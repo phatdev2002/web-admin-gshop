@@ -2,9 +2,9 @@ import LoginFrom from "@/app/(auth)/login/login-from";
 
 const LoginPage = () => {
   return (
-    <div className="flex h-screen relative">
+    <div className="flex h-screen w-full relative">
       {/* Logo */}
-        <img src="/login/LogoAppGShop2.png" alt="Logo GShop" className="absolute top-4 right-4 h-20"/>
+        <img src="/login/LogoAppGShop2.png" alt="Logo GShop" className="absolute top-4 right-4 h-10"/>
       {/* Banner */}
       <div
         className="w-3/5 h-full bg-cover bg-center"
