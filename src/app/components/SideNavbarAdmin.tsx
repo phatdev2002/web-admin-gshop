@@ -27,7 +27,7 @@ export default function SideNavbarAdmin({}: Props){
   }
 
     return (
-        <div className="relative min-w-[80px] border-r px-3 pb-10 pt-24">
+        <div className="relative min-w-[80px] h-100000 border-r px-3 pb-10 pt-24">
           <Image
             src={isCollapsed ? "/logo/LogoAppG.png" : "/login/LogoAppGShop2.png"}
             alt="Logo GShop"
@@ -37,11 +37,12 @@ export default function SideNavbarAdmin({}: Props){
             priority
           />
           <div className="absolute right-[-20px] top-7">
-            <Button onClick={toggleSidebar} variant='secondary'>
+            <Button onClick={toggleSidebar} variant='outline'>
             <ChevronRight/>
             </Button>
           </div>
-            <Nav
+          
+          <Nav
             isCollapsed={isCollapsed}
             links={[
               {
@@ -88,7 +89,7 @@ export default function SideNavbarAdmin({}: Props){
               },
             ]}
           />
-          <div className="mt-10 mr-2 w-full text-center">
+          <div className="mt-10 mr-0 ml-2">
             {isCollapsed ? (
               <Button variant="logout" size="icon">
                 <LogOut />
@@ -100,6 +101,7 @@ export default function SideNavbarAdmin({}: Props){
               </Button>
             )}
           </div>
+          
         </div>
     )
 }

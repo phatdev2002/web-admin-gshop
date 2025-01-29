@@ -28,11 +28,13 @@ export default function AdminLayout({
       <body
         className={`flex ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/*Sidebar*/}
-        <SideNavbarAdmin/>
-        {/*Sidebar*/}
-        <div className="p-8 w-full">{children}</div>
-        
+        {/* Sidebar */}
+        <SideNavbarAdmin />
+        {/* Sidebar */}
+
+        <div className="flex-1 h-full bg-blue-100 px-8 py-5 min-h-[750px] overflow-y-auto">
+          {children}
+        </div>
       </body>
     </html>
   );

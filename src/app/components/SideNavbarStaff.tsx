@@ -23,7 +23,7 @@ export default function SideNavbarStaff({}: Props){
   }
 
     return (
-        <div className="relative min-w-[80px] border-r px-3 pb-10 pt-24">
+        <div className="relative min-w-[80px] h-100000 border-r px-3 pb-10 pt-24">
           <Image
             src={isCollapsed ? "/logo/LogoAppG.png" : "/login/LogoAppGShop2.png"}
             alt="Logo GShop"
@@ -33,11 +33,23 @@ export default function SideNavbarStaff({}: Props){
             priority
           />
           <div className="absolute right-[-20px] top-7">
-            <Button onClick={toggleSidebar} variant='secondary'>
+            <Button onClick={toggleSidebar} variant='outline'>
             <ChevronRight/>
             </Button>
           </div>
-            <Nav
+          <div className="absolute bottom-10 mr-2 ml-3 text-center">
+                      {isCollapsed ? (
+                        <Button variant="logout" size="icon">
+                          <LogOut />
+                        </Button>
+                      ) : (
+                        <Button variant="logout">
+                          <LogOut />
+                          Đăng xuất
+                        </Button>
+                      )}
+                    </div>
+          <Nav
             isCollapsed={isCollapsed}
             links={[
               {
@@ -66,18 +78,7 @@ export default function SideNavbarStaff({}: Props){
               },
             ]}
           />
-          <div className="mt-10 mr-2 w-full text-center">
-            {isCollapsed ? (
-              <Button variant="logout" size="icon">
-                <LogOut />
-              </Button>
-            ) : (
-              <Button variant="logout">
-                <LogOut />
-                Đăng xuất
-              </Button>
-            )}
-          </div>
+          
         </div>
     )
 }
