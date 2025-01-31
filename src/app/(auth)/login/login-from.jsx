@@ -3,30 +3,19 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useRouter } from "next/navigation"; 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import loginUser  from "@/app/(auth)/login/login-handle";
+import loginUser from "@/app/(auth)/login/login-handle";
 
-// Định nghĩa schema form với Zod
 const formSchema = z.object({
-  email: z.string().email({
-    message: "Email không hợp lệ.",
-  }),
-  password: z.string()
-    .min(1, {
-      message: "Mật khẩu không được để trống.",
-    }),
+  email: z.string().email({ message: "Email không hợp lệ." }),
+  password: z.string().min(1, { message: "Mật khẩu không được để trống." }),
 });
 
 const RegisterForm = () => {
+  const router = useRouter(); 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,29 +26,32 @@ const RegisterForm = () => {
 
   const onSubmit = async (values) => {
     try {
-      // Gọi hàm loginUser từ authService
       const result = await loginUser(values.email, values.password);
-  
+
       if (result.success) {
-        // Thành công - xử lý khi đăng nhập thành công
-        //console.log("Đăng nhập thành công:", result);
-        alert('Đăng nhập thành công!');
+        const { user } = result;
+
+        // Lưu token và role vào localStorage (nếu cần)
+        localStorage.setItem("role", user.role);
+        
+        // Điều hướng theo vai trò
+        if (user.role === "admin") {
+          router.push("/admin/overview");
+        } else if (user.role === "staff") {
+          router.push("/staff/overview");
+        } else {
+          alert("Bạn không có quyền truy cập!");
+        }
       } else {
-        // Thất bại - hiển thị thông báo lỗi dựa trên message từ server
         let errorMessage = "Lỗi đăng nhập!";
-  
         if (result.message === "User not found!") {
           errorMessage = "Không tìm thấy người dùng!";
         } else if (result.message === "Invalid credentials!") {
           errorMessage = "Sai mật khẩu!";
         }
-  
-        //console.error("Lỗi đăng nhập:", result.message);
         alert(errorMessage);
       }
     } catch (error) {
-      // Xử lý lỗi kết nối hoặc lỗi không xác định
-      //console.error("Lỗi kết nối:", error);
       alert("Không thể kết nối tới server. Vui lòng thử lại sau!");
     }
   };

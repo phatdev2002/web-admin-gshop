@@ -32,7 +32,7 @@ export default function AdminLayout({
         <SideNavbarAdmin />
         {/* Sidebar */}
 
-        <div className="flex-1 h-full bg-blue-100 px-8 py-5 min-h-[750px] overflow-y-auto">
+        <div className="flex-1 h-full bg-blue-50 px-8 py-5 min-h-[750px] overflow-y-auto">
           {children}
         </div>
       </body>

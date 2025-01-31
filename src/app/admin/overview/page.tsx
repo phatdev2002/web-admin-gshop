@@ -102,17 +102,19 @@ const OverviewPage = () => {
             <BarChart/>
           </CardContent>
         </section>
-        <CardContent>
-          <section>
-            <p  className='font-semibold'>Xếp hạng 10 bộ Gundam bán chạy nhất</p>
-          </section>
-          {gundamData.map((d,i)=>(
-            <TenGundamCard key={i}
-            name={d.name}
-            amount={d.amount}/>
-          ))}
-          
-        </CardContent>
+        <section>
+          <CardContent>
+            <section>
+              <p  className='font-semibold'>Xếp hạng 10 bộ Gundam bán chạy nhất</p>
+            </section>
+            {gundamData.map((d,i)=>(
+              <TenGundamCard key={i}
+              name={d.name}
+              amount={d.amount}/>
+            ))}
+            
+          </CardContent>
+        </section>
       </section>
     </div>
   )
