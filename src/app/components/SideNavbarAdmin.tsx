@@ -5,8 +5,8 @@ import Image from "next/image";
 
 import {
   BoxIcon,
-  
   ChartNoAxesCombined,
+  ChevronLeft,
   ChevronRight,
   LayoutDashboard,
   LogOut,
@@ -31,14 +31,14 @@ export default function SideNavbarAdmin({}: Props){
           <Image
             src={isCollapsed ? "/logo/LogoAppG.png" : "/login/LogoAppGShop2.png"}
             alt="Logo GShop"
-            width={isCollapsed ? 30 : 100} // Thay đổi chiều rộng theo trạng thái
+            width={isCollapsed ? 46 : 120} // Thay đổi chiều rộng theo trạng thái
             height={isCollapsed ? 50 : 50} // Giữ nguyên hoặc thay đổi chiều cao nếu cần
-            className={`absolute top-8`} // Thay đổi kích thước bằng className
+            className={`absolute top-8 pl-2`} // Thay đổi kích thước bằng className
             priority
           />
           <div className="absolute right-[-20px] top-7">
-            <Button onClick={toggleSidebar} variant='outline'>
-            <ChevronRight/>
+            <Button onClick={toggleSidebar} variant='btnright' className="w-9 text-black/20 hover:text-black/30 hover:bg-blue-50">
+            {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
             </Button>
           </div>
           
