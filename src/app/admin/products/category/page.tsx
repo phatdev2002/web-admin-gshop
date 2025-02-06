@@ -1,13 +1,5 @@
 "use client"
 import React, { useState } from "react";
-
-interface Category {
-  name_type: string;
-  investor_name: string;
-  sdt: string;
-  email: string;
-  sales: string;
-}
 import { useQuery } from "@tanstack/react-query";
 import PageTitle from "@/components/PageTitle";
 import { DataTable } from "@/components/ui/DataTable";
@@ -15,6 +7,15 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import AddCategoryDialog from "@/components/Dialog/AddCategoryDialog";
+
+// Define Category type
+type Category = {
+  name_type: string;
+  investor_name: string;
+  sdt: string;
+  email: string;
+  sales: string;
+};
 
 // Fetch API function
 const fetchCategories = async () => {
@@ -44,29 +45,29 @@ const CategoryPage = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleAddCategory = async (categoryName: string) => {
-    try {
-      const res = await fetch("https://gshopbackend.onrender.com/category/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name_type: categoryName }),
-      });
-
-      if (!res.ok) throw new Error("Thêm thể loại thất bại");
-
-      // Sau khi thêm thể loại thành công, làm mới danh sách
-      refetch();
-      setIsOpen(false); // Đóng dialog
-    } catch (error) {
-      console.error("Lỗi khi thêm thể loại:", error);
-      alert("Có lỗi xảy ra khi thêm thể loại. Vui lòng thử lại.");
-    }
-  };
+      try {
+        const res = await fetch("https://gshopbackend.onrender.com/category/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name_type: categoryName }),
+        });
+  
+        if (!res.ok) throw new Error("Thêm thể loại thất bại");
+  
+        // Sau khi thêm thể loại thành công, làm mới danh sách
+        refetch();
+        setIsOpen(false); // Đóng dialog
+      } catch (error) {
+        console.error("Lỗi khi thêm thể loại:", error);
+        alert("Có lỗi xảy ra khi thêm thể loại. Vui lòng thử lại.");
+      }
+    };
 
   if (isLoading) return <p>Đang tải dữ liệu...</p>;
   if (isError) return <p>Không thể tải danh sách thể loại.</p>;
-  
+
   return (
     <div>
       <PageTitle title="Quản lý thể loại Gundam" />
