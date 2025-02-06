@@ -3,19 +3,11 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PageTitle from "@/components/PageTitle";
 import { DataTable } from "@/components/ui/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-
 import AddCategoryDialog from "@/components/Dialog/AddCategoryDialog";
-// Define Category type
-type Category = {
-  name_type: string;
-  investor_name: string;
-  sdt: string;
-  email: string;
-  sales: string;
-};
+import { columns } from "@/app/admin/products/category/columns";
+
 
 // Fetch API function
 const fetchCategories = async () => {
@@ -104,14 +96,6 @@ export default CategoryPage;
 
 
 
-//Định nghĩa cột cho bảng
-export const columns: ColumnDef<Category>[] = [
-  { accessorKey: "name_type", header: "Thể loại" },
-  { accessorKey: "investor_name", header: "Tên nhà đầu tư" },
-  { accessorKey: "email", header: "Email" },
-  { accessorKey: "sdt", header: "Số điện thoại" },
-  { accessorKey: "sales", header: "Doanh số" },
-];
 
 
 // "use client"
