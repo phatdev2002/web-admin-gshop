@@ -12,7 +12,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button";
 
-type Props = {}
+type Props = object
 
 export default function SideNavbar({}: Props){
   const [isCollapsed, setIsCollapsed] = useState(false)

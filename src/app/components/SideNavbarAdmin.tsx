@@ -16,8 +16,9 @@ import {
   UserSquare2Icon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button";
+import logoutUser from "@/app/(auth)/logout/logout-handle";
 
-type Props = {}
+type Props = object
 
 export default function SideNavbarAdmin({}: Props){
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -91,14 +92,14 @@ export default function SideNavbarAdmin({}: Props){
           />
           <div className="mt-10 mr-0 ml-2">
             {isCollapsed ? (
-              <Button variant="logout" size="icon">
-                <LogOut />
-              </Button>
+              <Button variant="logout" size="icon" onClick={() => logoutUser()}>
+              <LogOut />
+            </Button>
             ) : (
-              <Button variant="logout">
-                <LogOut />
-                Đăng xuất
-              </Button>
+              <Button variant="logout" onClick={() => logoutUser()}>
+  <LogOut />
+  Đăng xuất
+</Button>
             )}
           </div>
           

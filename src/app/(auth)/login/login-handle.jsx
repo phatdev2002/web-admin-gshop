@@ -9,11 +9,14 @@ const loginUser = async (email, password) => {
     });
 
     const data = await response.json();
-    console.log("Phản hồi từ server:", data); // Kiểm tra dữ liệu phản hồi
+    console.log("Phản hồi từ server:", data); // Kiểm tra phản hồi
 
-    // Kiểm tra nếu `data.data` tồn tại và có ít nhất một phần tử
-    if (data.status === true && Array.isArray(data.data) && data.data.length > 0) {
-      const user = data.data[0]; // Lấy user đầu tiên từ mảng
+    if (data.status === true && data.data) {
+      const user = data.data;
+      
+      // Lưu vào localStorage để kiểm tra sau này
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("role", user.role);
 
       return { success: true, user };
     } else {

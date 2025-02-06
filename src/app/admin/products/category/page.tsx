@@ -1,5 +1,13 @@
 "use client"
 import React, { useState } from "react";
+
+interface Category {
+  name_type: string;
+  investor_name: string;
+  sdt: string;
+  email: string;
+  sales: string;
+}
 import { useQuery } from "@tanstack/react-query";
 import PageTitle from "@/components/PageTitle";
 import { DataTable } from "@/components/ui/DataTable";
@@ -18,7 +26,7 @@ const fetchCategories = async () => {
 
   if (!Array.isArray(categoryList)) throw new Error("Dữ liệu thể loại không hợp lệ");
 
-  return categoryList.map((item: any) => ({
+  return categoryList.map((item: { name_type: string }) => ({
     name_type: item.name_type,
     investor_name: "-",
     sdt: "-",
@@ -35,14 +43,14 @@ const CategoryPage = () => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleAddCategory = async (newCategory: any) => {
+  const handleAddCategory = async (categoryName: string) => {
     try {
       const res = await fetch("https://gshopbackend.onrender.com/category/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name_type: newCategory.name_type }),
+        body: JSON.stringify({ name_type: categoryName }),
       });
 
       if (!res.ok) throw new Error("Thêm thể loại thất bại");
@@ -58,7 +66,7 @@ const CategoryPage = () => {
 
   if (isLoading) return <p>Đang tải dữ liệu...</p>;
   if (isError) return <p>Không thể tải danh sách thể loại.</p>;
-
+  
   return (
     <div>
       <PageTitle title="Quản lý thể loại Gundam" />
