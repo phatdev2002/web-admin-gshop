@@ -20,7 +20,7 @@ const fetchCategories = async () => {
   if (!Array.isArray(categoryList)) throw new Error("Invalid category format");
 
   const categoryMap: { [key: string]: string } = {};
-  categoryList.forEach((item: any) => {
+  categoryList.forEach((item: { _id: string; name_type: string }) => {
     categoryMap[item._id] = item.name_type;
   });
 
@@ -36,11 +36,11 @@ const fetchProducts = async (categories: { [key: string]: string }) => {
 
   if (!Array.isArray(productList)) throw new Error("Invalid product format");
 
-  return productList.map((item: any) => ({
+  return productList.map((item: { name: string; id_category: string; price: number; status: string; quantity: number }) => ({
     name: item.name,
     id_category: categories[item.id_category] || "Không xác định",
     price: item.price,
-    status: item.status === "true" ? "Còn hàng" : "Hết hàng",
+    status: item.status === "true" ? "Còn hàng" : "Hết hàng" as "Còn hàng" | "Hết hàng",
     quantity: item.quantity,
     rate: "-",
   }));
@@ -120,7 +120,7 @@ const ProductPage = () => {
       {isLoadingCategories || isLoadingProducts ? (
         <p>Đang tải dữ liệu...</p>
       ) : (
-        <DataTable columns={columns} data={filteredProducts} />
+        <DataTable<Product, unknown> columns={columns} data={filteredProducts} />
       )}
 
       {/* Dialog thêm sản phẩm */}

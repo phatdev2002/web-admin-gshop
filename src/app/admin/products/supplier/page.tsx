@@ -23,7 +23,7 @@ const fetchSuppliers = async () => {
     return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
   };
 
-  return supplierList.map((item: any) => ({
+  return supplierList.map((item: { name: string; email?: string; phone_number?: string; representative?: string; cooperation_date?: string; address?: string }) => ({
     supplier: item.name,
     email: item.email || "-",
     sdt: item.phone_number || "-",
@@ -41,7 +41,7 @@ const SupplierPage = () => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleAddSupplier = (newSupplier: any) => {
+  const handleAddSupplier = (newSupplier: Supplier) => {
     console.log("New Supplier:", newSupplier);
     // Here, you can make the API call to add the supplier
     setIsOpen(false);

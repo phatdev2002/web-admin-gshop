@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import {Bar, BarChart as BarGraph, ResponsiveContainer, XAxis, YAxis} from "recharts";
-type Props = {}
+type Props = object
 
 const data = [
   {

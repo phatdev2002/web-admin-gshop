@@ -9,7 +9,7 @@ import { X } from "lucide-react";
 type AddSupplierDialogProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onSubmit: (newSupplier: any) => void;
+  onSubmit: (newSupplier: { supplier: string; email: string; sdt: string; investor_name: string; cooperation_day: string; address: string; }) => void;
 };
 
 const AddSupplierDialog = ({ isOpen, setIsOpen, onSubmit }: AddSupplierDialogProps) => {

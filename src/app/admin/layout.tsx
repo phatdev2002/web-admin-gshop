@@ -1,8 +1,7 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "../globals.css";
+import { Metadata } from "next";
 import SideNavbarAdmin from "@/app/components/SideNavbarAdmin";
-import SideNavbarStaff from "@/app/components/SideNavbarStaff";
+import { Geist, Geist_Mono } from "next/font/google";
+import AuthGuard from "./AuthGuard"; // ⬅️ Import AuthGuard
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,28 +13,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// ✅ Định nghĩa metadata
 export const metadata: Metadata = {
-  title: "Over View",
+  title: "Gundam Shop Admin",
+  description: "Trang quản lý của cửa hàng Gundam Shop",
 };
 
-export default function AdminLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body
-        className={`flex ${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <AuthGuard> {/* ⬅️ Kiểm tra đăng nhập */}
+      <div className={`flex w-full h-screen ${geistSans.variable} ${geistMono.variable} antialiased`}>
         {/* Sidebar */}
         <SideNavbarAdmin />
-        {/* Sidebar */}
 
-        <div className="flex-1 h-full bg-blue-50 px-8 py-5 min-h-[750px] overflow-y-auto">
+        {/* Nội dung chính */}
+        <div className="flex-1 min-h-screen w-full bg-blue-50 px-8 py-5 overflow-y-auto">
           {children}
         </div>
-      </body>
-    </html>
+      </div>
+    </AuthGuard>
   );
 }

@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(auth)/register/register-from.jsx", "src/app/(auth)/register/register-xuly.jsx", "src/app/(auth)/login/login-from.jsx", "src/app/components/SideNavbarAdmin.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(auth)/register/register-from.jsx", "src/app/(auth)/register/register-xuly.jsx", "src/app/(auth)/login/login-from.jsx", "src/app/components/SideNavbarAdmin.jsx", "src/app/admin/products/category/page.jsx"],
   "exclude": ["node_modules"]
 }

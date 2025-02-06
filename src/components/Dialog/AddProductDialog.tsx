@@ -15,7 +15,7 @@ export const fetchCategories = async () => {
     if (!Array.isArray(categoryList)) throw new Error("Invalid category format");
   
     const categoryMap: { [key: string]: string } = {};
-    categoryList.forEach((item: any) => {
+    categoryList.forEach((item: { _id: string; name_type: string }) => {
       categoryMap[item._id] = item.name_type;
     });
   
@@ -31,7 +31,7 @@ export const fetchCategories = async () => {
   
     if (!Array.isArray(productList)) throw new Error("Invalid product format");
   
-    return productList.map((item: any) => ({
+    return productList.map((item: { name: string; id_category: string; price: number; status: string; quantity: number }) => ({
       name: item.name,
       id_category: categories[item.id_category] || "Không xác định",
       price: item.price,
@@ -44,7 +44,7 @@ export const fetchCategories = async () => {
 type AddProductDialogProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onSubmit: (newProduct: any) => void;
+  onSubmit: (newProduct: { name: string; id_category: string; price: string; status: string; quantity: string }) => void;
 };
 
 const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps) => {

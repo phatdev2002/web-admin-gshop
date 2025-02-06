@@ -4,17 +4,19 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation"; 
+import { useState } from "react";  // Import useState
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import loginUser from "@/app/(auth)/login/login-handle";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Email không hợp lệ." }),
   password: z.string().min(1, { message: "Mật khẩu không được để trống." }),
 });
 
-const RegisterForm = () => {
+const LoginForm = () => {
   const router = useRouter(); 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -23,6 +25,8 @@ const RegisterForm = () => {
       password: "",
     },
   });
+
+  const [showPassword, setShowPassword] = useState(false);  // State để điều khiển hiển thị mật khẩu
 
   const onSubmit = async (values) => {
     try {
@@ -33,7 +37,7 @@ const RegisterForm = () => {
 
         // Lưu token và role vào localStorage (nếu cần)
         localStorage.setItem("role", user.role);
-        
+
         // Điều hướng theo vai trò
         if (user.role === "admin") {
           router.push("/admin/overview");
@@ -76,11 +80,21 @@ const RegisterForm = () => {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="relative">
               <FormLabel>Mật khẩu</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Mật khẩu của bạn" {...field} />
+                <Input
+                  type={showPassword ? "text" : "password"} // Điều chỉnh type của input
+                  placeholder="Mật khẩu của bạn"
+                  {...field}
+                />
               </FormControl>
+              <div
+                className="absolute top-8 right-3  cursor-pointer text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}  
+              >
+                {showPassword ? <Eye size={20}/> : <EyeOff size={20} />}  
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -91,4 +105,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default LoginForm;
