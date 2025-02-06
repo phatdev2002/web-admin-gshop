@@ -11,7 +11,7 @@ type AddSupplierDialogProps = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onSubmit: (newSupplier: { supplier: string; email: string; sdt: string; investor_name: string; cooperation_day: string; address: string; }) => void;
 };
-
+ 
 const AddSupplierDialog = ({ isOpen, setIsOpen, onSubmit }: AddSupplierDialogProps) => {
   const [newSupplier, setNewSupplier] = useState({
     supplier: "",
