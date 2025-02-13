@@ -1,4 +1,4 @@
-import PageTitle from '@/components/PageTitle';
+
 import BarChart from '@/components/ui/BarChart';
 import Card, { CardContent, CardProps } from '@/components/ui/Card';
 import { HandCoinsIcon, Landmark, ShoppingCart } from 'lucide-react';
@@ -48,8 +48,7 @@ const dataWithPercentage = pieData.map((item) => ({
 const ReportPage = () => {
   return (
     <div>
-      <PageTitle title="Báo cáo doanh thu" />
-      <section className="grid w-full py-4 grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-3">
+      <section className="grid w-full pb-4 grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-3">
         {cardData.map((d, i) => (
           <Card
             key={i}
@@ -72,7 +71,7 @@ const ReportPage = () => {
           </CardContent>
         </section>
         <section>
-        <CardContent>
+        <CardContent >
           <section>
             <p className="font-semibold">Tỉ lệ bán chạy của các loại Gundam</p>
           </section>

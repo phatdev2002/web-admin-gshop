@@ -3,8 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useRouter } from "next/navigation"; 
-import { useState } from "react";  // Import useState
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";  // Thêm useEffect để kiểm tra localStorage
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
-  const router = useRouter(); 
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -26,16 +26,30 @@ const LoginForm = () => {
     },
   });
 
-  const [showPassword, setShowPassword] = useState(false);  // State để điều khiển hiển thị mật khẩu
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Kiểm tra localStorage khi component mount
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    if (role === "admin") {
+      router.push("/admin/overview"); // Điều hướng đến trang admin nếu role là admin
+    }
+    if (role === "staff") {
+      router.push("/staff/overview"); // Điều hướng đến trang staff nếu role là staff
+    }
+  }, [router]);
 
   const onSubmit = async (values) => {
+    setLoading(true);
+
     try {
       const result = await loginUser(values.email, values.password);
 
       if (result.success) {
         const { user } = result;
 
-        // Lưu token và role vào localStorage (nếu cần)
+        // Lưu thông tin vào localStorage
         localStorage.setItem("role", user.role);
 
         // Điều hướng theo vai trò
@@ -57,49 +71,66 @@ const LoginForm = () => {
       }
     } catch (error) {
       alert("Không thể kết nối tới server. Vui lòng thử lại sau!");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-[400px] flex-shrink-0 w-full">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1 max-w-[400px] flex-shrink-0 w-full">
+        <FormLabel>Email</FormLabel>
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email của bạn" {...field} />
+                <Input 
+                  placeholder="example@gmail.com" 
+                  {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+        <div className="h-0" />
+        <FormLabel>Mật khẩu</FormLabel>
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem className="relative">
-              <FormLabel>Mật khẩu</FormLabel>
               <FormControl>
                 <Input
-                  type={showPassword ? "text" : "password"} // Điều chỉnh type của input
-                  placeholder="Mật khẩu của bạn"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Nhập mật khẩu"
                   {...field}
                 />
               </FormControl>
               <div
-                className="absolute top-8 right-3  cursor-pointer text-gray-500"
-                onClick={() => setShowPassword(!showPassword)}  
+                className="absolute top-0 right-3 cursor-pointer text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <Eye size={20}/> : <EyeOff size={20} />}  
+                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </div>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="!mt-8 w-full">Đăng nhập</Button>
+        
+        <Button type="submit" className="!mt-8 w-full" disabled={loading}>
+          {loading ? "Đang đăng nhập..." : "Đăng nhập"}
+        </Button>
+        
+        <div className="mt-4 text-center">
+          <Button 
+            variant="link" 
+            //onClick={() => router.push("/forgot-password")} 
+            className="text-sm text-blue-500">
+            Quên mật khẩu?
+          </Button>
+        </div>
       </form>
     </Form>
   );

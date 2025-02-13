@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import PageTitle from "@/components/PageTitle";
 import { DataTable } from "@/components/ui/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
@@ -52,8 +51,7 @@ const SupplierPage = () => {
 
   return (
     <div>
-      <PageTitle title="Quản lý nhà cung cấp" />
-      <div className="flex flex-row align-top my-5 justify-between">
+      <div className="flex flex-row align-top mb-5 justify-between">
         <p className="text-lg">{data?.length || 0} nhà cung cấp</p>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => refetch()}>

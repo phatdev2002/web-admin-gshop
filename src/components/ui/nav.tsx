@@ -50,7 +50,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                   <span className="sr-only">{link.title}</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right" className="flex items-center gap-4 bg-black/10 text-black">
+              <TooltipContent side="right" className="flex items-center gap-4 bg-blue-400 text-white text-sm">
                 {link.title}
                 {link.label && (
                   <span className="ml-auto text-muted-foreground">
@@ -64,7 +64,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
               key={index}
               href={link.href}
               className={cn(
-                buttonVariants({ variant: link.href === pathName ? "navsidebar" : "navsidebarnochoose", size: "sm" }),
+                buttonVariants({ variant: link.href === pathName ? "navsidebar" : "navsidebarnochoose", size: "lg" }),
                 link.variant === "default" &&
                   "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
                 "justify-start"

@@ -1,9 +1,9 @@
 "use client"
 import { Nav } from "@/components/ui/nav";
 import React, { useState } from "react";
-import Image from "next/image";
 
 import {
+  ChevronLeft,
   ChevronRight,
   LayoutDashboard,
   LogOut,
@@ -12,10 +12,11 @@ import {
   Users2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button";
+import logoutUser from "@/app/(auth)/logout/logout-handle";
 
 type Props = object
 
-export default function SideNavbarStaff({}: Props){
+export default function SideNavbarAdmin({}: Props){
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   function toggleSidebar(){
@@ -23,32 +24,21 @@ export default function SideNavbarStaff({}: Props){
   }
 
     return (
-        <div className="relative min-w-[80px] h-100000 border-r px-3 pb-10 pt-24">
-          <Image
+        <div className="relative min-w-[80px] h-100000 border-r px-1 pb-10 pt-1 bg-white">
+          {/* <Image
             src={isCollapsed ? "/logo/LogoAppG.png" : "/login/LogoAppGShop2.png"}
             alt="Logo GShop"
-            width={isCollapsed ? 30 : 100} // Thay đổi chiều rộng theo trạng thái
+            width={isCollapsed ? 46 : 120} // Thay đổi chiều rộng theo trạng thái
             height={isCollapsed ? 50 : 50} // Giữ nguyên hoặc thay đổi chiều cao nếu cần
-            className={`absolute top-8`} // Thay đổi kích thước bằng className
+            className={`absolute top-8 pl-2`} // Thay đổi kích thước bằng className
             priority
-          />
-          <div className="absolute right-[-20px] top-7">
-            <Button onClick={toggleSidebar} variant='outline'>
-            <ChevronRight/>
+          /> */}
+          <div className="absolute right-[-20px] bottom-5">
+            <Button onClick={toggleSidebar} variant='btnright' className="w-9 text-black/20 hover:text-black/30 hover:bg-blue-50">
+            {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
             </Button>
           </div>
-          <div className="absolute bottom-10 mr-2 ml-3 text-center">
-                      {isCollapsed ? (
-                        <Button variant="logout" size="icon">
-                          <LogOut />
-                        </Button>
-                      ) : (
-                        <Button variant="logout">
-                          <LogOut />
-                          Đăng xuất
-                        </Button>
-                      )}
-                    </div>
+          
           <Nav
             isCollapsed={isCollapsed}
             links={[
@@ -78,7 +68,28 @@ export default function SideNavbarStaff({}: Props){
               },
             ]}
           />
+          <div className="absolute mt-10 mr-0 ml-4 bottom-5">
+            {isCollapsed ? (
+              <Button variant="logout" size="icon" onClick={() => logoutUser()}>
+              <LogOut />
+            </Button>
+            ) : (
+              <Button variant="logout" onClick={() => logoutUser()}>
+              <LogOut />
+              Đăng xuất
+            </Button>
+            )}
+          </div>
           
         </div>
     )
 }
+
+////////////
+import {
+  
+} from "lucide-react"
+
+
+
+///////////////

@@ -33,6 +33,6 @@ export function CardContent(props: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div
         {...props}
-        className={cn('flex w-full flex-col gap-5 rounded-xl border mb-5 p-5 shadow bg-white',props.className)}/>
+        className={cn('flex w-full flex-col gap-2 rounded-xl border p-5 shadow bg-white',props.className)}/>
     )
 }

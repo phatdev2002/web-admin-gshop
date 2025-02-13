@@ -1,12 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import PageTitle from "@/components/PageTitle";
 import { DataTable } from "@/components/ui/DataTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import AddCategoryDialog from "@/components/Dialog/AddCategoryDialog";
-import { columns } from "@/app/admin/products/category/columns";
+import { columns } from "./columns";
 
 
 // Fetch API function
@@ -69,8 +68,7 @@ const CategoryPage = () => {
 
   return (
     <div>
-      <PageTitle title="Quản lý nhà cung cấp" />
-      <div className="flex flex-row align-top my-5 justify-between">
+      <div className="flex flex-row align-top mb-5 justify-between">
         <p className="text-lg">{data?.length || 0} thể loại Gundam</p>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => refetch()}>

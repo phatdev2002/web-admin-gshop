@@ -1,4 +1,4 @@
-import PageTitle from '@/components/PageTitle'
+
 import BarChart from '@/components/ui/BarChart'
 import Card, { CardContent, CardProps } from '@/components/ui/Card'
 import TenGundamCard, { TenGundamProps } from '@/components/ui/TenGundamCard'
@@ -78,8 +78,7 @@ const gundamData: TenGundamProps[] = [
 const OverviewPage = () => {
   return (
     <div>
-      <PageTitle title="Tổng quan hệ thống"/>
-      <section className='grid w-full py-4 grid-cols-1 gap-4 gap-x-8 transition-all
+      <section className='grid w-full pb-5 grid-cols-1 gap-4 gap-x-8 transition-all
       sm:grid-cols-2 xl:grid-cols-4'>
         {cardData.map((d,i) =>(
           <Card 

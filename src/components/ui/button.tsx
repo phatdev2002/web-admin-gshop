@@ -19,10 +19,10 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        logout: "text-red-500 underline-offset-4 hover:underline",
+        logout: "text-red-500 underline-offset-4 hover:text-red-700 text-sm",
         btnright: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground rounded-full",
-        navsidebar: " bg-black/20 shadow hover:bg-black-400",
-        navsidebarnochoose:"hover:bg-black/5 hover:text-accent-foreground",
+        navsidebar: " bg-blue-500 shadow hover:bg-black-400 text-white",
+        navsidebarnochoose:"hover:bg-black/10 hover:text-accent-foreground",
       },
       size: {
         default: "h-9 px-4 py-2",
