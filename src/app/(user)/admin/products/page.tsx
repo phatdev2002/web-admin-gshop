@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { DataTable } from "@/components/ui/DataTable";
 import { Button } from "@/components/ui/button";
 import { Search, Plus, Blocks, UserSquareIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import ViewProductDialog from "@/components/Dialog/ViewProductDialog";
@@ -52,7 +53,7 @@ const fetchProducts = async (categories: { [key: string]: string }) => {
         name: item.name,
         id_category: categories[item.id_category] || "Không xác định",
         price: item.price,
-        status: item.status === "true" ? "Còn hàng" : "Hết hàng",
+        status: item.status === "true" ? "true" : "false",
         quantity: item.quantity,
         image: image,
         description: item.description,
@@ -87,7 +88,12 @@ const ProductPage = () => {
   );
 
   const handleViewProduct = (product: Product) => {
-    setSelectedProduct(product);
+    setSelectedProduct({
+      ...product,
+      id_category: Object.keys(categories).find(
+        (key) => categories[key] === product.id_category
+      ) || product.id_category, // Đảm bảo ID đúng
+    });
     setIsViewDialogOpen(true);
   };
 
@@ -96,13 +102,15 @@ const ProductPage = () => {
     {
       accessorKey: "image",
       header: "Ảnh",
-      cell: ({ row }) => {
+      cell: ({ row }: { row: { original: Product } }) => {
         const product = row.original;
         return product.image ? (
-          <img
+          <Image
             src={product.image}
             alt={product.name}
-            className="w-24 h-24 object-cover rounded"
+            width={96}
+            height={96}
+            className="object-cover rounded"
           />
         ) : (
           <span>Không có ảnh</span>
@@ -111,19 +119,27 @@ const ProductPage = () => {
     },
 
     { accessorKey: "name", header: "Sản phẩm" },
-    { accessorKey: "id_category", header: "Danh mục" },
-    { accessorKey: "price", header: "Đơn giá" },
+    { accessorKey: "id_category", header: "Thể loại" },
+    {
+      accessorKey: "price",
+      header: "Đơn giá",
+      cell: ({ row }: { row: { getValue: (key: string) => number } }) => {
+        const price = row.getValue("price");
+        return price ? `${price.toLocaleString()} đ` : "-";
+      },
+    },
+    
     //{ accessorKey: "description", header: "Ghi chú" },
     {
       accessorKey: "status",
       header: "Trạng thái",
-      cell: ({ row }) => (
+      cell: ({ row }: { row: { getValue: (key: string) => string } }) => (
         <div
           className={`font-medium w-fit px-4 py-2 rounded-lg ${
-            row.getValue("status") === "Hết hàng" ? "bg-red-200" : "bg-green-200"
+            row.getValue("status") === "false" ? "bg-red-200" : "bg-green-200"
           }`}
         >
-          {row.getValue("status")}
+          {row.getValue("status") === "true" ? "Còn hàng" : "Hết hàng"}
         </div>
       ),
     },
@@ -132,16 +148,16 @@ const ProductPage = () => {
     {
       accessorKey: "actions",
       header: "Hành động",
-      cell: ({ row }) => {
+      cell: ({ row }: { row: { original: Product } }) => {
         const product = row.original;
-
+      
         return (
           <Button
             size="sm"
             variant="outline"
             onClick={() => handleViewProduct(product)}
           >
-            Xem chi tiết
+            Chỉnh sửa
           </Button>
         );
       },
@@ -154,7 +170,9 @@ const ProductPage = () => {
     const productData = {
       ...selectedProduct,
       ...updatedProduct, // Override existing fields with the updated values
-      status: updatedProduct.status || selectedProduct.status, // Ensure status is set correctly
+      //status: updatedProduct.status || selectedProduct.status, // Ensure status is set correctly
+      status: updatedProduct.status !== undefined ? updatedProduct.status : selectedProduct.status,
+
       description: updatedProduct.description || selectedProduct.description, // Ensure description is included
       id_category: updatedProduct.id_category || selectedProduct.id_category, // Ensure id_category is included
       id_supplier: updatedProduct.id_supplier || selectedProduct.id_supplier, // Ensure id_supplier is included
@@ -183,6 +201,8 @@ const ProductPage = () => {
     } catch (error) {
       alert("Lỗi khi cập nhật sản phẩm!");
       console.error("Lỗi khi cập nhật sản phẩm:", error);
+      console.log("handleUpdateProduct:", handleUpdateProduct);
+
     }
   };
   
@@ -251,8 +271,8 @@ const ProductPage = () => {
       <ViewProductDialog
         isOpen={isViewDialogOpen}
         setIsOpen={setIsViewDialogOpen}
-        productToEdit={selectedProduct}
-        onUpdateProduct={handleUpdateProduct}
+        productToEdit={selectedProduct as Product}
+        onSubmit={handleUpdateProduct}
       />
     </div>
   );

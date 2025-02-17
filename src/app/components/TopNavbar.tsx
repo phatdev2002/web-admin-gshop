@@ -7,7 +7,7 @@ import { Bell } from "lucide-react";
 export default function TopNavbar() {
     interface User {
         name: string;
-        // Add other user properties here
+        role: string; // Thêm thuộc tính role
     }
 
     const [user, setUser] = useState<User | null>(null);
@@ -42,15 +42,23 @@ export default function TopNavbar() {
         }
     }, []);
 
+    // Chọn ảnh đại diện dựa trên vai trò người dùng
+    const getAvatar = () => {
+        if (user?.role === "staff") {
+            return "/img/avtstaff.jpg"; // Đổi ảnh nếu là nhân viên
+        }
+        return "/img/avt.jpg"; // Mặc định ảnh khác
+    };
+
     return (
-        <div className=" flex justify-between items-center px-5 py-2 border-b bg-white w-full">
+        <div className="flex justify-between items-center px-5 py-2 border-b bg-white w-full">
             <div className="flex items-center">
                 <Image src="/login/logoAppGShop2.png" alt="logo" width={100} height={50}/>
                 <h1 className="ml-24 text-xl font-semibold ">{getPageTitle()}</h1>
             </div>
             <div className="flex justify-between items-center">
-                <Bell className="mr-2 bg-blue-50 rounded-full  p-2 w-9 h-9"/>
-                <Image src="/img/avt.jpg" alt="avatar" width={40} height={40} className="rounded-full mr-2"/>
+                <Bell className="mr-2 bg-blue-50 rounded-full p-2 w-9 h-9"/>
+                <Image src={getAvatar()} alt="avatar" width={40} height={40} className="rounded-full mr-2"/>
                 <p className="font-semibold">{user?.name}</p>
             </div>
         </div>
