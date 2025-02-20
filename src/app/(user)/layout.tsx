@@ -17,7 +17,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className={`flex flex-col w-full h-screen ${geistSans.variable} ${geistMono.variable} antialiased`}>
     <TopNavbar /> 
-    <div className="flex-1 bg-blue-50 overflow-y-auto">
+    <div className="flex-1 bg-[#E9F1FB] overflow-y-auto">
       {children}
     </div>
   </div>

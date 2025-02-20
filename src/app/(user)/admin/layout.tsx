@@ -27,7 +27,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <SideNavbarAdmin />
 
         {/* Nội dung chính */}
-        <div className="flex-1  w-full bg-blue-50 px-8 py-5 overflow-y-auto">
+        <div className="flex-1  w-full px-8 py-5 overflow-y-auto">
           {children}
         </div>
       </div>
