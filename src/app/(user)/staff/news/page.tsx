@@ -39,7 +39,7 @@ export default function NewsPage() {
   );
 
   return (
-    <div className="flex flex-col align-top mb-5 justify-between">
+    <div className="flex flex-col mb-5">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-lg">{filteredNews.length} bài đăng</h1>
         <div>
@@ -47,8 +47,8 @@ export default function NewsPage() {
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Tìm kiếm theo tiêu đề hoặc ngày (VD: 02/04)"
-                className="pl-8 bg-white"
+                placeholder="Tìm kiếm theo tên hoặc ngày (dd/mm/yyyy)"
+                className="pl-8 bg-white w-96"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -56,24 +56,26 @@ export default function NewsPage() {
           </form>
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {filteredNews.map((news) => (
-          <div key={news._id} className="flex gap-4 pb-2">
+          <div key={news._id} className="bg-white border rounded-md overflow-hidden flex flex-col justify-between">
             <Image
               src={news.images?.[0] || "/default-image.jpg"}
               alt={news.title}
-              width={100}
-              height={100}
-              className="w-[200px] h-[150px] object-cover rounded-md"
+              width={300}
+              height={200}
+              className="w-full h-48 object-cover"
             />
-            <div>
-              <h2 className="text-lg font-semibold">{news.title}</h2>
-              <p className="text-sm text-gray-500">{news.date}</p>
-              <p className="text-gray-700">
-                {news.content.length > 400
-                  ? `${news.content.slice(0, 400)}...`
+            <div className="p-4 flex flex-col flex-grow">
+              <h2 className="text-base font-semibold mb-1 flex-grow">{news.title}</h2>
+              {/* <p className="text-gray-500 flex-grow">
+                {news.content.length > 130
+                  ? `${news.content.slice(0, 130)}...`
                   : news.content}
-              </p>
+              </p> */}
+              <div className="flex justify-end mt-2">
+                <p className="text-sm text-gray-800">{news.date}</p>
+              </div>
             </div>
           </div>
         ))}

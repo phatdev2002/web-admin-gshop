@@ -2,11 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "*.fbcdn.net" }, // Chấp nhận tất cả subdomain của Facebook
-      { protocol: "https", hostname: "i.pinimg.com" }, // Thêm Pinterest
-      { protocol: "https", hostname: "res.cloudinary.com" },
-    ],
+    domains: ["res.cloudinary.com", "i.pinimg.com", "scontent.xx.fbcdn.net", "platform-lookaside.fbsbx.com"], // Chỉ định chính xác hostname
   },
 };
 

@@ -10,22 +10,26 @@ interface EditProductDialogProps {
   setIsOpen: (isOpen: boolean) => void;
   onSubmit: (updatedProduct: {
     name: string;
-    id_category: string;
     price: number;
-    status: string;
     quantity: number;
     description: string;
+    id_category: string;
     id_supplier: string;
+    status: string;
+    viewer: number;
+    isActive: boolean;
   }) => void;
   productToEdit: {
     _id: string;
     name: string;
-    id_category: string;
     price: number;
-    status: string;
     quantity: number;
     description: string;
+    id_category: string;
     id_supplier: string;
+    status: string;
+    viewer: number;
+    isActive: boolean;
   };
 }
 
@@ -33,14 +37,11 @@ export const fetchCategories = async () => {
   const res = await fetch("https://gshopbackend.onrender.com/category/list");
   const result = await res.json();
   const categoryList = result.categories || result.data || result;
-
   if (!Array.isArray(categoryList)) throw new Error("Invalid category format");
-
   const categoryMap: { [key: string]: string } = {};
   categoryList.forEach((item: { _id: string; name_type: string }) => {
     categoryMap[item._id] = item.name_type;
   });
-
   return categoryMap;
 };
 
@@ -48,14 +49,11 @@ export const fetchSuppliers = async () => {
   const res = await fetch("https://gshopbackend.onrender.com/supplier/list");
   const result = await res.json();
   const supplierList = result.suppliers || result.data || result;
-
   if (!Array.isArray(supplierList)) throw new Error("Invalid supplier format");
-
   const supplierMap: { [key: string]: string } = {};
   supplierList.forEach((item: { _id: string; name: string }) => {
     supplierMap[item._id] = item.name;
   });
-
   return supplierMap;
 };
 
@@ -64,10 +62,12 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
     name: "",
     id_category: "",
     price: "",
-    status: "true",
+    isActive: true,
     quantity: "",
     description: "",
     id_supplier: "",
+    status: "",
+    viewer: "",
   });
 
   const { data: categories = {}, isLoading: categoriesLoading } = useQuery({
@@ -80,7 +80,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
     queryFn: fetchSuppliers,
   });
 
-  // Set initial data when productToEdit changes (for editing)
+  // Khởi tạo giá trị ban đầu dựa trên productToEdit
   useEffect(() => {
     if (productToEdit) {
       setEditedProduct({
@@ -88,30 +88,33 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
         id_category: productToEdit.id_category,
         id_supplier: productToEdit.id_supplier,
         price: productToEdit.price.toString(),
-        status: productToEdit.status,
+        isActive: productToEdit.isActive,
         quantity: productToEdit.quantity.toString(),
         description: productToEdit.description,
+        status: productToEdit.status,
+        viewer: productToEdit.viewer.toString(),
       });
     }
   }, [productToEdit]);
 
   const handleSubmit = async () => {
     try {
-      const endpoint = `https://gshopbackend.onrender.com/product/update/${productToEdit._id}`; // Update product
-
+      const endpoint = `https://gshopbackend.onrender.com/product/update/${productToEdit._id}`;
       const response = await fetch(endpoint, {
-        method: "PUT", // Use PUT for update
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: editedProduct.name,
-          price: editedProduct.price,
-          quantity: editedProduct.quantity,
+          price: Number(editedProduct.price),
+          quantity: Number(editedProduct.quantity),
           description: editedProduct.description,
           id_category: editedProduct.id_category,
           id_supplier: editedProduct.id_supplier,
+          isActive: editedProduct.isActive,
           status: editedProduct.status,
+          viewer: Number(editedProduct.viewer),
         }),
       });
 
@@ -125,8 +128,9 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
         ...editedProduct,
         price: Number(editedProduct.price),
         quantity: Number(editedProduct.quantity),
-      }); // Pass the updated product to the parent
-      setIsOpen(false); // Close dialog
+        viewer: Number(editedProduct.viewer),
+      });
+      setIsOpen(false);
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
       alert("Lỗi khi cập nhật sản phẩm, vui lòng thử lại!");
@@ -147,26 +151,29 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
           <Dialog.Title className="text-xl font-bold text-center">
             Chỉnh sửa sản phẩm
           </Dialog.Title>
-          <form onSubmit={(e) => e.preventDefault()} className="mt-4">
+          <form onSubmit={(e) => e.preventDefault()} className="mt-2">
             {/* Tên sản phẩm */}
-            <div className="my-3">
+            <div className="my-1">
               <label className="block text-sm font-medium">Tên sản phẩm</label>
               <Input
                 type="text"
                 className="w-full p-2 border rounded mt-1 bg-blue-50"
                 value={editedProduct.name}
-                onChange={(e) => setEditedProduct({ ...editedProduct, name: e.target.value })}
+                onChange={(e) =>
+                  setEditedProduct({ ...editedProduct, name: e.target.value })
+                }
                 required
               />
             </div>
 
-            {/* Thể loại */}
-            <div className="my-3">
+            <div className="my-2">
               <label className="block text-sm font-medium">Thể loại</label>
               <select
                 className="w-full p-2 border rounded mt-1 bg-blue-50"
                 value={editedProduct.id_category}
-                onChange={(e) => setEditedProduct({ ...editedProduct, id_category: e.target.value })}
+                onChange={(e) =>
+                  setEditedProduct({ ...editedProduct, id_category: e.target.value })
+                }
                 required
               >
                 <option value="">Chọn thể loại</option>
@@ -182,13 +189,14 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
               </select>
             </div>
 
-            {/* Nhà cung cấp */}
-            <div className="my-3">
+            <div className="my-2">
               <label className="block text-sm font-medium">Nhà cung cấp</label>
               <select
-                className="w-full p-2 border rounded mt-1 bg-blue-50"
+                className="w-full p-2 border rounded mt-1 bg-blue-50 pr-8"
                 value={editedProduct.id_supplier}
-                onChange={(e) => setEditedProduct({ ...editedProduct, id_supplier: e.target.value })}
+                onChange={(e) =>
+                  setEditedProduct({ ...editedProduct, id_supplier: e.target.value })
+                }
                 required
               >
                 <option value="">Chọn nhà cung cấp</option>
@@ -203,54 +211,86 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
                 )}
               </select>
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="">
+                <label className="block text-sm font-medium">Giá (VNĐ)</label>
+                <Input
+                  type="number"
+                  className="w-full p-2 border rounded mt-1 bg-blue-50"
+                  value={editedProduct.price}
+                  onChange={(e) =>
+                    setEditedProduct({ ...editedProduct, price: e.target.value })
+                  }
+                  required
+                />
+              </div>
 
-            {/* Các trường còn lại */}
-            <div className="my-3">
-              <label className="block text-sm font-medium">Giá (VNĐ)</label>
-              <Input
-                type="number"
-                className="w-full p-2 border rounded mt-1 bg-blue-50"
-                value={editedProduct.price}
-                onChange={(e) => setEditedProduct({ ...editedProduct, price: e.target.value })}
-                required
-              />
+              <div className="">
+                <label className="block text-sm font-medium">Số lượng</label>
+                <Input
+                  type="number"
+                  className="w-full p-2 border rounded mt-1 bg-blue-50"
+                  value={editedProduct.quantity}
+                  onChange={(e) =>
+                    setEditedProduct({ ...editedProduct, quantity: e.target.value })
+                  }
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="my-2">
+                <label className="block text-sm font-medium">Lượt xem</label>
+                <Input
+                
+                  type="number"
+                  className="w-full p-2 border rounded mt-1 bg-gray-200"
+                  value={editedProduct.viewer}
+                  readOnly
+                />
+              </div>
+              <div className="my-2">
+                <label className="block text-sm font-medium">Status</label>
+                <Input
+                  type="text"
+                  className="w-full p-2 border rounded mt-1 bg-gray-200"
+                  value={editedProduct.status} 
+                  readOnly
+                />
+              </div>
             </div>
 
-            <div className="my-3">
-              <label className="block text-sm font-medium">Số lượng</label>
-              <Input
-                type="number"
-                className="w-full p-2 border rounded mt-1 bg-blue-50"
-                value={editedProduct.quantity}
-                onChange={(e) => setEditedProduct({ ...editedProduct, quantity: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="my-3">
+            <div className="my-1">
               <label className="block text-sm font-medium">Mô tả</label>
-              <Input
-                type="text"
+              <textarea
                 className="w-full p-2 border rounded mt-1 bg-blue-50"
                 value={editedProduct.description}
-                onChange={(e) => setEditedProduct({ ...editedProduct, description: e.target.value })}
+                onChange={(e) =>
+                  setEditedProduct({ ...editedProduct, description: e.target.value })
+                }
+                rows={3}
                 required
               />
             </div>
 
-            <div className="my-3">
+            <div className="my-2">
               <label className="block text-sm font-medium">Tình trạng</label>
               <select
                 className="w-full p-2 border rounded mt-1 bg-blue-50"
-                value={editedProduct.status}
-                onChange={(e) => setEditedProduct({ ...editedProduct, status: e.target.value })}
+                value={editedProduct.isActive ? "true" : "false"}
+                onChange={(e) =>
+                  setEditedProduct({ ...editedProduct, isActive: e.target.value === "true" })
+                }
               >
-                <option value="true">Còn hàng</option>
-                <option value="false">Hết hàng</option>
+                <option value="true">Đang HĐ</option>
+                <option value="false">Ngừng HĐ</option>
               </select>
             </div>
 
-            <Button className="w-full mt-4" variant="destructive" onClick={handleSubmit}>
+            
+
+            <Button className="w-full mt-3" variant="destructive" onClick={handleSubmit}>
               Cập nhật sản phẩm
             </Button>
           </form>

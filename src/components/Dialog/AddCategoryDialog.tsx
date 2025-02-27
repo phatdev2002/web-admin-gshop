@@ -1,5 +1,3 @@
-
-
 "use client";
 import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
@@ -11,17 +9,35 @@ type AddCategoryDialogProps = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onSubmit: (newCategory: { category: string; }) => void;
 };
- 
+
 const AddCategoryDialog = ({ isOpen, setIsOpen, onSubmit }: AddCategoryDialogProps) => {
   const [newCategory, setNewCategory] = useState({
     category: "",
   });
 
-  const handleSubmit = () => {
-    onSubmit({ category: newCategory.category }); // Giữ nguyên vì CategoryPage đã sửa lại
-    setIsOpen(false);
-};
+  const handleSubmit = async () => {
+    try {
+      // Gọi API thêm thể loại
+      const res = await fetch("https://gshopbackend.onrender.com/category/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // Backend mong đợi trường name_type
+        body: JSON.stringify({ name_type: newCategory.category }),
+      });
 
+      if (!res.ok) {
+        throw new Error("Thêm thể loại thất bại");
+      }
+      // Nếu thành công, gọi hàm onSubmit từ CategoryPage để refetch dữ liệu hoặc cập nhật UI
+      onSubmit({ category: newCategory.category });
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Lỗi khi thêm thể loại:", error);
+      alert("Có lỗi xảy ra khi thêm thể loại. Vui lòng thử lại.");
+    }
+  };
 
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
@@ -35,10 +51,10 @@ const AddCategoryDialog = ({ isOpen, setIsOpen, onSubmit }: AddCategoryDialogPro
             <X size={20} />
           </button>
 
-          <Dialog.Title className="text-xl font-bold text-center">Thêm nhà cung cấp</Dialog.Title>
+          <Dialog.Title className="text-xl font-bold text-center">Thêm thể loại</Dialog.Title>
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="my-3">
-              <label className="block text-sm font-medium">Nhà cung cấp</label>
+              <label className="block text-sm font-medium">Tên thể loại</label>
               <input
                 type="text"
                 className="w-full p-2 border rounded mt-1 bg-blue-50"

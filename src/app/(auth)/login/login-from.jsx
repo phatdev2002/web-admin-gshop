@@ -42,16 +42,16 @@ const LoginForm = () => {
 
   const onSubmit = async (values) => {
     setLoading(true);
-
+  
     try {
       const result = await loginUser(values.email, values.password);
-
+  
       if (result.success) {
         const { user } = result;
-
+  
         // Lưu thông tin vào localStorage
         localStorage.setItem("role", user.role);
-
+  
         // Điều hướng theo vai trò
         if (user.role === "admin") {
           router.push("/admin/overview");
@@ -62,20 +62,31 @@ const LoginForm = () => {
         }
       } else {
         let errorMessage = "Lỗi đăng nhập!";
-        if (result.message === "User not found!") {
-          errorMessage = "Không tìm thấy người dùng!";
-        } else if (result.message === "Invalid credentials!") {
-          errorMessage = "Sai mật khẩu!";
+        if (result.message) {
+          errorMessage = result.message; // Hiển thị lỗi cụ thể từ server nếu có
         }
         alert(errorMessage);
       }
     } catch (error) {
-      alert("Không thể kết nối tới server. Vui lòng thử lại sau!");
+      let errorMessage = "Không thể kết nối tới server. Vui lòng thử lại sau!";
+  
+      if (error.response) {
+        // Nếu server phản hồi lỗi cụ thể
+        errorMessage = error.response.data?.message || "Đã xảy ra lỗi từ server!";
+      } else if (error.request) {
+        // Không nhận được phản hồi từ server
+        errorMessage = "Không nhận được phản hồi từ server!";
+      } else {
+        // Lỗi khác (ví dụ: lỗi cú pháp)
+        errorMessage = `Lỗi: ${error.message}`;
+      }
+  
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1 max-w-[400px] flex-shrink-0 w-full">

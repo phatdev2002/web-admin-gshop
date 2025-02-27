@@ -3,15 +3,15 @@
 import React, { useState } from "react";
 import { DataTable } from "@/components/ui/DataTable";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, Blocks, UserSquareIcon } from "lucide-react";
+import { Search, Plus, Blocks, UserSquareIcon, EditIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import ViewProductDialog from "@/components/Dialog/ViewProductDialog";
 import { Input } from "@/components/ui/input";
 import AddProductDialog from "@/components/Dialog/AddProductDialog";
-import { Product } from "@/types/Product"; 
-
+import { Product } from "@/types/Product";
+import { toast } from "sonner";
 
 // API Fetch Functions
 const fetchCategories = async () => {
@@ -32,9 +32,15 @@ const fetchCategories = async () => {
 const fetchProductImages = async (id_product: string) => {
   const res = await fetch(`https://gshopbackend.onrender.com/image_product/list-images/${id_product}`);
   const result = await res.json();
+  
+  if (result.status === false && result.mess === "Không có ảnh cho sản phẩm này") {
+    return ""; // Trả về chuỗi rỗng nếu không có ảnh
+  }
+
   const images = result.data[0]?.image || [];
-  return images[1] || "";
+  return images[0] || "";
 };
+
 
 const fetchProducts = async (categories: { [key: string]: string }) => {
   if (Object.keys(categories).length === 0) return [];
@@ -46,18 +52,31 @@ const fetchProducts = async (categories: { [key: string]: string }) => {
   if (!Array.isArray(productList)) throw new Error("Invalid product format");
 
   const productsWithImages = await Promise.all(
-    productList.map(async (item: { _id: string; name: string; id_category: string; price: number; status: string; quantity: number; description: string; id_supplier: string }) => {
+    productList.map(async (item: {
+      _id: string;
+      name: string;
+      id_category: string;
+      price: number;
+      isActive: string | boolean;
+      quantity: number;
+      description: string;
+      id_supplier: string;
+      viewer: number;
+      status: string;
+    }) => {
       const image = await fetchProductImages(item._id);
       return {
         _id: item._id,
         name: item.name,
         id_category: categories[item.id_category] || "Không xác định",
         price: item.price,
-        status: item.status === "true" ? "true" : "false",
+        isActive: Boolean(item.isActive),
         quantity: item.quantity,
         image: image,
         description: item.description,
         id_supplier: item.id_supplier,
+        viewer: item.viewer,
+        status: item.status,
       };
     })
   );
@@ -88,16 +107,15 @@ const ProductPage = () => {
   );
 
   const handleViewProduct = (product: Product) => {
-    setSelectedProduct({
-      ...product,
-      id_category: Object.keys(categories).find(
-        (key) => categories[key] === product.id_category
-      ) || product.id_category, // Đảm bảo ID đúng
-    });
+    // Chuyển đổi id_category từ tên sang id nếu cần thiết
+    const categoryId = Object.keys(categories).find(
+      (key) => categories[key] === product.id_category
+    ) || product.id_category;
+    setSelectedProduct({ ...product, id_category: categoryId });
     setIsViewDialogOpen(true);
   };
 
-  // Định nghĩa cột bên trong ProductPage để có thể sử dụng handleViewProduct
+  // Định nghĩa các cột cho DataTable
   const columns = [
     {
       accessorKey: "image",
@@ -115,10 +133,10 @@ const ProductPage = () => {
         ) : (
           <span>Không có ảnh</span>
         );
-      },
+      }
+      
     },
-
-    { accessorKey: "name", header: "Sản phẩm" },
+    { accessorKey: "name", header: "Tên sản phẩm" },
     { accessorKey: "id_category", header: "Thể loại" },
     {
       accessorKey: "price",
@@ -129,54 +147,56 @@ const ProductPage = () => {
       },
     },
     
-    //{ accessorKey: "description", header: "Ghi chú" },
+    { accessorKey: "quantity", header: "Số lượng" },
+    { accessorKey: "viewer", header: "Lượt xem" },
+    { accessorKey: "status", header: "Trạng thái" },
     {
-      accessorKey: "status",
-      header: "Trạng thái",
-      cell: ({ row }: { row: { getValue: (key: string) => string } }) => (
+      accessorKey: "isActive",
+      header: "Tình trạng",
+      cell: ({ row }: { row: { getValue: (key: string) => boolean } }) => (
         <div
           className={`font-medium w-fit px-4 py-2 rounded-lg ${
-            row.getValue("status") === "false" ? "bg-red-200" : "bg-green-200"
+            row.getValue("isActive") ? "bg-green-300" : "bg-red-300"
           }`}
         >
-          {row.getValue("status") === "true" ? "Còn hàng" : "Hết hàng"}
+          {row.getValue("isActive") ? "Đang HĐ" : "Ngừng HĐ "}
         </div>
       ),
     },
-    { accessorKey: "quantity", header: "Số lượng" },
-    //{ accessorKey: "rate", header: "Đánh giá" },
     {
       accessorKey: "actions",
-      header: "Hành động",
+      header: "",
       cell: ({ row }: { row: { original: Product } }) => {
         const product = row.original;
-      
         return (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => handleViewProduct(product)}
-          >
-            Chỉnh sửa
+          <Button size="sm" variant="logout" onClick={() => handleViewProduct(product)}>
+            <EditIcon/>
           </Button>
         );
       },
     },
   ];
+
   const handleUpdateProduct = async (updatedProduct: Partial<Product>) => {
-    if (!selectedProduct?._id) return;
+    if (!selectedProduct || !selectedProduct._id) {
+      alert("Không thể cập nhật sản phẩm!");
+      return;
+    }
   
-    // Ensure that all necessary fields are passed to the update request
     const productData = {
       ...selectedProduct,
-      ...updatedProduct, // Override existing fields with the updated values
-      //status: updatedProduct.status || selectedProduct.status, // Ensure status is set correctly
-      status: updatedProduct.status !== undefined ? updatedProduct.status : selectedProduct.status,
-
-      description: updatedProduct.description || selectedProduct.description, // Ensure description is included
-      id_category: updatedProduct.id_category || selectedProduct.id_category, // Ensure id_category is included
-      id_supplier: updatedProduct.id_supplier || selectedProduct.id_supplier, // Ensure id_supplier is included
+      ...updatedProduct,
+      isActive:
+        updatedProduct.isActive !== undefined
+          ? updatedProduct.isActive
+          : selectedProduct.isActive,
+      description: updatedProduct.description || selectedProduct.description,
+      id_category: updatedProduct.id_category || selectedProduct.id_category,
+      id_supplier: updatedProduct.id_supplier || selectedProduct.id_supplier,
     };
+  
+    // In payload ra console để kiểm tra dữ liệu đầu vào
+    console.log("Payload gửi đi:", productData);
   
     try {
       const response = await fetch(
@@ -189,35 +209,32 @@ const ProductPage = () => {
           body: JSON.stringify(productData),
         }
       );
-  
+    
       const result = await response.json();
-  
-      if (response.ok) {
-        alert("Sản phẩm đã được cập nhật thành công!");
-        refetchProducts(); // Refetch the list of products to get the updated data
-      } else {
-        alert(`Cập nhật sản phẩm thất bại: ${result.mess || "Có lỗi xảy ra"}`);
+    
+      if (result.status === true) {
+        toast.success("Sản phẩm đã được cập nhật thành công!");
+        refetchProducts();
+      } else if (result.status === false) {
+        toast(`Cập nhật sản phẩm thất bại: ${result.mess || "Có lỗi xảy ra"}`);
       }
     } catch (error) {
-      alert("Lỗi khi cập nhật sản phẩm!");
+      toast("Lỗi khi cập nhật sản phẩm!");
       console.error("Lỗi khi cập nhật sản phẩm:", error);
-      console.log("handleUpdateProduct:", handleUpdateProduct);
-
     }
+    
   };
-  
-  
   
 
   return (
     <div>
-      <div className="flex flex-row align-top mb-5 justify-between">
+      <div className="flex flex-row align-top mb-5 justify-between ">
         <p className="text-lg">{filteredProducts.length} sản phẩm</p>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => refetchProducts()}>
+        <div className="flex gap-2 rounded-xl">
+          <Button variant="outline" onClick={() => refetchProducts()} className="border ">
             Làm mới danh sách
           </Button>
-          <Button variant="destructive" onClick={() => setIsAddDialogOpen(true)}>
+          <Button variant="destructive" onClick={() => setIsAddDialogOpen(true)} className="border ">
             <Plus size={16} className="mr-1" />
             Thêm sản phẩm
           </Button>
@@ -227,10 +244,10 @@ const ProductPage = () => {
       <div className="flex flex-row justify-between my-5">
         <div>
           <form>
-            <div className="relative">
+            <div className="relative w-96">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Tìm kiếm"
+                placeholder="Tìm kiếm theo tên"
                 className="pl-8 bg-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -240,14 +257,14 @@ const ProductPage = () => {
         </div>
         <div>
           <Link href="/admin/products/category">
-            <Button variant="outline" className="mr-2">
+            <Button variant="outline" className="mr-2 border ">
               <Blocks size={16} className="mr-1" />
               Loại Gundam
             </Button>
           </Link>
           <Link href="/admin/products/supplier">
-            <Button variant="outline">
-              <UserSquareIcon size={16} className="mr-1" />
+            <Button variant="outline" className="border ">
+              <UserSquareIcon size={16} className="mr-1"  />
               Nhà cung cấp
             </Button>
           </Link>
@@ -264,8 +281,12 @@ const ProductPage = () => {
       <AddProductDialog
         isOpen={isAddDialogOpen}
         setIsOpen={setIsAddDialogOpen}
-        onSubmit={(newProduct) => console.log("Sản phẩm mới:", newProduct)}
+        onSubmit={(newProduct) => {
+          console.log("Sản phẩm mới:", newProduct);
+          refetchProducts(); // Làm mới danh sách sản phẩm sau khi thêm
+        }}
       />
+
 
       {/* Dialog xem chi tiết sản phẩm */}
       <ViewProductDialog

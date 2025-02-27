@@ -27,7 +27,7 @@ export default function SideNavbarAdmin({}: Props){
   }
 
     return (
-        <div className="relative min-w-[80px] h-100000 //border-r px-1 pb-10 pt-1 bg-white">
+        <div className="relative min-w-[80px] h-auto border-r-stone-300 border-r px-1 pb-10 pt-1 bg-[#eeeeee]">
           {/* <Image
             src={isCollapsed ? "/logo/LogoAppG.png" : "/login/LogoAppGShop2.png"}
             alt="Logo GShop"
@@ -37,7 +37,7 @@ export default function SideNavbarAdmin({}: Props){
             priority
           /> */}
           <div className="absolute right-[-20px] bottom-5">
-            <Button onClick={toggleSidebar} variant='btnright' className="w-9 text-black/20 hover:text-black/30 hover:bg-blue-50">
+            <Button onClick={toggleSidebar} variant='btnright' className="w-9 text-black/100 hover:text-black/100 hover:bg-blue-50">
             {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
             </Button>
           </div>

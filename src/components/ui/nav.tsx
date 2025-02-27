@@ -19,7 +19,7 @@ interface NavProps {
     title: string
     label?: string
     icon: LucideIcon
-    variant: "default" | "ghost"
+    variant: "default" | "ghost" | "defaultdark"
     href: string
   }[]
 }
@@ -32,7 +32,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
       data-collapsed={isCollapsed}
       className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2"
     >
-      <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2 ">
+      <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2 //text-white //hover:text-white">
         {links.map((link, index) =>
           isCollapsed ? (
             <Tooltip key={index} delayDuration={0}>
@@ -43,14 +43,14 @@ export function Nav({ links, isCollapsed }: NavProps) {
                     buttonVariants({ variant: link.href === pathName ? "navsidebar" : "navsidebarnochoose", size: "icon" }),
                     "h-9 w-9",
                     link.variant === "default" &&
-                      "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
+                      "dark:bg-muted dark:text-muted-foreground //text-white dark:hover:bg-muted dark:hover:text-white"
                   )}
                 >
                   <link.icon className="h-4 w-4" />
                   <span className="sr-only">{link.title}</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right" className="flex items-center gap-4 bg-blue-400 text-white text-sm">
+              <TooltipContent side="right" className="flex items-center gap-4 bg-red-500 text-white text-sm">
                 {link.title}
                 {link.label && (
                   <span className="ml-auto text-muted-foreground">
