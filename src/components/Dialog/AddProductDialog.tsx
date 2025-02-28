@@ -123,7 +123,9 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
   newProduct.id_supplier.trim() !== "" &&
   newProduct.price > 0 &&
   newProduct.quantity > 0 &&
-  selectedImages.length > 0;
+  selectedImages.length > 0 &&
+  selectedImages.length <= 10;
+
   const handleSubmit = async () => {
     if (!isFormValid) return;
     
@@ -209,6 +211,9 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
                   className="w-96 p-2 border rounded mt-1 "
                   onChange={handleImageChange}
                 />
+                {selectedImages.length > 10 && (
+                  <p className="text-red-500 text-sm mt-1">Bạn chỉ có thể tải lên tối đa 10 hình!</p>
+                )}
                 <div className="flex flex-wrap gap-2 mt-2">
                   {selectedImages.map((file, index) => (
                     <Image
@@ -217,7 +222,7 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
                       alt="preview"
                       width={100}
                       height={100}
-                      className={`object-cover rounded border ${index === 0 ? "w-[384px] h-[200px]" : "w-[90px] h-[90px] block"}`}
+                      className={`object-cover rounded border ${index === 0 ? "w-96 h-[200px]" : "w-[70px] h-[70px] block"}`}
                     />
                   ))}
                 </div>

@@ -3,6 +3,7 @@ import { Dialog } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 
 interface EditProductDialogProps {
@@ -57,6 +58,17 @@ export const fetchSuppliers = async () => {
   return supplierMap;
 };
 
+const fetchProductImages = async (id_product: string) => {
+  if (!id_product) return [];
+  const res = await fetch(`https://gshopbackend.onrender.com/image_product/list-images/${id_product}`);
+  const result = await res.json();
+  if (!result.status || !Array.isArray(result.data)) throw new Error("Invalid image format");
+
+  return result.data.length > 0 ? result.data[0].image : []; // Lấy danh sách ảnh từ object đầu tiên
+};
+
+
+
 const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditProductDialogProps) => {
   const [editedProduct, setEditedProduct] = useState({
     name: "",
@@ -79,6 +91,14 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
     queryKey: ["suppliers"],
     queryFn: fetchSuppliers,
   });
+
+  const { data: productImages = [], isLoading } = useQuery({
+    queryKey: ["productImages", productToEdit?._id], // Dấu "?" để tránh lỗi nếu productToEdit là undefined
+    queryFn: () => fetchProductImages(productToEdit!._id), // Dùng "!" để đảm bảo rằng _id có giá trị hợp lệ
+    enabled: !!productToEdit?._id, // Chỉ chạy query khi có _id hợp lệ
+  });
+  
+  
 
   // Khởi tạo giá trị ban đầu dựa trên productToEdit
   useEffect(() => {
@@ -140,7 +160,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <Dialog.Panel className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative">
+        <Dialog.Panel className="bg-white p-6 rounded-lg shadow-lg w-fit relative">
           <button
             className="absolute top-3 right-3 text-red-600 hover:text-red-900"
             onClick={() => setIsOpen(false)}
@@ -151,7 +171,31 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
           <Dialog.Title className="text-xl font-bold text-center">
             Chỉnh sửa sản phẩm
           </Dialog.Title>
-          <form onSubmit={(e) => e.preventDefault()} className="mt-2">
+          <div className="flex flex-row space-y-4">
+            {/* /////////// */}
+            <div className="my-2 max-w-[400px]">
+              <label className="block text-sm font-medium">Hình ảnh sản phẩm </label>
+              <p className="italic text-gray-600 text-sm">Không thể chỉnh sửa</p>
+              {isLoading ? (
+                <p>Đang tải ảnh...</p>
+              ) : (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {productImages.length > 0 ? (
+                    productImages.map((imgUrl: string, index: number) => (
+                      <Image key={index} src={imgUrl} alt="Ảnh sản phẩm" 
+                      width={80} 
+                      height={80} 
+                      className={`object-cover rounded border ${index === 0 ? "w-96 h-[200px]" : "w-[70px] h-[70px] block"}`} />
+                    ))
+                  ) : (
+                    <p>Không có hình ảnh nào</p>
+                  )}
+                </div>
+              )}
+            </div>
+            {/* /////////// */}
+            {/* /////////// */}
+            <form onSubmit={(e) => e.preventDefault()} className="mt-2">
             {/* Tên sản phẩm */}
             <div className="my-1">
               <label className="block text-sm font-medium">Tên sản phẩm</label>
@@ -287,13 +331,14 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
                 <option value="false">Ngừng HĐ</option>
               </select>
             </div>
+          </form>
+            {/* /////////// */}
+          </div>
 
-            
-
-            <Button className="w-full mt-3" variant="destructive" onClick={handleSubmit}>
+          
+          <Button className="w-full mt-3" variant="destructive" onClick={handleSubmit}>
               Cập nhật sản phẩm
             </Button>
-          </form>
         </Dialog.Panel>
       </div>
     </Dialog>
