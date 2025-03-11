@@ -28,6 +28,7 @@ export default function TopNavbar() {
       case "/admin/clients": return "Quản lý khách hàng";
       case "/admin/news": return "Quản lý tin tức";
       case "/admin/profile": return "Thông tin của tôi";
+      case "/admin/news/create": return "Tạo bài viết";
       
       case "/staff/profile": return "Thông tin của tôi";
       case "/staff/overview": return "Tổng quan hệ thống";
@@ -64,7 +65,7 @@ export default function TopNavbar() {
   };
 
   return (
-    <div className="flex justify-between items-center px-5 py-2 border-b border-b-gray-300 bg-[#ffffff] w-full">
+    <div className="flex justify-between items-center px-5 py-2 border-b bg-[#d1d1d1] w-full">
       <div className="flex items-center">
         <Image src="/login/logoAppGShop2.png" alt="logo" width={100} height={50} />
         <h1 className="ml-24 text-xl font-semibold ">{getPageTitle()}</h1>

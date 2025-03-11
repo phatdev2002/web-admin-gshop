@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface EditProductDialogProps {
   isOpen: boolean;
@@ -66,6 +67,33 @@ const fetchProductImages = async (id_product: string) => {
 
   return result.data.length > 0 ? result.data[0].image : []; // Lấy danh sách ảnh từ object đầu tiên
 };
+
+
+// Hàm xóa ảnh với thông báo Toast
+const deleteProductImage = async (id_product: string, imageUrl: string) => {
+  try {
+    const res = await fetch(
+      `https://gshopbackend.onrender.com/image_product/delete-image/${id_product}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imaUrlsRemove: [imageUrl] }),
+      }
+    );
+
+    if (!res.ok) throw new Error("Xóa ảnh thất bại");
+
+    const result = await res.json();
+    toast.success("Xóa ảnh thành công!"); // Hiển thị thông báo
+    return result;
+  } catch (error) {
+    console.error("Lỗi khi xóa ảnh:", error);
+    toast.error("Lỗi khi xóa ảnh! ❌");
+    throw error;
+  }
+};
+
+
 
 
 
@@ -156,7 +184,16 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
       alert("Lỗi khi cập nhật sản phẩm, vui lòng thử lại!");
     }
   };
+  const queryClient = useQueryClient();
 
+  const handleDeleteImage = async (imgUrl: string) => {
+    try {
+      await deleteProductImage(productToEdit._id, imgUrl);
+      queryClient.invalidateQueries({ queryKey: ["productImages", productToEdit._id] }); // Refresh danh sách ảnh
+    } catch {
+      alert("Xóa ảnh thất bại, vui lòng thử lại!");
+    }
+  };
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -168,36 +205,48 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
             <X size={20} />
           </button>
 
-          <Dialog.Title className="text-xl font-bold text-center">
+          <Dialog.Title className="text-xl font-bold text-center mb-4">
             Chỉnh sửa sản phẩm
           </Dialog.Title>
-          <div className="flex flex-row space-y-4">
+          <div className="flex flex-row ">
             {/* /////////// */}
-            <div className="my-2 max-w-[400px]">
+            <div className=" max-w-[400px]">
               <label className="block text-sm font-medium">Hình ảnh sản phẩm </label>
-              <p className="italic text-gray-600 text-sm">Không thể chỉnh sửa</p>
               {isLoading ? (
                 <p>Đang tải ảnh...</p>
               ) : (
                 <div className="flex flex-wrap gap-2 mt-2">
+                  {/* /////////// */}
                   {productImages.length > 0 ? (
                     productImages.map((imgUrl: string, index: number) => (
-                      <Image key={index} src={imgUrl} alt="Ảnh sản phẩm" 
-                      width={80} 
-                      height={80} 
-                      className={`object-cover rounded border ${index === 0 ? "w-96 h-[200px]" : "w-[70px] h-[70px] block"}`} />
+                      <div key={index} className="relative">
+                        <Image
+                          src={imgUrl}
+                          alt="Ảnh sản phẩm"
+                          width={80}
+                          height={80}
+                          className={`object-cover rounded border ${index === 0 ? "w-96 h-[200px]" : "w-[70px] h-[70px] block"}`}
+                        />
+                        <button
+                          onClick={() => handleDeleteImage(imgUrl)}
+                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     ))
                   ) : (
                     <p>Không có hình ảnh nào</p>
                   )}
+                {/* /////////// */}
                 </div>
               )}
             </div>
             {/* /////////// */}
             {/* /////////// */}
-            <form onSubmit={(e) => e.preventDefault()} className="mt-2">
+            <form onSubmit={(e) => e.preventDefault()} className="">
             {/* Tên sản phẩm */}
-            <div className="my-1">
+            <div className="">
               <label className="block text-sm font-medium">Tên sản phẩm</label>
               <Input
                 type="text"
@@ -327,8 +376,8 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
                   setEditedProduct({ ...editedProduct, isActive: e.target.value === "true" })
                 }
               >
-                <option value="true">Đang HĐ</option>
-                <option value="false">Ngừng HĐ</option>
+                <option value="true">Đang hoạt động</option>
+                <option value="false">Ngừng hoạt động</option>
               </select>
             </div>
           </form>

@@ -7,13 +7,13 @@ interface DialogProps {
   children: ReactNode;
 }
 
-export const Dialog: React.FC<DialogProps> = ({ open, onOpenChange, children }) => {
+export const Dialog: React.FC<DialogProps> = ({ open, children }) => {
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-lg max-w-lg w-full">
-        <button onClick={() => onOpenChange(false)} className="absolute top-2 right-2 text-xl">X</button>
+      <div className="bg-gray-200 p-6 rounded-lg max-w-lg w-full">
+        {/* <button onClick={() => onOpenChange(false)} className="absolute top-2 right-2 text-xl">X</button> */}
         {children}
       </div>
     </div>
