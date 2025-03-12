@@ -229,7 +229,7 @@ const ProductPage = () => {
   return (
     <div>
       <div className="flex flex-row align-top mb-5 justify-between ">
-        <p className="text-lg">{filteredProducts.length} sản phẩm</p>
+        <p className="text-lg font-semibold">{filteredProducts.length} sản phẩm</p>
         <div className="flex gap-2 rounded-xl">
           <Button variant="outline" onClick={() => refetchProducts()} className="border ">
             Làm mới danh sách

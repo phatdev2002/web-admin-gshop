@@ -1,4 +1,3 @@
-// components/ProfilePage.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -25,6 +24,8 @@ const ProfilePage = () => {
   });
 
   const [isChangePassOpen, setIsChangePassOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -46,20 +47,54 @@ const ProfilePage = () => {
     setIsChangePassOpen(true);
   };
 
-  const handleUpdateProfile = () => {
-    console.log("Update profile clicked!");
+  const handleUpdateProfile = async () => {
+    setIsLoading(true);
+    setMessage(null);
+  
+    try {
+      const response = await fetch("https://gshopbackend.onrender.com/user/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: user.email,
+          name: user.name,
+          phone_number: user.phone_number,
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        setMessage({ type: "success", text: "Cập nhật hồ sơ thành công!" });
+        localStorage.setItem("user", JSON.stringify(user));
+      
+        // Kích hoạt sự kiện storage để các component khác nhận thay đổi
+        window.dispatchEvent(new Event("storage"));
+      
+        setTimeout(() => {
+          setMessage(null);
+        }, 3000);
+      } else {
+        setMessage({ type: "error", text: result.message || "Cập nhật thất bại!" });
+      }
+    } catch (error) {
+      console.error("Lỗi khi cập nhật hồ sơ:", error);
+      setMessage({ type: "error", text: "Đã xảy ra lỗi, vui lòng thử lại sau!" });
+    } finally {
+      setIsLoading(false);
+    }
   };
+  
 
   const getAvatar = () => {
-    if (user.role === "staff") {
-      return "/img/avtstaff.jpg";
-    }
-    return "/img/avt.jpg";
+    return user.role === "staff" ? "/img/avtstaff.jpg" : "/img/avt.jpg";
   };
 
   return (
     <>
-      <CardContent className="flex flex-row">
+      <CardContent className="flex flex-row relative">
         <div className="w-1/4 flex flex-col items-center">
           <div className="relative w-40 h-40 mb-4">
             <Image
@@ -73,9 +108,7 @@ const ProfilePage = () => {
           <h2 className="text-xl font-semibold text-center">
             {user.name || "Tên người dùng"}
           </h2>
-          <p className="text-gray-500 text-center">
-            {user.role || "Vai trò"}
-          </p>
+          <p className="text-gray-500 text-center">{user.role || "Vai trò"}</p>
           <button
             onClick={handleChangeAvatar}
             className="mt-4 px-5 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors"
@@ -88,15 +121,23 @@ const ProfilePage = () => {
           >
             Đổi mật khẩu cá nhân
           </button>
-          <ChangePass 
-            isOpen={isChangePassOpen} 
-            onClose={() => setIsChangePassOpen(false)} 
-            userId={user._id}
-          />
+          <ChangePass isOpen={isChangePassOpen} onClose={() => setIsChangePassOpen(false)} userId={user._id} />
         </div>
 
         <div className="w-2/3 pl-6">
           <h2 className="text-xl font-semibold mb-4">Chỉnh sửa hồ sơ</h2>
+          
+          {/* Thông báo */}
+          {message && (
+            <div
+              className={`absolute top-0 right-0 m-4 p-3 rounded shadow-md ${
+                message.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+              }`}
+            >
+              {message.text}
+            </div>
+          )}
+
           <div className="mb-4">
             <label htmlFor="name" className="block mb-1 font-medium">
               Họ và tên
@@ -128,9 +169,10 @@ const ProfilePage = () => {
             <input
               id="email"
               type="email"
-              className="w-full p-2 border rounded mt-1 bg-blue-50"
+              className="w-full p-2 border rounded mt-1 bg-gray-100"
               value={user.email}
-              onChange={(e) => setUser({ ...user, email: e.target.value })}
+              //onChange={(e) => setUser({ ...user, email: e.target.value })}
+              readOnly
             />
           </div>
           <div className="mb-4">
@@ -148,13 +190,15 @@ const ProfilePage = () => {
           <div className="flex justify-end">
             <Button
               onClick={handleUpdateProfile}
-              className="px-14 bg-red-500 text-white py-2 rounded-xl hover:bg-red-600 transition-colors"
+              className={`px-14 text-white py-2 rounded-xl transition-colors ${
+                isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
+              }`}
+              disabled={isLoading}
             >
-              Cập nhật
+              {isLoading ? "Đang cập nhật..." : "Cập nhật"}
             </Button>
           </div>
         </div>
-
       </CardContent>
     </>
   );

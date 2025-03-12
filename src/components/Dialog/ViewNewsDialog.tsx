@@ -119,7 +119,8 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
   if (!news) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+
       <div className="bg-gray-200 px-5 py-5 rounded-lg h-[650px] w-[850px] overflow-y-auto relative">
         {/* Ảnh bài viết */}
         <div>
