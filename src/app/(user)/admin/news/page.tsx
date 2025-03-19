@@ -37,11 +37,20 @@ export default function NewsPage() {
     fetchNews();
   }, []);
 
-  const filteredNews = newsData.filter(
+
+  const filteredNews = [...newsData]
+  .sort((a, b) => {
+    const dateA = a.date.split("/").reverse().join("-"); // Chuyển từ dd/mm/yyyy thành yyyy-mm-dd
+    const dateB = b.date.split("/").reverse().join("-");
+    return new Date(dateB).getTime() - new Date(dateA).getTime();
+  })
+  .filter(
     (news) =>
       news.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       news.date.includes(searchTerm)
   );
+
+
 
   const getValidThumbnail = (thumbnail?: string) => {
     if (!thumbnail) return "/adas.jpg"; // Ảnh mặc định
@@ -55,7 +64,7 @@ export default function NewsPage() {
     <div>
       {/* Thanh tìm kiếm & Button tạo bài viết */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl">{filteredNews.length} bài đăng</h1>
+        <h1 className="bg-gray-500 text-white rounded-sm py-2 px-4 flex flex-row gap-2">{filteredNews.length} bài đăng</h1>
 
         <div className="flex gap-4">
           {/* Input tìm kiếm */}

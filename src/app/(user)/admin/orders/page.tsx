@@ -1,233 +1,251 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { DataTable } from "@/components/ui/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Edit, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import ViewOrderDialog from "@/components/Dialog/ViewOrderDialog";
 
-// Hardcoded data
-const hardcodedOrders = [
-  {
-    nameclient: "Nguyen Duc Phat",
-    pay: "Tiền mặt",
-    amount: 1500000,
-    order_date: new Date("2025-02-17"),
-    status: 1,
-  },
-  {
-    nameclient: "Le Minh Tu",
-    pay: "Chuyển khoản",
-    amount: 2000000,
-    order_date: new Date("2025-02-16"),
-    status: 2,
-  },
-  {
-    nameclient: "Tran Thi Lan",
-    pay: "Tiền mặt",
-    amount: 800000,
-    order_date: new Date("2025-02-15"),
-    status: 3,
-  },
-  {
-    nameclient: "Hoang Thi Lan",
-    pay: "Chuyển khoản",
-    amount: 3000000,
-    order_date: new Date("2025-02-14"),
-    status: 2,
-  },
-  {
-    nameclient: "Nguyen Thi Mai",
-    pay: "Tiền mặt",
-    amount: 1200000,
-    order_date: new Date("2025-02-13"),
-    status: 1,
-  },
-  {
-    nameclient: "Pham Quang Duy",
-    pay: "Chuyển khoản",
-    amount: 2500000,
-    order_date: new Date("2025-02-12"),
-    status: 2,
-  },
-  {
-    nameclient: "Nguyen Minh Tu",
-    pay: "Tiền mặt",
-    amount: 1700000,
-    order_date: new Date("2025-02-11"),
-    status: 3,
-  },
-  {
-    nameclient: "Hoang Thanh Son",
-    pay: "Chuyển khoản",
-    amount: 2300000,
-    order_date: new Date("2025-02-10"),
-    status: 1,
-  },
-  {
-    nameclient: "Tran Thi Thao",
-    pay: "Tiền mặt",
-    amount: 900000,
-    order_date: new Date("2025-02-09"),
-    status: 2,
-  },
-  {
-    nameclient: "Pham Thanh Tu",
-    pay: "Chuyển khoản",
-    amount: 3500000,
-    order_date: new Date("2025-02-08"),
-    status: 3,
-  },
-  {
-    nameclient: "Le Quang Minh",
-    pay: "Tiền mặt",
-    amount: 4000000,
-    order_date: new Date("2025-02-07"),
-    status: 1,
-  },
-  {
-    nameclient: "Nguyen Thi Kim",
-    pay: "Chuyển khoản",
-    amount: 1800000,
-    order_date: new Date("2025-02-06"),
-    status: 2,
-  },
-  {
-    nameclient: "Vu Thi Lan",
-    pay: "Tiền mặt",
-    amount: 2700000,
-    order_date: new Date("2025-02-05"),
-    status: 3,
-  },
-  {
-    nameclient: "Tran Minh Tu",
-    pay: "Chuyển khoản",
-    amount: 3200000,
-    order_date: new Date("2025-02-04"),
-    status: 1,
-  },
-  {
-    nameclient: "Le Thi Hoa",
-    pay: "Tiền mặt",
-    amount: 1500000,
-    order_date: new Date("2025-02-03"),
-    status: 2,
-  },
-  {
-    nameclient: "Nguyen Thi Mai",
-    pay: "Chuyển khoản",
-    amount: 2100000,
-    order_date: new Date("2025-02-02"),
-    status: 3,
-  },
-];
+const API_ORDERS = "https://gshopbackend.onrender.com/order/list";
+const API_USERS = "https://gshopbackend.onrender.com/user/list";
+//const API_ADDRESS = "https://gshopbackend.onrender.com/address/detail/";
+//const API_PAYMENT = "https://gshopbackend.onrender.com/payment_method/detail/";
+
+interface Order {
+  id: string;
+  id_user: string;
+  id_payment: string;
+  id_address: string;
+  total_price: number;
+  shipping_fee: number;
+  amount: number;
+  order_date: string;
+  status: string;
+}
 
 
 const OrderPage = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [users, setUsers] = useState<{ [key: string]: string }>({});
+  ///const [addresses, setAddresses] = useState<{ [key: string]: string }>({});
+  //const [payments, setPayments] = useState<{ [key: string]: string }>({});
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Use hardcoded data instead of API query
-  const data = hardcodedOrders;
+  useEffect(() => {
+    fetchOrders();
+    fetchUsers();
+  }, []);
 
-  // Filter data by client name
-  const filteredData = data.filter(order =>
-    order.nameclient.toLowerCase().includes(search.toLowerCase())
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const response = await axios.get(API_ORDERS);
+      if (response.data.status) {
+        const apiData = response.data.data.map((order: { 
+          _id: string; 
+          id_user: string; 
+          id_payment: string; 
+          id_address: string; 
+          total_price: number; 
+          shipping_fee: number; 
+          date: string; 
+          status: string; 
+        }) => ({
+          id: order._id,
+          id_user: order.id_user,
+          id_payment: order.id_payment,
+          id_address: order.id_address,
+          total_price: order.total_price,
+          shipping_fee: order.shipping_fee,
+          amount: order.total_price + order.shipping_fee,
+          order_date: order.date,
+          status: order.status,
+        }));
+  
+        setOrders(apiData);
+        //fetchAddresses(apiData);
+        //fetchPayments(apiData);
+      } else {
+        setError("Dữ liệu không hợp lệ từ server.");
+      }
+    } catch (err) {
+      console.error("Lỗi khi gọi API đơn hàng:", err);
+      setError("Không thể tải dữ liệu đơn hàng! Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(API_USERS);
+      if (response.data.status) {
+        const userMap: { [key: string]: string } = {};
+        response.data.data.forEach((user: { _id: string; name: string }) => {
+          userMap[user._id] = user.name;
+        });
+        setUsers(userMap);
+      }
+    } catch (err) {
+      console.error("Lỗi khi gọi API khách hàng:", err);
+    }
+  };
+
+  // const fetchAddresses = async (orders: Order[]) => {
+  //   try {
+  //     const addressMap: { [key: string]: string } = {};
+
+  //     await Promise.all(
+  //       orders.map(async (order) => {
+  //         try {
+  //           const res = await axios.get(API_ADDRESS + order.id_address);
+  //           if (res.data.status && res.data.data) {
+  //             const addr = res.data.data;
+  //             addressMap[order.id_address] = `${addr.detail}, ${addr.commune}, ${addr.district}, ${addr.province}`;
+  //           }
+  //         } catch (error) {
+  //           console.error(`Lỗi khi lấy địa chỉ ID ${order.id_address}:`, error);
+  //         }
+  //       })
+  //     );
+
+  //     setAddresses(addressMap);
+  //   } catch (err) {
+  //     console.error("Lỗi khi gọi API địa chỉ:", err);
+  //   }
+  // };
+
+  // const fetchPayments = async (orders: Order[]) => {
+  //   try {
+  //     const paymentMap: { [key: string]: string } = {};
+
+  //     await Promise.all(
+  //       orders.map(async (order) => {
+  //         try {
+  //           const res = await axios.get(API_PAYMENT + order.id_payment);
+  //           if (res.data.status && res.data.data) {
+  //             paymentMap[order.id_payment] = res.data.data.name;
+  //           }
+  //         } catch (error) {
+  //           console.error(`Lỗi khi lấy phương thức thanh toán ID ${order.id_payment}:`, error);
+  //         }
+  //       })
+  //     );
+
+  //     setPayments(paymentMap);
+  //   } catch (err) {
+  //     console.error("Lỗi khi gọi API phương thức thanh toán:", err);
+  //   }
+  // };
+
+  const filteredOrders = orders.filter(
+    (order) =>
+      order.id.toLowerCase().includes(search.toLowerCase()) ||
+      (users[order.id_user] && users[order.id_user].toLowerCase().includes(search.toLowerCase())) ||
+      false // Removed addresses filtering as addresses is not defined
   );
+
+  const handleEdit = (order: Order) => {
+    setSelectedOrder(order);
+    setIsDialogOpen(true);
+  };
 
   return (
     <div>
       <div className="flex flex-row align-top mb-5 justify-between">
-        <p className="text-lg">{filteredData.length || 0} đơn hàng</p>
+        <p className="bg-gray-500 text-white rounded-sm py-2 px-4 flex flex-row gap-2">
+          {filteredOrders.length || 0} đơn hàng
+        </p>
         <div className="flex gap-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Tìm kiếm theo tên khách hàng"
+              placeholder="Tìm kiếm theo ID, khách hàng hoặc địa chỉ"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 bg-white w-64"
+              className="pl-8 bg-white w-72"
             />
           </div>
-          <Button variant="outline">
-            Làm mới danh sách
-          </Button>
-          
+          <Button variant="outline" onClick={fetchOrders}>Làm mới</Button>
         </div>
       </div>
 
-      <DataTable columns={columns} data={filteredData} />
+      {loading && <p>Đang tải dữ liệu...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+
+    {!loading && !error ? (
+      <DataTable
+        columns={columns(users, {}, {}, handleEdit)}
+        data={filteredOrders}
+      />
+    ) : null}
+
+
+      <ViewOrderDialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        order={selectedOrder}
+        users={users}
+        addresses={{}} // Pass empty object or appropriate data
+        payments={{}}  // Pass empty object or appropriate data
+        refreshOrders={fetchOrders}  // <-- Truyền hàm làm mới danh sách đơn hàng
+      />
+
+
     </div>
   );
 };
 
 export default OrderPage;
 
-// Loại dữ liệu
-export type Order = {
-  nameclient: string;
-  pay: string;
-  amount: number; // changed to number
-  order_date: Date; // changed to Date object
-  status: number; // status as number
-};
-
-// Định nghĩa cột cho bảng
-const mapStatus = (status: number) => {
-  switch (status) {
-    case 1:
-      return "Hoàn thành";
-    case 2:
-      return "Đang giao";
-    case 3:
-      return "Đang xử lý";
-    default:
-      return "Không xác định";
-  }
-};
-
-export const columns: ColumnDef<Order>[] = [
-  { accessorKey: "nameclient", header: "Tên khách hàng" },
-  { accessorKey: "pay", header: "Thanh toán" },
-  {
-    accessorKey: "amount",
-    header: "Tổng tiền",
-    // Render amount as a formatted string
-    cell: ({ getValue }) => `${(getValue() as number).toLocaleString()} đ`,
+const columns = (
+  users: { [key: string]: string },
+  addresses: { [key: string]: string },
+  payments: { [key: string]: string },
+  onEdit: (order: Order) => void
+): ColumnDef<Order>[] => [
+  { accessorKey: "id", header: "Mã đơn hàng" },
+  { 
+    accessorKey: "id_user", 
+    header: "Khách hàng", 
+    cell: ({ getValue }) => users[getValue() as string] || "Không xác định" 
   },
-  {
-    accessorKey: "order_date",
-    header: "Ngày đặt",
-    // Render order_date as a formatted string
-    cell: ({ getValue }) => (getValue() as Date).toLocaleDateString(),
+  // { 
+  //   accessorKey: "total_price", 
+  //   header: "Tổng tiền sản phẩm", 
+  //   cell: ({ getValue }) => `${(getValue() as number).toLocaleString("vi-VN")} đ`
+  // },
+  { 
+    accessorKey: "amount", 
+    header: "Tổng tiền thanh toán", 
+    cell: ({ getValue }) => `${(getValue() as number).toLocaleString("vi-VN")} đ`
   },
+  { accessorKey: "order_date", header: "Ngày đặt" },
   {
     accessorKey: "status",
     header: "Trạng thái",
-    // Render status as text and apply dynamic background color
     cell: ({ getValue }) => {
-      const status = getValue() as number;
-      const statusText = mapStatus(status);
-      let statusClass = "";
-
-      switch (status) {
-        case 1:
-          statusClass = "bg-green-200 text-green-500"; // Green for "Hoàn thành"
-          break;
-        case 2:
-          statusClass = "bg-orange-200 text-orange-800"; // Orange for "Đang giao"
-          break;
-        case 3:
-          statusClass = "bg-red-200 text-red-800"; // Red for "Đang xử lý"
-          break;
-        default:
-          statusClass = "bg-gray-100"; // Default for undefined status
-      }
-
-      return (
-        <span className={`inline-block px-2 py-1 rounded ${statusClass}`}>
-          {statusText}
-        </span>
-      );
+      const status = getValue() as string;
+      const statusColors: { [key: string]: string } = {
+        "Đã giao": "bg-green-500 text-white",
+        "Đang xử lý": "bg-red-500 text-white",
+        "Đang giao hàng": "bg-orange-400 text-black",
+      };
+      return <span className={`px-2 py-1 rounded ${statusColors[status] || "bg-gray-200"}`}>{status}</span>;
     },
+  },
+  { 
+    accessorKey: "actions", 
+    header: "", 
+    cell: ({ row }) => 
+      <Edit size={20} className="text-blue-500 cursor-pointer" onClick={() => onEdit(row.original)} /> 
   },
 ];

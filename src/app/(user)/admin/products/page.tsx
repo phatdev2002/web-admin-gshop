@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { DataTable } from "@/components/ui/DataTable";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, Blocks, UserSquareIcon, EditIcon } from "lucide-react";
+import { Search, Plus, Blocks, UserSquareIcon, EditIcon, Box } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -228,20 +228,20 @@ const ProductPage = () => {
 
   return (
     <div>
-      <div className="flex flex-row align-top mb-5 justify-between ">
-        <p className="text-lg font-semibold">{filteredProducts.length} sản phẩm</p>
+      <div className="flex flex-row align-top mb-6 justify-between ">
+        <p className="bg-gray-500 text-white rounded-sm py-2 px-4 flex flex-row gap-2"><Box/>{filteredProducts.length} sản phẩm </p>
         <div className="flex gap-2 rounded-xl">
-          <Button variant="outline" onClick={() => refetchProducts()} className="border ">
+          <Button variant="outline" onClick={() => refetchProducts()} className="">
             Làm mới danh sách
           </Button>
-          <Button variant="destructive" onClick={() => setIsAddDialogOpen(true)} className="border ">
+          <Button variant="destructive" onClick={() => setIsAddDialogOpen(true)} className=" ">
             <Plus size={16} className="mr-1" />
             Thêm sản phẩm
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-row justify-between my-5">
+      <div className="flex flex-row justify-between mb-4">
         <div>
           <form>
             <div className="relative w-96">

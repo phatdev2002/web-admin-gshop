@@ -1,8 +1,9 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import { ImagePlus, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -95,9 +96,8 @@ const deleteProductImage = async (id_product: string, imageUrl: string) => {
 
 
 
-
-
 const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditProductDialogProps) => {
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [editedProduct, setEditedProduct] = useState({
     name: "",
     id_category: "",
@@ -125,7 +125,48 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
     queryFn: () => fetchProductImages(productToEdit!._id), // Dùng "!" để đảm bảo rằng _id có giá trị hợp lệ
     enabled: !!productToEdit?._id, // Chỉ chạy query khi có _id hợp lệ
   });
-  
+  ///////////// tải ảnh lên
+  // Chọn ảnh
+  // Hàm xử lý thay đổi hình ảnh
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files);
+      console.log("Selected files:", files); // Kiểm tra danh sách ảnh
+      setSelectedImages(files); // Cập nhật state với các file đã chọn
+    }
+  };
+
+  // Hàm upload hình ảnh
+  const uploadImages = async (id_product: string) => {
+    const formData = new FormData();
+    selectedImages.forEach((image) => {
+      formData.append("image", image);
+    });
+
+    try {
+      const uploadResponse = await fetch(
+        `https://gshopbackend.onrender.com/image_product/upload/${id_product}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const uploadResult = await uploadResponse.json();
+
+      if (uploadResponse.ok && uploadResult.status === true) {
+        toast.success("Ảnh đã được tải lên thành công!");
+        setSelectedImages([]); // Xóa danh sách ảnh đã chọn
+        queryClient.invalidateQueries({ queryKey: ["productImages", id_product] }); // Cập nhật danh sách ảnh
+      } else {
+        toast.error(uploadResult.mess || "Tải ảnh lên thất bại!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải ảnh lên:", error);
+      toast.error("Không thể kết nối đến server. Vui lòng thử lại!");
+    }
+  };
+
+////////////////////////////
   
 
   // Khởi tạo giá trị ban đầu dựa trên productToEdit
@@ -184,6 +225,11 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
       alert("Lỗi khi cập nhật sản phẩm, vui lòng thử lại!");
     }
   };
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedImages([]); // Xóa ảnh đã chọn khi đóng dialog
+    }
+  }, [isOpen]);
   const queryClient = useQueryClient();
 
   const handleDeleteImage = async (imgUrl: string) => {
@@ -210,7 +256,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
           </Dialog.Title>
           <div className="flex flex-row ">
             {/* /////////// */}
-            <div className=" max-w-[400px]">
+            <div className=" max-w-[400px] mr-5">
               <label className="block text-sm font-medium">Hình ảnh sản phẩm </label>
               {isLoading ? (
                 <p>Đang tải ảnh...</p>
@@ -229,18 +275,53 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
                         />
                         <button
                           onClick={() => handleDeleteImage(imgUrl)}
-                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                          className="absolute top-0 right-0 bg-red-500 rounded text-white w-5 h-5 flex items-center justify-center text-xs"
                         >
                           ✕
                         </button>
                       </div>
                     ))
                   ) : (
-                    <p>Không có hình ảnh nào</p>
+                    <p>Không có hình ảnh </p>
                   )}
                 {/* /////////// */}
                 </div>
               )}
+              {/* ///////Chọn ảnh//// */}
+              <div className="mt-2">
+                <div className="flex items-center gap-2">
+                  <label className="cursor-pointer text-blue-500 p-2 rounded hover:text-blue-600">
+                    <ImagePlus/>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                  {/* Hiển thị số lượng file đã chọn */}
+                  {selectedImages.length > 0 && (
+                    <p className="text-sm ">Đã chọn {selectedImages.length} ảnh</p>
+                  )}
+                </div>
+                {/* Nút tải ảnh lên */}
+                {selectedImages.length > 0 && (
+                  <Button
+                    className="mt-2 px-4 py-2 bg-green-500 text-white rounded"
+                    onClick={() => uploadImages(productToEdit._id)}
+                  >
+                    <Upload/>
+                    Tải ảnh lên
+                  </Button>
+                )}
+                {/* Thông báo nếu chọn quá 10 file */}
+                {selectedImages.length > 10 && (
+                  <p className="text-red-500 text-sm mt-1">Bạn chỉ có thể tải lên tối đa 10 hình!</p>
+                )}
+              </div>
+              {/* /////////// */}
+
             </div>
             {/* /////////// */}
             {/* /////////// */}
@@ -382,12 +463,18 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
             </div>
           </form>
             {/* /////////// */}
-          </div>
+          </div> 
+          <Button
+            className="w-full mt-3"
+            variant="destructive"
+            onClick={() => {
+              handleSubmit();
+              uploadImages(productToEdit._id);
+            }}
+          >
+            Cập nhật sản phẩm
+          </Button>
 
-          
-          <Button className="w-full mt-3" variant="destructive" onClick={handleSubmit}>
-              Cập nhật sản phẩm
-            </Button>
         </Dialog.Panel>
       </div>
     </Dialog>

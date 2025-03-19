@@ -40,7 +40,7 @@ const ClientPage = () => {
   return (
     <div>
       <div className="flex flex-row align-top mb-5 justify-between">
-        <p className="text-lg">{filteredData?.length || 0} khách hàng</p>
+        <p className="bg-gray-500 text-white rounded-sm py-2 px-4 flex flex-row gap-2">{filteredData?.length || 0} khách hàng</p>
         <div className="flex gap-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
