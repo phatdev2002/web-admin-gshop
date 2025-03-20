@@ -2,7 +2,11 @@
 import * as React from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 
-export default function PieChartComponent({ piedata }) {
+interface PieChartComponentProps {
+  piedata: { name: string; value: number }[]; // Adjust the type based on your data structure
+}
+
+export default function PieChartComponent({ piedata }: PieChartComponentProps) {
   return (
     <div style={{ display: 'flex' }}>
       <div>

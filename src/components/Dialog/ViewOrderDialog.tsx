@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "sonner";
+
 
 const API_ORDER_DETAIL = "https://gshopbackend.onrender.com/detail_order/list-by-order/";
 const API_PRODUCTS = "https://gshopbackend.onrender.com/product/list";
@@ -87,29 +88,40 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ open, onClose, order,
     }
   };
 
-  const fetchOrderDetails = async (orderId: string) => {
-    setLoading(true);
-    setError("");
-    try {
-      const response = await axios.get(API_ORDER_DETAIL + orderId);
-      if (response.data.status) {
-        const details = response.data.data.map((item: { id_product: string; quantity: number; unit_price: number }) => ({
-          id_product: item.id_product,
-          product_name: products[item.id_product] || "Không xác định",
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-        }));
-        setOrderDetails(details);
-      } else {
-        setOrderDetails([]);
-      }
-    } catch (err) {
-      console.error("Lỗi khi lấy chi tiết đơn hàng:", err);
-      setError("Không thể tải chi tiết đơn hàng!");
-    } finally {
-      setLoading(false);
+  // Định nghĩa fetchOrderDetails với useCallback
+const fetchOrderDetails = useCallback(async (orderId: string) => {
+  setLoading(true);
+  setError("");
+  try {
+    const response = await axios.get(API_ORDER_DETAIL + orderId);
+    if (response.data.status) {
+      const details = response.data.data.map((item: { id_product: string; quantity: number; unit_price: number }) => ({
+        id_product: item.id_product,
+        product_name: products[item.id_product] || "Không xác định",
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+      }));
+      setOrderDetails(details);
+    } else {
+      setOrderDetails([]);
     }
-  };
+  } catch (err) {
+    console.error("Lỗi khi lấy chi tiết đơn hàng:", err);
+    setError("Không thể tải chi tiết đơn hàng!");
+  } finally {
+    setLoading(false);
+  }
+}, [products]); // Chỉ re-create khi `products` thay đổi
+
+// Sử dụng trong useEffect
+useEffect(() => {
+  if (order && open) {
+    fetchOrderDetails(order.id);
+    fetchAddressDetail(order.id_address);
+    fetchPaymentDetail(order.id_payment);
+    setStatus(order.status);
+  }
+}, [order, open, fetchOrderDetails]);
 
   const handleUpdateStatus = async () => {
     if (!order) return;
@@ -183,7 +195,7 @@ useEffect(() => {
       fetchOrderDetails(order.id);
       setStatus(order.status);
     }
-  }, [order, open, products]);
+  }, [order, open]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

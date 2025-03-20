@@ -27,16 +27,20 @@ const cardData: CardProps[] = [
   },
 ];
 
-export const pieData = [
-  { id: 0, value: 100, label: 'High Grade' },
-  { id: 1, value: 54, label: 'Master Grade' },
-  { id: 2, value: 25, label: 'Real Grade' },
-  { id: 3, value: 30, label: 'Super Deformed' },
-  { id: 4, value: 10, label: 'Perfect Grade' },
-  { id: 5, value: 10, label: 'Entry Grade' },
-];
 
-// Tính tổng giá trị
+
+
+
+const ReportPage = () => {
+  const pieData = [
+    { id: 0, value: 100, label: "High Grade" },
+    { id: 1, value: 54, label: "Master Grade" },
+    { id: 2, value: 25, label: "Real Grade" },
+    { id: 3, value: 30, label: "Super Deformed" },
+    { id: 4, value: 10, label: "Perfect Grade" },
+    { id: 5, value: 10, label: "Entry Grade" },
+  ];
+  // Tính tổng giá trị
 const total = pieData.reduce((sum, item) => sum + item.value, 0);
 
 // Thêm phần trăm vào nhãn
@@ -44,8 +48,6 @@ const dataWithPercentage = pieData.map((item) => ({
   ...item,
   label: `${item.label} (${((item.value / total) * 100).toFixed(0)}%)`, // Làm tròn phần trăm
 }));
-
-const ReportPage = () => {
   return (
     <div>
       <section className="grid w-full pb-4 grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-3">
@@ -75,7 +77,7 @@ const ReportPage = () => {
           <section>
             <p className="font-semibold">Tỉ lệ bán chạy của các loại Gundam</p>
           </section>
-          <PieChartComponent piedata={dataWithPercentage} />
+          <PieChartComponent piedata={dataWithPercentage.map(({ label, ...rest }) => ({ name: label, ...rest }))} />
         </CardContent>
         </section>
       </section>

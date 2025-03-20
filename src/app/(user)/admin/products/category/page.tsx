@@ -7,8 +7,7 @@ import { Plus } from "lucide-react";
 import AddCategoryDialog from "@/components/Dialog/AddCategoryDialog";
 import EditCategoryDialog from "@/components/Dialog/ViewCategoryDialog";
 import { columns as baseColumns, Category } from "./columns";
-import { toast } from "sonner"
-import { ClassNames } from "@emotion/react";
+import { toast } from "sonner";
 
 
 // Fetch API function
