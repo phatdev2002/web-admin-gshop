@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 
 // Fetch API function
-const fetchCategories = async () => {
+async function fetchCategories() {
   // Lấy danh sách thể loại
   const categoryRes = await fetch("https://gshopbackend.onrender.com/category/list");
   if (!categoryRes.ok) throw new Error("Failed to fetch categories");
@@ -27,7 +27,7 @@ const fetchCategories = async () => {
   if (!Array.isArray(productList)) throw new Error("Unexpected API format");
 
   // Đếm số lượng sản phẩm theo id_category
-  const productCountMap = productList.reduce((acc: Record<string, number>, product: { id_category: string }) => {
+  const productCountMap = productList.reduce((acc: Record<string, number>, product: { id_category: string; }) => {
     if (product.id_category) {
       acc[product.id_category] = (acc[product.id_category] || 0) + 1;
     }
@@ -35,12 +35,12 @@ const fetchCategories = async () => {
   }, {});
 
   // Gán số lượng sản phẩm vào danh sách thể loại
-  return categoryList.map((item: { _id: string; name_type: string }) => ({
+  return categoryList.map((item: { _id: string; name_type: string; }) => ({
     id: item._id,
     name_type: item.name_type,
     product_count: productCountMap[item._id] || 0, // mặc định là 0 nếu không có sản phẩm
   }));
-};
+}
 
 const CategoryPage = () => {
   const { data = [], isLoading, isError, refetch } = useQuery({
