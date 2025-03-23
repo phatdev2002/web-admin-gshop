@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Bell, Paintbrush2, Palette } from "lucide-react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 
 export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) => void }) {
   interface User {
@@ -17,7 +16,6 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
   const pathname = usePathname();
   const colorInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Xác định tiêu đề trang từ đường dẫn
   const getPageTitle = () => {
     switch (pathname) {
       case "/admin/overview": return "Tổng quan hệ thống";
@@ -31,7 +29,6 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
       case "/admin/news": return "Quản lý tin tức";
       case "/admin/profile": return "Thông tin của tôi";
       case "/admin/news/create": return "Tạo bài viết";
-
       case "/staff/profile": return "Thông tin của tôi";
       case "/staff/overview": return "Tổng quan hệ thống";
       case "/staff/orders": return "Quản lý đơn hàng";
@@ -46,16 +43,6 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-
-    const handleStorageChange = () => {
-      const updatedUser = localStorage.getItem("user");
-      if (updatedUser) {
-        setUser(JSON.parse(updatedUser));
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const handleChangeColor = (color: string) => {
@@ -64,7 +51,7 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
   };
 
   return (
-    <div className="flex justify-between items-center px-5 py-2 border-b bg-white w-full relative">
+    <div className="flex justify-between items-center px-5 py-2  bg-white w-full relative">
       {/* Logo + Tiêu đề */}
       <div className="flex items-center">
         <Image src="/login/logoAppGShop2.png" alt="logo" width={100} height={50} />
@@ -73,59 +60,38 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
 
       {/* Các nút chức năng */}
       <div className="flex items-center gap-4 relative">
-
-        {/* Nút chọn màu nền */}
+        {/* Bảng chọn màu nằm bên trái nút */}
         <div className="relative flex items-center">
-          <motion.button
+          {showColorPicker && (
+            <div className="absolute right-10 flex gap-2 p-2 rounded-lg border bg-white shadow-md">
+              {["#d6d6d6", "#e4c58a", "#e6a5a1", "#92b79d", "#8aa1c1", "#f0f0f0"].map((color) => (
+                <button
+                  key={color}
+                  className="w-8 h-8 rounded-full border cursor-pointer"
+                  style={{ backgroundColor: color }}
+                  onClick={() => handleChangeColor(color)}
+                />
+              ))}
+              <button
+                className="w-8 h-8 rounded-full border flex items-center justify-center cursor-pointer hover:bg-gray-100"
+                onClick={() => colorInputRef.current?.click()}
+              >
+                <Palette className="w-5 h-5 text-gray-700" />
+              </button>
+              <input
+                ref={colorInputRef}
+                type="color"
+                className="absolute w-0 h-10 opacity-0"
+                onChange={(e) => handleChangeColor(e.target.value)}
+              />
+            </div>
+          )}
+          <button
             onClick={() => setShowColorPicker(!showColorPicker)}
-            initial={{ x: 0 }}
-            animate={{ x: showColorPicker ? -300 : 0 }}
-            transition={{ duration: 0.5 }}
-            className={`rounded-full p-2 w-9 h-9 flex items-center justify-center cursor-pointer ${
-              showColorPicker ? "bg-blue-100" : "bg-blue-50"
-            } hover:bg-blue-100`}
+            className="rounded-full p-2 w-9 h-9 flex items-center justify-center cursor-pointer bg-blue-50 hover:bg-blue-100"
           >
             <Paintbrush2 className="w-5 h-5" />
-          </motion.button>
-
-          {/* Hiệu ứng xuất hiện và biến mất */}
-          <AnimatePresence>
-            {showColorPicker && (
-              <motion.div
-                initial={{ opacity: 0, x: 20, scale: 0.95 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 20, scale: 0.95 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="absolute left-[-260] top-[-5] transform -translate-y-1/2 flex gap-2 p-2 rounded-lg"
-              >
-                {/* Màu có sẵn */}
-                {["#d6d6d6", "#e4c58a", "#e6a5a1", "#92b79d", "#8aa1c1", "#f0f0f0"].map((color) => (
-                  <button
-                    key={color}
-                    className="w-8 h-8 rounded-full border border-gray-300 cursor-pointer"
-                    style={{ backgroundColor: color }}
-                    onClick={() => handleChangeColor(color)}
-                  />
-                ))}
-
-                {/* Nút icon Palette để mở bộ chọn màu */}
-                <button
-                  className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-100"
-                  onClick={() => colorInputRef.current?.click()}
-                >
-                  <Palette className="w-5 h-5 text-gray-700" />
-                </button>
-
-                {/* Input color ẩn */}
-                <input
-                  ref={colorInputRef}
-                  type="color"
-                  className="absolute w-0 h-10 opacity-0"
-                  onChange={(e) => handleChangeColor(e.target.value)}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </button>
         </div>
 
         {/* Nút thông báo */}
