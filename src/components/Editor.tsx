@@ -68,17 +68,10 @@ export default function EditorComponent({ value, onChange }: EditorProps) {
         }}
         config={{
           extraPlugins: [CustomUploadAdapterPlugin], // Thêm plugin upload ảnh
-          licenseKey: "eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NDIyNTU5OTksImp0aSI6IjQxNmI2NDVlLTZmZmYtNDRjOC1hZDYxLTRiYWE1MmQ2ZDc5MiIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjkxYmFlOWM3In0.r5BBLf3SK1Q39mj0g70zpCIWerLT81dy7rmQcFBoxdr0s3AMmsFN6KWpSvyqg6ufh4wr9nFZKCFcJJ2q2ECznw" // Thay bằng license key của bạn
+          licenseKey: "eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NDQzMjk1OTksImp0aSI6IjM0ODVjYTZkLTZlZDktNGI1NC04ODY4LTY4YzkwMTc4YzVmMyIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjdmZjJmZDA5In0.NvshURZVqqJo9bb2Tr38vv0az7iqdg5hmqWwKNJuZ57yhp9sVK5IgTqr9x_BtSCTtL6eiKSnW_WXRyVHTkU5hg" // Thay bằng license key của bạn
         }}
       />
     </div>
   );
 }
 
-
-
-
-//////////
-// config={{
-//   licenseKey: "eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NDIyNTU5OTksImp0aSI6IjQxNmI2NDVlLTZmZmYtNDRjOC1hZDYxLTRiYWE1MmQ2ZDc5MiIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6IjkxYmFlOWM3In0.r5BBLf3SK1Q39mj0g70zpCIWerLT81dy7rmQcFBoxdr0s3AMmsFN6KWpSvyqg6ufh4wr9nFZKCFcJJ2q2ECznw", // Gắn license key vào đây
-// }}

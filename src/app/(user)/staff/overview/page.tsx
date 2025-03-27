@@ -1,66 +1,57 @@
 "use client";
-import React, { useState } from "react";
-import { DataTable } from "@/components/ui/DataTable";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import React, { useEffect, useState } from "react";
 import Card, { CardContent, CardProps } from "@/components/ui/Card";
 import { CheckCircleIcon, Settings, ShoppingCart } from "lucide-react";
 import LineChart from "@/components/ui/LineChart";
-import { columns, Order } from "./columns"; // Import columns từ file riêng
-
-const cardData: CardProps[] = [
-  {
-    label: "Tổng đơn hàng hôm nay",
-    amount: "3000",
-    discription: "Số đơn hàng chưa xử lý và đã hoàn thành",
-    icon: ShoppingCart,
-  },
-  {
-    label: "Tổng đơn hàng chờ xử lý",
-    amount: "245",
-    discription: "Số lượng đơn hàng đang trong tình trạng chưa xử lý",
-    icon: Settings,
-  },
-  {
-    label: "Tổng đơn hàng đã hoàn thành",
-    amount: "7",
-    discription: "Các đơn hàng đã giao thành công",
-    icon: CheckCircleIcon,
-  },
-];
-
-const hardcodedOrders: Order[] = [
-  {
-    nameclient: "Nguyen Duc Phat",
-    pay: "Tiền mặt",
-    amount: 1500000,
-    order_date: new Date("2025-02-17"),
-    status: 1,
-  },
-  {
-    nameclient: "Le Minh Tu",
-    pay: "Chuyển khoản",
-    amount: 2000000,
-    order_date: new Date("2025-02-16"),
-    status: 2,
-  },
-  {
-    nameclient: "Tran Thi Lan",
-    pay: "Tiền mặt",
-    amount: 800000,
-    order_date: new Date("2025-02-15"),
-    status: 3,
-  },
-];
 
 const OverviewPage = () => {
-  const [search, setSearch] = useState("");
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [completedOrders, setCompletedOrders] = useState(0);
+  const [pendingOrders, setPendingOrders] = useState(0);
 
-  // Lọc dữ liệu theo tên khách hàng
-  const filteredData = hardcodedOrders.filter((order) =>
-    order.nameclient.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch("https://gshopbackend.onrender.com/order/list");
+        const result = await response.json();
+        if (result.status) {
+          const total = result.data.length;
+          type Order = { status: string }; // Define the type for orders
+          const completed = result.data.filter((order: Order) => order.status === "Đã giao").length;
+          const pending = result.data.filter((order: Order) => order.status === "Đang xử lý").length;
+
+          setTotalOrders(total);
+          setCompletedOrders(completed);
+          setPendingOrders(pending);
+        }
+      } catch (error) {
+        console.error("Lỗi khi gọi API đơn hàng:", error);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const cardData: CardProps[] = [
+    {
+      label: "Tổng đơn hàng",
+      amount: totalOrders.toString(),
+      discription: "Tổng số đơn hàng đã đặt",
+      icon: ShoppingCart,
+    },
+    {
+      label: "Đơn hàng chờ xử lý",
+      amount: pendingOrders.toString(),
+      discription: "Số lượng đơn hàng chưa hoàn thành",
+      icon: Settings,
+    },
+    {
+      label: "Đơn hàng đã hoàn thành",
+      amount: completedOrders.toString(),
+      discription: "Số lượng đơn đã giao thành công",
+      icon: CheckCircleIcon,
+    },
+  ];
 
   return (
     <div>
@@ -75,32 +66,11 @@ const OverviewPage = () => {
       <section className="grid grid-cols-1 gap-4 transition-all">
         <CardContent>
           <p className="p-4 font-semibold">Thống kê đơn đặt hàng</p>
-          <LineChart />
+          <p className="p-4">Chưa có api</p>
+          <LineChart data={[{ name: "January", total: 100 }, { name: "February", total: 200 }]} />
         </CardContent>
       </section>
 
-      {/* Danh sách đơn hàng */}
-      <section>
-        <h1 className="text-xl font-semibold mt-5 mb-2">Danh sách đơn hàng</h1>
-        <div className="flex flex-row align-top mb-5 justify-between">
-          <p className="text-lg">{filteredData.length} đơn hàng</p>
-          <div className="flex gap-2">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Tìm kiếm theo tên khách hàng"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 bg-white w-64"
-              />
-            </div>
-            <Button variant="outline" onClick={() => setSearch("")}>
-              Làm mới danh sách
-            </Button>
-          </div>
-        </div>
-        <DataTable columns={columns} data={filteredData} />
-      </section>
     </div>
   );
 };

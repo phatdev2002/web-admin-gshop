@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/Dialog";
+import { Dialog, DialogContent, DialogHeader, DialogFooter } from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "sonner";
@@ -55,7 +55,7 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ open, onClose, order,
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState(order?.status || "Đang xử lý");
-  const [updating, setUpdating] = useState(false);
+  const [, setUpdating] = useState(false);
   
 
   const fetchProducts = async () => {
@@ -123,15 +123,18 @@ useEffect(() => {
   }
 }, [order, open, fetchOrderDetails]);
 
-  const handleUpdateStatus = async () => {
-    if (!order) return;
+// Định nghĩa handleStatusChange
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (!order || newStatus === status) return; // Không làm gì nếu trạng thái không thay đổi
+  
     setUpdating(true);
     try {
-      const response = await axios.put(`${API_UPDATE_ORDER}${order.id}`, { status });
+      const response = await axios.put(`${API_UPDATE_ORDER}${order.id}`, { status: newStatus });
       if (response.data.status) {
         toast("Cập nhật trạng thái thành công!");
-        refreshOrders(); // Cập nhật lại danh sách đơn hàng
-        onClose(); // Đóng dialog sau khi cập nhật thành công
+        setStatus(newStatus); // Cập nhật UI
+        refreshOrders(); // Cập nhật danh sách đơn hàng
       } else {
         alert("Cập nhật thất bại!");
       }
@@ -201,58 +204,65 @@ useEffect(() => {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Chi tiết đơn hàng</DialogTitle>
+          <div className="flex justify-center mb-4">Chi tiết đơn hàng</div>
         </DialogHeader>
 
         {order && (
           <div>
             <div>
-              <p><strong>Mã đơn hàng:</strong> {order.id}</p>
+              <p className="pb-5"><strong>Mã đơn hàng:</strong> {order.id}</p>
+
               <p><strong>Khách hàng:</strong> {usersList[order.id_user]?.name || "Không xác định"}</p>
               <p><strong>Số điện thoại:</strong> {usersList[order.id_user]?.phone_number || "Không có số điện thoại"}</p>
               <p><strong>Địa chỉ:</strong> {addressDetail}</p>
-              <p><strong>Phương thức thanh toán:</strong> {paymentDetail} </p>
+
+              <h3 className="mt-4 mb-2 font-semibold">Sản phẩm trong đơn hàng:</h3>
+                {loading ? (
+                  <p>Đang tải chi tiết đơn hàng...</p>
+                ) : error ? (
+                  <p className="text-red-500">{error}</p>
+                ) : orderDetails.length > 0 ? (
+                  <ul className="list-disc pl-5">
+                    {orderDetails.map((item, index) => (
+                      <li key={index}>
+                        <strong>{item.product_name}</strong> - {item.quantity} x {item.unit_price.toLocaleString()} VND
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Không có sản phẩm nào.</p>
+                )}
+              <p className="pt-4"><strong>Phương thức thanh toán:</strong> {paymentDetail} </p>
               <p><strong>Phí vận chuyển:</strong> {order.shipping_fee.toLocaleString()} VND</p>
               <p><strong>Tổng tiền:</strong> {order.amount.toLocaleString()} VND</p>
-              <p><strong>Ngày đặt hàng:</strong> {order.order_date}</p>
+              
+              <p className="pt-5"><strong>Ngày đặt hàng:</strong> {order.order_date}</p>
             </div>
 
             {/* Thay đổi trạng thái đơn hàng */}
-            <div className="mt-3">
-              <label className="font-semibold">Trạng thái đơn hàng:</label>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger>
+            <div className="mt-3 flex flex-col">
+              <label className="font-semibold mb-2">Trạng thái đơn hàng:</label>
+              <Select value={status} onValueChange={handleStatusChange}>
+                <SelectTrigger className={`
+                    ${status === "Đang xử lý" ? "bg-red-100 text-red-700 border-red-500" : ""}
+                    ${status === "Đang giao hàng" ? "bg-orange-100 text-orange-700 border-orange-500" : ""}
+                    ${status === "Đã giao" ? "bg-green-100 text-green-700 border-green-500" : ""}
+                    border rounded-lg px-4 py-2 font-semibold
+                `}>
                   <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Đang xử lý">Đang xử lý</SelectItem>
-                  <SelectItem value="Đang giao hàng">Đang giao hàng</SelectItem>
-                  <SelectItem value="Đã giao">Đã giao</SelectItem>
-                </SelectContent>
+                <SelectItem value="Đang xử lý" disabled={status !== "Đang xử lý"} className="text-red-500">🔴 Đang xử lý</SelectItem>
+                <SelectItem value="Đang giao hàng" disabled={status !== "Đang xử lý"} className="text-orange-500">🟠 Đang giao hàng</SelectItem>
+                <SelectItem value="Đã giao" disabled={status !== "Đang giao hàng"} className="text-green-500">🟢 Đã giao</SelectItem>
+                <SelectItem value="Đã hủy" disabled={status === "Đã giao"} className="text-gray-500">❌ Đã hủy</SelectItem>
+              </SelectContent>
               </Select>
-              <Button onClick={handleUpdateStatus} className="mt-2" disabled={updating}>
-                {updating ? "Đang cập nhật..." : "Cập nhật trạng thái"}
-              </Button>
             </div>
           </div>
         )}
 
-        <h3 className="mt-4 font-semibold">Sản phẩm trong đơn hàng:</h3>
-        {loading ? (
-          <p>Đang tải chi tiết đơn hàng...</p>
-        ) : error ? (
-          <p className="text-red-500">{error}</p>
-        ) : orderDetails.length > 0 ? (
-          <ul className="list-disc pl-5">
-            {orderDetails.map((item, index) => (
-              <li key={index}>
-                <strong>{item.product_name}</strong> - {item.quantity} x {item.unit_price.toLocaleString()} VND
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Không có sản phẩm nào.</p>
-        )}
+        
 
         <DialogFooter>
           <Button onClick={onClose}>Đóng</Button>

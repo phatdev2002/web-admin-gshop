@@ -167,7 +167,8 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="border rounded p-2 w-full mt-2" />
 
           <p className="my-2 font-semibold">Nội dung</p>
-          <Editor value={content} onChange={setContent} />
+          <Editor value={content} onChange={setContent}  />
+
 
           {/* Nút cập nhật */}
           <div className="flex justify-end">

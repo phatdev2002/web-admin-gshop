@@ -98,7 +98,7 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
         <Bell className="bg-blue-50 rounded-full p-2 w-9 h-9 cursor-pointer hover:bg-blue-100" />
 
         {/* Ảnh đại diện + Tên người dùng */}
-        <Link href="/admin/profile">
+        <Link href={user?.role === "admin" ? "/admin/profile" : "/staff/profile"}>
           <div className="flex items-center">
             <Image src="/img/avt.jpg" alt="avatar" width={40} height={40} className="rounded-full mr-2" />
             <p className="font-semibold">{user?.name}</p>
