@@ -54,7 +54,7 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
     <div className="flex justify-between items-center px-5 py-2  bg-white w-full relative">
       {/* Logo + Tiêu đề */}
       <div className="flex items-center">
-        <Image src="/login/logoAppGShop2.png" alt="logo" width={100} height={50} />
+        <Image src="/login/LogoAppGShop2.png" alt="Logo GShop" className=" top-4 left-4 h-10" width={100} height={40} />
         <h1 className="ml-24 text-xl font-semibold">{getPageTitle()}</h1>
       </div>
 
