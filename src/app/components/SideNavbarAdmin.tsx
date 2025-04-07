@@ -27,7 +27,7 @@ export default function SideNavbarAdmin({}: Props){
   }
 
     return (
-        <div className="relative min-w-[80px] h-auto shadow-2xl  px-1 pb-10 pt-1 ">
+        <div className="relative min-w-[80px] h-auto //shadow-2xl bg-white px-1 pb-10 pt-1 ">
           {/* <Image
             src={isCollapsed ? "/logo/LogoAppG.png" : "/login/LogoAppGShop2.png"}
             alt="Logo GShop"

@@ -24,7 +24,7 @@ export default function CreateNews() {
       if (!userProfile._id) throw new Error("Không tìm thấy ID người dùng.");
 
       // 2️⃣ Gửi request tạo bài viết
-      const response = await fetch("https://gshopbackend.onrender.com/news/add", {
+      const response = await fetch("https://gshopbackend-1.onrender.com/news/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, content, id_user: userProfile._id }),
@@ -47,11 +47,11 @@ export default function CreateNews() {
         const formData = new FormData();
         formData.append("image", thumbnail);
 
-        //console.log("Upload URL:", `https://gshopbackend.onrender.com/news/upload-thumbnail?id_news=${newsId}`);
+        //console.log("Upload URL:", `https://gshopbackend-1.onrender.com/news/upload-thumbnail?id_news=${newsId}`);
 
         try {
           const uploadResponse = await fetch(
-            `https://gshopbackend.onrender.com/news/upload-thumbnail?id_news=${encodeURIComponent(newsId)}`,
+            `https://gshopbackend-1.onrender.com/news/upload-thumbnail?id_news=${encodeURIComponent(newsId)}`,
             { method: "POST", body: formData }
           );
 
@@ -71,7 +71,7 @@ export default function CreateNews() {
 
       // 4️⃣ Nếu có ảnh, cập nhật bài viết với thumbnail
       if (uploadedThumbnailUrl) {
-        await fetch(`https://gshopbackend.onrender.com/news/edit?_id=${newsId}`, {
+        await fetch(`https://gshopbackend-1.onrender.com/news/edit?_id=${newsId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ thumbnail: uploadedThumbnailUrl }),

@@ -46,7 +46,7 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
         }
 
         setMessage(null);
-        const response = await fetch("https://gshopbackend.onrender.com/user/create-staff", {
+        const response = await fetch("https://gshopbackend-1.onrender.com/user/create-staff", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, email, phone_number: phone, password }),

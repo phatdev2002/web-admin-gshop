@@ -26,7 +26,7 @@ export default function EditStaffDialog({ employee, onClose, onUpdated }: EditSt
     setLoading(true);
     setError(null);
     
-    fetch("https://gshopbackend.onrender.com/user/update", {
+    fetch("https://gshopbackend-1.onrender.com/user/update", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

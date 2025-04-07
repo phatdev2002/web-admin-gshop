@@ -28,7 +28,7 @@ export default function StaffPage() {
   
   const fetchEmployees = () => {
     setLoading(true);
-    fetch("https://gshopbackend.onrender.com/user/list_staff")
+    fetch("https://gshopbackend-1.onrender.com/user/list_staff")
       .then((response) => response.json())
       .then((data) => {
         if (data.status) {
@@ -51,7 +51,7 @@ export default function StaffPage() {
 
   const handleDelete = () => {
     if (!employeeToDelete) return;
-    fetch(`https://gshopbackend.onrender.com/user/update-staff/${employeeToDelete._id}`, {
+    fetch(`https://gshopbackend-1.onrender.com/user/update-staff/${employeeToDelete._id}`, {
       method: "PUT",
     })
       .then((res) => res.json())

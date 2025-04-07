@@ -7,10 +7,10 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { toast } from "sonner";
 
 
-const API_ORDER_DETAIL = "https://gshopbackend.onrender.com/detail_order/list-by-order/";
-const API_PRODUCTS = "https://gshopbackend.onrender.com/product/list";
-const API_USERS = "https://gshopbackend.onrender.com/user/list";
-const API_UPDATE_ORDER = "https://gshopbackend.onrender.com/order/update/";
+const API_ORDER_DETAIL = "https://gshopbackend-1.onrender.com/detail_order/list-by-order/";
+const API_PRODUCTS = "https://gshopbackend-1.onrender.com/product/list";
+const API_USERS = "https://gshopbackend-1.onrender.com/user/list";
+const API_UPDATE_ORDER = "https://gshopbackend-1.onrender.com/order/update/";
 
 interface Order {
   id: string;
@@ -146,8 +146,8 @@ useEffect(() => {
     }
   };
   
-  const API_ADDRESS = "https://gshopbackend.onrender.com/address/detail/";
-const API_PAYMENT = "https://gshopbackend.onrender.com/payment_method/detail/";
+  const API_ADDRESS = "https://gshopbackend-1.onrender.com/address/detail/";
+const API_PAYMENT = "https://gshopbackend-1.onrender.com/payment_method/detail/";
 
 const [addressDetail, setAddressDetail] = useState<string>("");
 const [paymentDetail, setPaymentDetail] = useState<string>("");

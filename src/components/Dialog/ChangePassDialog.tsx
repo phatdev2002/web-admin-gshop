@@ -36,7 +36,7 @@ const ChangePass: React.FC<ChangePassProps> = ({ isOpen, onClose, userId }) => {
     setError("");
 
     try {
-      const response = await fetch("https://gshopbackend.onrender.com/user/changPass", { 
+      const response = await fetch("https://gshopbackend-1.onrender.com/user/changPass", { 
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

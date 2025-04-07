@@ -45,7 +45,9 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@ckeditor/ckeditor5-core": "^44.3.0",
     "@eslint/eslintrc": "^3",
+    "@types/ckeditor__ckeditor5-core": "^33.0.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

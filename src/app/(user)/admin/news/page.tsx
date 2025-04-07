@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ViewNewsDialog from "@/components/Dialog/ViewNewsDialog"; // Import Dialog
 import { News } from "@/types/News";
+import { BASE_URL } from "@/constants";
 
 export default function NewsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,7 +18,7 @@ export default function NewsPage() {
   // Hàm lấy danh sách tin tức từ server
   const fetchNews = async () => {
     try {
-      const response = await fetch("https://gshopbackend.onrender.com/news/list");
+      const response = await fetch(`${BASE_URL}/news/list`);
       const data = await response.json();
 
       if (data.status && Array.isArray(data.data)) {

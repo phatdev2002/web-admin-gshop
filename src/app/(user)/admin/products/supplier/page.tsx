@@ -23,7 +23,7 @@ export type Supplier = {
 // Fetch API function
 const fetchSuppliers = async (): Promise<Supplier[]> => {
   try {
-    const res = await fetch("https://gshopbackend.onrender.com/supplier/list");
+    const res = await fetch("https://gshopbackend-1.onrender.com/supplier/list");
     if (!res.ok) throw new Error("Failed to fetch suppliers");
 
     const result = await res.json();

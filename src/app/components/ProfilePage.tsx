@@ -52,7 +52,7 @@ const ProfilePage = () => {
     setMessage(null);
   
     try {
-      const response = await fetch("https://gshopbackend.onrender.com/user/update", {
+      const response = await fetch("https://gshopbackend-1.onrender.com/user/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

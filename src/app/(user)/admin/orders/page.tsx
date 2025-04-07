@@ -8,10 +8,10 @@ import { Edit, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ViewOrderDialog from "@/components/Dialog/ViewOrderDialog";
 
-const API_ORDERS = "https://gshopbackend.onrender.com/order/list";
-const API_USERS = "https://gshopbackend.onrender.com/user/list";
-//const API_ADDRESS = "https://gshopbackend.onrender.com/address/detail/";
-//const API_PAYMENT = "https://gshopbackend.onrender.com/payment_method/detail/";
+const API_ORDERS = "https://gshopbackend-1.onrender.com/order/list";
+const API_USERS = "https://gshopbackend-1.onrender.com/user/list";
+//const API_ADDRESS = "https://gshopbackend-1.onrender.com/address/detail/";
+//const API_PAYMENT = "https://gshopbackend-1.onrender.com/payment_method/detail/";
 
 interface Order {
   id: string;

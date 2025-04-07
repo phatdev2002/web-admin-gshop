@@ -18,7 +18,7 @@ const AddCategoryDialog = ({ isOpen, setIsOpen, onSubmit }: AddCategoryDialogPro
   const handleSubmit = async () => {
     try {
       // Gọi API thêm thể loại
-      const res = await fetch("https://gshopbackend.onrender.com/category/create", {
+      const res = await fetch("https://gshopbackend-1.onrender.com/category/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

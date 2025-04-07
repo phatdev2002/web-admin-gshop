@@ -15,7 +15,7 @@ import { toast } from "sonner";
 
 // API Fetch Functions
 const fetchCategories = async () => {
-  const res = await fetch("https://gshopbackend.onrender.com/category/list");
+  const res = await fetch("https://gshopbackend-1.onrender.com/category/list");
   const result = await res.json();
   const categoryList = result.categories || result.data || result;
 
@@ -30,7 +30,7 @@ const fetchCategories = async () => {
 };
 
 const fetchProductImages = async (id_product: string) => {
-  const res = await fetch(`https://gshopbackend.onrender.com/image_product/list-images/${id_product}`);
+  const res = await fetch(`https://gshopbackend-1.onrender.com/image_product/list-images/${id_product}`);
   const result = await res.json();
   
   if (result.status === false && result.mess === "Không có ảnh cho sản phẩm này") {
@@ -45,7 +45,7 @@ const fetchProductImages = async (id_product: string) => {
 const fetchProducts = async (categories: { [key: string]: string }) => {
   if (Object.keys(categories).length === 0) return [];
 
-  const res = await fetch("https://gshopbackend.onrender.com/product/list");
+  const res = await fetch("https://gshopbackend-1.onrender.com/product/list");
   const result = await res.json();
   const productList = result.products || result.data || result;
 
@@ -200,7 +200,7 @@ const ProductPage = () => {
   
     try {
       const response = await fetch(
-        `https://gshopbackend.onrender.com/product/update/${selectedProduct._id}`,
+        `https://gshopbackend-1.onrender.com/product/update/${selectedProduct._id}`,
         {
           method: "PUT",
           headers: {

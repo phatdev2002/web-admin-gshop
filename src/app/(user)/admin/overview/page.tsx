@@ -31,17 +31,17 @@ const OverviewPage = () => {
       }
     };
 
-    fetchData("https://gshopbackend.onrender.com/user/list_user", setTotalCustomers);
-    fetchData("https://gshopbackend.onrender.com/product/list", setTotalProducts);
-    fetchData("https://gshopbackend.onrender.com/user/list_staff", setTotalStaff);
-    fetchData("https://gshopbackend.onrender.com/order/list", setTotalOrders);
+    fetchData("https://gshopbackend-1.onrender.com/user/list_user", setTotalCustomers);
+    fetchData("https://gshopbackend-1.onrender.com/product/list", setTotalProducts);
+    fetchData("https://gshopbackend-1.onrender.com/user/list_staff", setTotalStaff);
+    fetchData("https://gshopbackend-1.onrender.com/order/list", setTotalOrders);
   }, []);
 
   // Fetch doanh thu theo tháng
   useEffect(() => {
     const fetchRevenue = async () => {
       try {
-        const response = await fetch("https://gshopbackend.onrender.com/order/revenue");
+        const response = await fetch("https://gshopbackend-1.onrender.com/order/revenue");
         const result = await response.json();
 
         if (result.status && result.data?.monthlyRevenue) {

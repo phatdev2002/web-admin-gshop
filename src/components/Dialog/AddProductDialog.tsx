@@ -22,7 +22,7 @@ interface AddProductDialogProps {
 }
 
 export const fetchCategories = async () => {
-  const res = await fetch("https://gshopbackend.onrender.com/category/list");
+  const res = await fetch("https://gshopbackend-1.onrender.com/category/list");
   const result = await res.json();
   const categoryList = result.categories || result.data || result;
   
@@ -38,7 +38,7 @@ export const fetchCategories = async () => {
 };
 
 export const fetchSuppliers = async () => {
-  const res = await fetch("https://gshopbackend.onrender.com/supplier/list");
+  const res = await fetch("https://gshopbackend-1.onrender.com/supplier/list");
   const result = await res.json();
   const supplierList = result.suppliers || result.data || result;
   
@@ -94,7 +94,7 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
   
     try {
       const uploadResponse = await fetch(
-        `https://gshopbackend.onrender.com/image_product/upload/${id_product}`,
+        `https://gshopbackend-1.onrender.com/image_product/upload/${id_product}`,
         {
           method: "POST",
           body: formData,
@@ -133,7 +133,7 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
     
     try {
       const response = await fetch(
-        "https://gshopbackend.onrender.com/product/create",
+        "https://gshopbackend-1.onrender.com/product/create",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

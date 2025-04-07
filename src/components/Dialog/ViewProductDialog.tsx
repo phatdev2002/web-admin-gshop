@@ -37,7 +37,7 @@ interface EditProductDialogProps {
 }
 
 export const fetchCategories = async () => {
-  const res = await fetch("https://gshopbackend.onrender.com/category/list");
+  const res = await fetch("https://gshopbackend-1.onrender.com/category/list");
   const result = await res.json();
   const categoryList = result.categories || result.data || result;
   if (!Array.isArray(categoryList)) throw new Error("Invalid category format");
@@ -49,7 +49,7 @@ export const fetchCategories = async () => {
 };
 
 export const fetchSuppliers = async () => {
-  const res = await fetch("https://gshopbackend.onrender.com/supplier/list");
+  const res = await fetch("https://gshopbackend-1.onrender.com/supplier/list");
   const result = await res.json();
   const supplierList = result.suppliers || result.data || result;
   if (!Array.isArray(supplierList)) throw new Error("Invalid supplier format");
@@ -62,7 +62,7 @@ export const fetchSuppliers = async () => {
 
 const fetchProductImages = async (id_product: string) => {
   if (!id_product) return [];
-  const res = await fetch(`https://gshopbackend.onrender.com/image_product/list-images/${id_product}`);
+  const res = await fetch(`https://gshopbackend-1.onrender.com/image_product/list-images/${id_product}`);
   const result = await res.json();
   if (!result.status || !Array.isArray(result.data)) throw new Error("Invalid image format");
 
@@ -74,7 +74,7 @@ const fetchProductImages = async (id_product: string) => {
 const deleteProductImage = async (id_product: string, imageUrl: string) => {
   try {
     const res = await fetch(
-      `https://gshopbackend.onrender.com/image_product/delete-image/${id_product}`,
+      `https://gshopbackend-1.onrender.com/image_product/delete-image/${id_product}`,
       {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -145,7 +145,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
 
     try {
       const uploadResponse = await fetch(
-        `https://gshopbackend.onrender.com/image_product/upload/${id_product}`,
+        `https://gshopbackend-1.onrender.com/image_product/upload/${id_product}`,
         {
           method: "POST",
           body: formData,
@@ -188,7 +188,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
 
   const handleSubmit = async () => {
     try {
-      const endpoint = `https://gshopbackend.onrender.com/product/update/${productToEdit._id}`;
+      const endpoint = `https://gshopbackend-1.onrender.com/product/update/${productToEdit._id}`;
       const response = await fetch(endpoint, {
         method: "PUT",
         headers: {

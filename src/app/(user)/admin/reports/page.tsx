@@ -17,7 +17,7 @@ const ReportPage = () => {
   useEffect(() => {
     const fetchRevenueData = async () => {
       try {
-        const response = await fetch('https://gshopbackend.onrender.com/order/revenue');
+        const response = await fetch('https://gshopbackend-1.onrender.com/order/revenue');
         const result = await response.json();
         if (result.status) {
           setRevenueData({

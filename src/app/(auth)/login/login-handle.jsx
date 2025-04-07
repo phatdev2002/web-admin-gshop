@@ -1,6 +1,7 @@
+
 const loginUser = async (email, password) => {
   try {
-    const response = await fetch("https://gshopbackend.onrender.com/user/login", {
+    const response = await fetch("https://gshopbackend-1.onrender.com/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

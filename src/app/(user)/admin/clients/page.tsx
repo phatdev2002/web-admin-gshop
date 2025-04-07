@@ -12,7 +12,7 @@ import ViewClientDialog from "@/components/Dialog/ViewClientDialog";
 // Fetch API function
 const fetchClients = async () => {
   try {
-    const res = await fetch("https://gshopbackend.onrender.com/user/list");
+    const res = await fetch("https://gshopbackend-1.onrender.com/user/list");
     if (!res.ok) throw new Error("Failed to fetch clients");
     const result = await res.json();
     
