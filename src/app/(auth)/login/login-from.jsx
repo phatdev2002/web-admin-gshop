@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import loginUser from "@/app/(auth)/login/login-handle";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Email không hợp lệ." }),
@@ -137,9 +138,9 @@ const LoginForm = () => {
         <div className="mt-4 text-center">
           <Button 
             variant="link" 
-            //onClick={() => router.push("/forgot-password")} 
+            onClick={() => toast.error("Chức năng này chưa được phát triển.")} 
             className="text-sm text-blue-500">
-            Quên mật khẩu?
+            Quên mật khẩu ?
           </Button>
         </div>
       </form>

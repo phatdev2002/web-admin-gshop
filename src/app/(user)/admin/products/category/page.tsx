@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/ui/DataTable";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Box, Plus, UserSquareIcon } from "lucide-react";
 import AddCategoryDialog from "@/components/Dialog/AddCategoryDialog";
 import EditCategoryDialog from "@/components/Dialog/ViewCategoryDialog";
 import { columns as baseColumns, Category } from "./columns";
 import { toast } from "sonner";
+import Link from "next/link";
 
 async function fetchCategories() {
   try {
@@ -138,7 +139,24 @@ const CategoryPage = () => {
   return (
     <div className={ClassNames}>
       <div className="flex flex-row align-top mb-5 justify-between">
-        <p className="text-lg">{data?.length || 0} thể loại Gundam</p>
+        <p className="bg-white p-2 text-black rounded-sm text-sm flex flex-row ">Thể loại Gundam: {data?.length || 0}</p>
+        <div>
+          <Link href="/admin/products/" className="text-red-600 ">
+            <Button variant="outline" className="mr-2 ">
+              <Box size={16} className="mr-1"/>
+              Xem sản phẩm
+            </Button>
+          </Link>
+          <Link href="/admin/products/supplier"  className="text-green-600">
+            <Button variant="outline" className="">
+              <UserSquareIcon size={16} className="mr-1"  />
+              Nhà cung cấp
+            </Button>
+          </Link>
+        </div>
+        
+      </div>
+      <div className="flex justify-end mb-4">
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => refetch()} className="border-gray-500">
             Làm mới danh sách
@@ -149,7 +167,6 @@ const CategoryPage = () => {
           </Button>
         </div>
       </div>
-
       <DataTable columns={columns} data={data} />
 
       <AddCategoryDialog isOpen={isAddOpen} setIsOpen={setIsAddOpen} onSubmit={handleAddCategory} />

@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/ui/DataTable";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Blocks, Box, Plus } from "lucide-react";
 import AddSupplierDialog from "@/components/Dialog/AddSupplierDialog";
 import { columns } from "./colums";
+import Link from "next/link";
 
 
 // Loại dữ liệu nhà cung cấp
@@ -78,8 +79,24 @@ const SupplierPage = () => {
   return (
     <div>
       <div className="flex flex-row align-top mb-5 justify-between">
-        <p className="text-lg">{data.length} nhà cung cấp</p>
-        <div className="flex gap-2">
+        <p className="bg-white p-2 text-black rounded-sm text-sm flex flex-row ">Nhà cung cấp: {data.length}</p>
+        <div>
+          <Link href="/admin/products/" className="text-red-600 ">
+            <Button variant="outline" className="mr-2 ">
+              <Box size={16} className="mr-1"/>
+              Xem sản phẩm
+            </Button>
+          </Link>
+          <Link href="/admin/products/category"  className="text-blue-600">
+            <Button variant="outline" className="">
+              <Blocks size={16} className="mr-1"  />
+              Loại Gundam
+            </Button>
+          </Link>
+        </div>
+        
+      </div>
+      <div className="flex justify-end mb-4 gap-2">
           <Button variant="outline" onClick={() => refetch()}>
             Làm mới danh sách
           </Button>
@@ -88,7 +105,6 @@ const SupplierPage = () => {
             Thêm nhà cung cấp
           </Button>
         </div>
-      </div>
 
       <DataTable columns={columns} data={data} />
 

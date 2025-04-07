@@ -56,7 +56,7 @@ export default function NewsPage() {
   const getValidThumbnail = (thumbnail?: string) => {
     if (!thumbnail) return "/adas.jpg"; // Ảnh mặc định
     const firstImage = thumbnail.split(",")[0].trim(); // Lấy URL đầu tiên và bỏ khoảng trắng
-    return firstImage.startsWith("http") ? firstImage : "/phong.jpg";
+    return firstImage.startsWith("http") ? firstImage : "/default-thumbnail.jpg";
   };
   
   
@@ -65,7 +65,7 @@ export default function NewsPage() {
     <div>
       {/* Thanh tìm kiếm & Button tạo bài viết */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="bg-gray-500 text-white rounded-sm py-2 px-4 flex flex-row gap-2">{filteredNews.length} bài đăng</h1>
+        <h1 className="bg-white p-2 text-black rounded-sm text-sm flex flex-row ">Tổng bài viết đã đăng: {filteredNews.length}</h1>
 
         <div className="flex gap-4">
           {/* Input tìm kiếm */}

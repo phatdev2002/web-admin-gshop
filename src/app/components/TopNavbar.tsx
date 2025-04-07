@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Bell, Paintbrush2, Palette } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) => void }) {
   interface User {
@@ -95,12 +96,19 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
         </div>
 
         {/* Nút thông báo */}
-        <Bell className="bg-blue-50 rounded-full p-2 w-9 h-9 cursor-pointer hover:bg-blue-100" />
+        <Bell className="bg-blue-50 rounded-full p-2 w-9 h-9 cursor-pointer hover:bg-blue-100"
+        onClick={() => toast.error('Chức năng đang hoàn thiện')}/>
 
         {/* Ảnh đại diện + Tên người dùng */}
         <Link href={user?.role === "admin" ? "/admin/profile" : "/staff/profile"}>
           <div className="flex items-center">
-            <Image src="/img/avt.jpg" alt="avatar" width={40} height={40} className="rounded-full mr-2" />
+            <Image
+              src={user?.role === "staff" ? "/img/avtstaff.jpg" : "/img/avt.jpg"}
+              alt="avatar"
+              width={40}
+              height={40}
+              className="rounded-full mr-2"
+            />
             <p className="font-semibold">{user?.name}</p>
           </div>
         </Link>

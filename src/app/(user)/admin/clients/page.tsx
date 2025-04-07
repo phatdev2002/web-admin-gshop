@@ -77,8 +77,8 @@ const ClientPage = () => {
   return (
     <div>
       <div className="flex flex-row align-top mb-5 justify-between">
-        <p className="bg-gray-500 text-white rounded-sm py-2 px-4 flex flex-row gap-2">
-          {filteredData.length || 0} khách hàng
+        <p className="bg-white p-2 text-black rounded-sm text-sm flex flex-row ">
+          Tổng khách hàng: {filteredData.length || 0}
         </p>
         <div className="flex gap-2">
           <div className="relative">

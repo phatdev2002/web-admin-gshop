@@ -90,8 +90,11 @@ export default function CreateNews() {
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold mb-4">Tạo bài viết mới</h2>
-
+      <div className="flex items-center gap-2 mb-2">
+        <p className="font-semibold">Nhập tiêu đề</p>
+        <p className="text-red-500">*</p>
+      </div>
+      
       {/* Tiêu đề */}
       <input
         type="text"
@@ -100,20 +103,25 @@ export default function CreateNews() {
         onChange={(e) => setTitle(e.target.value)}
         className="border p-2 w-full mb-4 rounded"
       />
-
+      <div className="flex items-center gap-2 mb-2">
+        <p className="font-semibold">Nhập nội dung bài viết</p>
+        <p className="text-red-500">*</p>
+      </div>
       {/* Nội dung */}
       <Editor value={content} onChange={setContent} />
 
       {/* Upload ảnh */}
       <div className="mt-4">
         <p className="font-semibold">Thumbnail</p>
+        <p className="text-sm text-gray-500">Chọn ảnh thumbnail cho bài viết (tùy chọn)</p>
+        {/* Hiển thị thumbnail nếu đã chọn */}
         <input type="file" onChange={(e) => setThumbnail(e.target.files?.[0] || null)} className="mt-2" />
       </div>
 
       {/* Nút tạo bài viết */}
       <button
         onClick={handleSubmit}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded shadow-md hover:bg-blue-600 transition"
+        className="mt-4 px-4 py-2 bg-red-400 text-white rounded shadow-md hover:bg-red-500 transition"
         disabled={loading}
       >
         {loading ? "Đang xử lý..." : "Tạo bài viết"}

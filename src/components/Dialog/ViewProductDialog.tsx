@@ -158,7 +158,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
         setSelectedImages([]); // Xóa danh sách ảnh đã chọn
         queryClient.invalidateQueries({ queryKey: ["productImages", id_product] }); // Cập nhật danh sách ảnh
       } else {
-        toast.error(uploadResult.mess || "Tải ảnh lên thất bại!");
+        console.log(uploadResult.mess || "Tải ảnh lên thất bại!");
       }
     } catch (error) {
       console.error("Lỗi khi tải ảnh lên:", error);

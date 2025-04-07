@@ -115,12 +115,14 @@ const OverviewPage = () => {
       <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-[7fr_3fr]">
         <section className="grid grid-cols-1 gap-4 transition-all">
           <CardContent>
-            <p className="p-4 font-semibold">Thống kê doanh thu</p>
+            <p className="font-semibold">Thống kê doanh thu</p>
+            <p className="pb-4 text-xs text-gray-500">Doanh thu trong năm nay</p>
             {revenueData.length > 0 ? <LineChart data={revenueData} /> : <p className="text-center p-4">Không có dữ liệu</p>}
           </CardContent>
 
           <CardContent>
-            <p className="p-4 font-semibold">Thống kê đơn đặt hàng</p>
+            <p className=" font-semibold">Thống kê đơn đặt hàng</p>
+            <p className="pb-4 text-xs text-gray-500">Chờ gọi API ( HIỆN ĐANG CODE CỨNG )</p>
             <BarChart />
           </CardContent>
         </section>
@@ -129,6 +131,7 @@ const OverviewPage = () => {
           <CardContent>
             <section>
               <p className="font-semibold">Xếp hạng 10 bộ Gundam bán chạy nhất</p>
+              <p className="pb-4 text-xs text-gray-500">Chờ gọi API ( HIỆN ĐANG CODE CỨNG )</p>
             </section>
             {gundamData.map((d, i) => (
               <TenGundamCard key={i} name={d.name} amount={d.amount} />

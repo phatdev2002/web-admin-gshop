@@ -81,11 +81,13 @@ const ReportPage = () => {
       <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-[7fr_3fr]">
         <section className="grid grid-cols-1 gap-4 transition-all">
           <CardContent>
-            <p className="p-2 font-semibold">Thống kê doanh thu</p>
+            <p className=" font-semibold">Thống kê doanh thu</p>
+            <p className="pb-4 text-xs text-gray-500">Doanh thu trong năm nay</p>
             <LineChart data={Object.entries(revenueData.dailyRevenueLast7Days).reverse().map(([date, value]) => ({ name: date, total: Number(value) }))} />
           </CardContent>
           <CardContent>
-            <p className="p-2 font-semibold">Thống kê đơn đặt hàng</p>
+            <p className=" font-semibold">Thống kê đơn đặt hàng</p>
+            <p className="pb-4 text-xs text-gray-500">Chờ gọi API ( HIỆN ĐANG CODE CỨNG )</p>
             <BarChart />
           </CardContent>
         </section>
@@ -93,6 +95,7 @@ const ReportPage = () => {
           <CardContent>
             <section>
               <p className="font-semibold">Tỉ lệ bán chạy của các loại Gundam</p>
+              <p className="pb-4 text-xs text-gray-500">Chờ gọi API ( HIỆN ĐANG CODE CỨNG )</p>
             </section>
             <PieChartComponent piedata={dataWithPercentage.map(({ label, ...rest }) => ({ name: label, ...rest }))} />
           </CardContent>

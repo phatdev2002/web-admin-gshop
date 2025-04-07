@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { DataTable } from "@/components/ui/DataTable";
 import { Button } from "@/components/ui/button";
-import { Search, Plus, Blocks, UserSquareIcon, EditIcon, Box } from "lucide-react";
+import { Search, Plus, Blocks, UserSquareIcon, EditIcon} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -228,17 +228,23 @@ const ProductPage = () => {
 
   return (
     <div>
-      <div className="flex flex-row align-top mb-6 justify-between ">
-        <p className="bg-gray-500 text-white rounded-sm py-2 px-4 flex flex-row gap-2"><Box/>{filteredProducts.length} sản phẩm </p>
-        <div className="flex gap-2 rounded-xl">
-          <Button variant="outline" onClick={() => refetchProducts()} className="">
-            Làm mới danh sách
-          </Button>
-          <Button variant="destructive" onClick={() => setIsAddDialogOpen(true)} className=" ">
-            <Plus size={16} className="mr-1" />
-            Thêm sản phẩm
-          </Button>
+      <div className="flex flex-row align-top mb-4 justify-between ">
+        <p className="bg-white p-2 text-black rounded-sm text-sm flex flex-row ">Tổng sản phẩm: {filteredProducts.length}</p>
+        <div>
+          <Link href="/admin/products/category" className="text-blue-600 ">
+            <Button variant="outline" className="mr-2 ">
+              <Blocks size={16} className="mr-1"/>
+              Loại Gundam
+            </Button>
+          </Link>
+          <Link href="/admin/products/supplier"  className="text-green-600">
+            <Button variant="outline" className="">
+              <UserSquareIcon size={16} className="mr-1"  />
+              Nhà cung cấp
+            </Button>
+          </Link>
         </div>
+        
       </div>
 
       <div className="flex flex-row justify-between mb-4">
@@ -256,18 +262,16 @@ const ProductPage = () => {
           </form>
         </div>
         <div>
-          <Link href="/admin/products/category">
-            <Button variant="outline" className="mr-2 border ">
-              <Blocks size={16} className="mr-1" />
-              Loại Gundam
+          <div className="flex gap-2 rounded-xl">
+            <Button variant="outline" onClick={() => refetchProducts()} className="">
+              Làm mới danh sách
             </Button>
-          </Link>
-          <Link href="/admin/products/supplier">
-            <Button variant="outline" className="border ">
-              <UserSquareIcon size={16} className="mr-1"  />
-              Nhà cung cấp
+            <Button variant="destructive" onClick={() => setIsAddDialogOpen(true)} className="hover:bg-red-600">
+              <Plus size={16} />
+              Thêm sản phẩm
             </Button>
-          </Link>
+          </div>
+          
         </div>
       </div>
 

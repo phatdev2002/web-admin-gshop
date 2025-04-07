@@ -12,7 +12,7 @@ const OverviewPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch("https://gshopbackend.onrender.com/order/list");
+        const response = await fetch("https://gshopbackend-1.onrender.com/order/list");
         const result = await response.json();
         if (result.status) {
           const total = result.data.length;

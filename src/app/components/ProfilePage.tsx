@@ -5,6 +5,7 @@ import Image from "next/image";
 import { CardContent } from "@/components/ui/Card";
 import ChangePass from "@/components/Dialog/ChangePassDialog";
 import { Button } from "@headlessui/react";
+import { toast } from "sonner";
 
 export interface UserProfile {
   name: string;
@@ -26,6 +27,8 @@ const ProfilePage = () => {
   const [isChangePassOpen, setIsChangePassOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -41,6 +44,7 @@ const ProfilePage = () => {
 
   const handleChangeAvatar = () => {
     console.log("Change avatar clicked!");
+    toast.error("Chức năng này đang được phát triển!");
   };
 
   const handleChangePassword = () => {
@@ -48,6 +52,15 @@ const ProfilePage = () => {
   };
 
   const handleUpdateProfile = async () => {
+    // Kiểm tra số điện thoại có đúng 9 chữ số không
+    const phoneRegex = /^[0-9]{9}$/;
+    if (!phoneRegex.test(user.phone_number)) {
+      setPhoneError("Số điện thoại phải gồm đúng 9 chữ số.");
+      return;
+    } else {
+      setPhoneError(null); // Xóa lỗi nếu hợp lệ
+    }
+  
     setIsLoading(true);
     setMessage(null);
   
@@ -69,13 +82,8 @@ const ProfilePage = () => {
       if (response.ok) {
         setMessage({ type: "success", text: "Cập nhật hồ sơ thành công!" });
         localStorage.setItem("user", JSON.stringify(user));
-      
-        // Kích hoạt sự kiện storage để các component khác nhận thay đổi
         window.dispatchEvent(new Event("storage"));
-      
-        setTimeout(() => {
-          setMessage(null);
-        }, 3000);
+        setTimeout(() => setMessage(null), 3000);
       } else {
         setMessage({ type: "error", text: result.message || "Cập nhật thất bại!" });
       }
@@ -86,6 +94,7 @@ const ProfilePage = () => {
       setIsLoading(false);
     }
   };
+  
   
 
   const getAvatar = () => {
@@ -157,11 +166,18 @@ const ProfilePage = () => {
             <input
               id="phone"
               type="text"
-              className="w-full p-2 border rounded mt-1 bg-blue-50"
+              className={`w-full p-2 border rounded mt-1 bg-blue-50 ${
+                phoneError ? "border-red-500" : ""
+              }`}
               value={user.phone_number}
-              onChange={(e) => setUser({ ...user, phone_number: e.target.value })}
+              onChange={(e) => {
+                setUser({ ...user, phone_number: e.target.value });
+                setPhoneError(null); // Clear error khi đang gõ lại
+              }}
             />
+            {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
           </div>
+
           <div className="mb-4">
             <label htmlFor="email" className="block mb-1 font-medium">
               Email

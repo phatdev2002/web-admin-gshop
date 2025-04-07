@@ -73,7 +73,7 @@ export default function StaffPage() {
   return (
     <div>
       <div className="flex flex-row align-top mb-5 justify-between">
-        <h1 className="bg-gray-500 text-white rounded-sm py-2 px-4 flex flex-row gap-2">{filteredEmployees.length} nhân viên</h1>
+        <h1 className="bg-white p-2 text-black rounded-sm text-sm flex flex-row ">Tổng nhân viên: {filteredEmployees.length}</h1>
         <div className="flex items-center space-x-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />

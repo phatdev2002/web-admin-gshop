@@ -161,22 +161,23 @@ const OrderPage = () => {
   return (
     <div>
       <div className="flex flex-row align-top mb-5 justify-between">
-        <p className="bg-gray-500 text-white rounded-sm py-2 px-4 flex flex-row gap-2">
-          {filteredOrders.length || 0} đơn hàng
+        <p className="bg-white p-2 text-black rounded-sm text-sm flex flex-row">
+          Tổng đơn hàng: {filteredOrders.length || 0}
         </p>
-        <div className="flex gap-2">
+        
+      </div>
+      <div className="flex gap-2 justify-between mb-4">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Tìm kiếm theo ID, khách hàng hoặc địa chỉ"
+              placeholder="Tìm kiếm theo ID, tên khách hàng hoặc địa chỉ"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 bg-white w-72"
+              className="pl-8 bg-white w-96"
             />
           </div>
-          <Button variant="outline" onClick={fetchOrders}>Làm mới</Button>
+          <Button variant="outline" onClick={fetchOrders}>Làm mới danh sách</Button>
         </div>
-      </div>
 
       {loading && <p>Đang tải dữ liệu...</p>}
       {error && <p className="text-red-500">{error}</p>}

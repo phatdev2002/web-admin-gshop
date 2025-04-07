@@ -68,7 +68,7 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
 
     return (
         <div>
-            <Button className="bg-red-500 text-white" onClick={handleOpen}>
+            <Button variant={'destructive'} onClick={handleOpen}>
                 <Plus size={16} className="mr-1" /> Thêm nhân viên
             </Button>
 
