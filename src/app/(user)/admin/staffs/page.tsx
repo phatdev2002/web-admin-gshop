@@ -70,6 +70,10 @@ export default function StaffPage() {
     employee.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const formatPhoneNumber = (phone: string) => {
+    return phone.replace(/\D/g, '').replace(/(\d{3})(?=\d)/g, '$1 ');
+  };
+
   return (
     <div>
       <div className="flex flex-row align-top mb-5 justify-between">
@@ -108,7 +112,8 @@ export default function StaffPage() {
                 <Mail className="mr-2" /> {employee.email}
               </p>
               <p className="flex items-center justify-center text-gray-700">
-                <Phone className="mr-2" /> {employee.phone_number}
+                <Phone className="mr-2" /> {formatPhoneNumber(employee.phone_number)}
+
               </p>
               <div className="absolute top-2 right-2 flex space-x-2">
                 <Button
