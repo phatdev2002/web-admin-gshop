@@ -64,7 +64,7 @@ const OrderPage = () => {
           id_address: order.id_address,
           total_price: order.total_price,
           shipping_fee: order.shipping_fee,
-          amount: order.total_price + order.shipping_fee,
+          amount: order.total_price,
           order_date: order.date,
           status: order.status,
         }));
