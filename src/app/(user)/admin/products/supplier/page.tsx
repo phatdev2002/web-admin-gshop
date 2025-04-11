@@ -7,16 +7,19 @@ import { Blocks, Box, Plus } from "lucide-react";
 import AddSupplierDialog from "@/components/Dialog/AddSupplierDialog";
 import { columns } from "./colums";
 import Link from "next/link";
+import EditSupplierDialog from "@/components/Dialog/EditSupplierDialog";
 
 
 // Loại dữ liệu nhà cung cấp
 export type Supplier = {
+  _id: string;
   supplier: string;
   email: string;
   sdt: string;
   investor_name: string;
   cooperation_day: string;
   address: string;
+  onEdit?: (supplier: Supplier) => void;
 };
 
 
@@ -39,6 +42,7 @@ const fetchSuppliers = async (): Promise<Supplier[]> => {
     };
 
     return supplierList.map((item: { 
+      _id: string;
       name: string; 
       email?: string; 
       phone_number?: string; 
@@ -46,6 +50,7 @@ const fetchSuppliers = async (): Promise<Supplier[]> => {
       cooperation_date?: string; 
       address?: string; 
     }) => ({
+      _id: item._id,
       supplier: item.name,
       email: item.email || "-",
       sdt: item.phone_number || "-",
@@ -60,21 +65,31 @@ const fetchSuppliers = async (): Promise<Supplier[]> => {
 };
 
 const SupplierPage = () => {
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [editData, setEditData] = useState<Supplier | null>(null);
+
   const { data = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["suppliers"],
     queryFn: fetchSuppliers,
   });
 
   const [isOpen, setIsOpen] = useState(false);
+  // In SupplierPage component
+  const dataWithAction = data.map((item) => ({
+    ...item,
+    onEdit: (supplier: Supplier) => {
+      setEditData(supplier);
+      setIsOpenEdit(true);
+    },
+  }));
+  
 
-  // Xử lý thêm nhà cung cấp mới (Chưa tích hợp API)
-  const handleAddSupplier = (newSupplier: Supplier) => {
-    console.log("New Supplier:", newSupplier);
-    setIsOpen(false);
-  };
+
+  
 
   if (isLoading) return <p>Đang tải dữ liệu...</p>;
   if (isError) return <p className="text-red-500">Không thể tải danh sách nhà cung cấp.</p>;
+  
 
   return (
     <div>
@@ -106,10 +121,27 @@ const SupplierPage = () => {
           </Button>
         </div>
 
-      <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={dataWithAction} />
+
 
       {/* Dialog thêm nhà cung cấp */}
-      <AddSupplierDialog isOpen={isOpen} setIsOpen={setIsOpen} onSubmit={handleAddSupplier} />
+        <AddSupplierDialog
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          onSubmit={() => {
+            refetch();
+          }}
+        />
+        <EditSupplierDialog
+          isOpen={isOpenEdit}
+          setIsOpen={setIsOpenEdit}
+          initialData={editData || undefined}
+          onSubmit={() => {
+            refetch();
+          }}
+        />
+
+
     </div>
   );
 };
