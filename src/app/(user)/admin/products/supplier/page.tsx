@@ -25,15 +25,28 @@ export type Supplier = {
 
 
 // Fetch API function
-const fetchSuppliers = async (): Promise<Supplier[]> => {
-  try {
-    const res = await fetch("https://gshopbackend-1.onrender.com/supplier/list");
-    if (!res.ok) throw new Error("Failed to fetch suppliers");
+  const fetchSuppliers = async (): Promise<Supplier[]> => {
+    try {
+      const res = await fetch("https://gshopbackend-1.onrender.com/supplier/list");
+      if (!res.ok) throw new Error("Failed to fetch suppliers");
 
-    const result = await res.json();
-    const supplierList = result.supplier || result.data || result;
+      const result = await res.json();
 
-    if (!Array.isArray(supplierList)) throw new Error("Unexpected API format");
+  console.log("Kết quả từ API:", result); // debug ở đây
+
+  let supplierList = [];
+
+  if (Array.isArray(result)) {
+    supplierList = result;
+  } else if (Array.isArray(result.supplier)) {
+    supplierList = result.supplier;
+  } else if (Array.isArray(result.data)) {
+    supplierList = result.data;
+  } else {
+    console.warn("API không trả về mảng hợp lệ:", result);
+    return [];
+  }
+
 
     // Format date for cooperation_day
     const formatDate = (date: string) => {
