@@ -1,16 +1,19 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { Dialog, DialogContent, DialogHeader, DialogFooter } from "@/components/ui/Dialog";
+import { Dialog, DialogHeader} from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "sonner";
-
+import { DataTable } from "@/components/ui/DataTable";
+import { columns } from "@/app/(user)/admin/orders/columns";
 
 const API_ORDER_DETAIL = "https://gshopbackend-1.onrender.com/detail_order/list-by-order/";
 const API_PRODUCTS = "https://gshopbackend-1.onrender.com/product/list";
 const API_USERS = "https://gshopbackend-1.onrender.com/user/list";
 const API_UPDATE_ORDER = "https://gshopbackend-1.onrender.com/order/update/";
+
+
 
 interface Order {
   id: string;
@@ -22,13 +25,16 @@ interface Order {
   amount: number;
   order_date: string;
   status: string;
+  address?: string; // Make address optional if it's not always provided
 }
+
 
 interface OrderDetail {
   id_product: string;
   product_name: string;
   quantity: number;
   unit_price: number;
+  product_image: string;
 }
 
 interface User {
@@ -89,19 +95,29 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ open, onClose, order,
   };
 
   // Định nghĩa fetchOrderDetails với useCallback
-const fetchOrderDetails = useCallback(async (orderId: string) => {
+  const fetchOrderDetails = useCallback(async (orderId: string) => {
   setLoading(true);
   setError("");
   try {
     const response = await axios.get(API_ORDER_DETAIL + orderId);
     if (response.data.status) {
-      const details = response.data.data.map((item: { id_product: string; quantity: number; unit_price: number }) => ({
-        id_product: item.id_product,
-        product_name: products[item.id_product] || "Không xác định",
-        quantity: item.quantity,
-        unit_price: item.unit_price,
+      const details = await Promise.all(response.data.data.map(async (item: { id_product: string; quantity: number; unit_price: number; address: string }) => {
+        const imageResponse = await axios.get(`https://gshopbackend-1.onrender.com/image_product/list-images/${item.id_product}`);
+        const imageUrl = imageResponse.data.status && Array.isArray(imageResponse.data.data) && imageResponse.data.data.length > 0
+          ? imageResponse.data.data[0].image[1]
+          : '';
+        return {
+          id_product: item.id_product,
+          product_name: products[item.id_product] || "Không xác định",
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          product_image: imageUrl,
+          address: item.address,
+        };
       }));
+
       setOrderDetails(details);
+
     } else {
       setOrderDetails([]);
     }
@@ -111,13 +127,15 @@ const fetchOrderDetails = useCallback(async (orderId: string) => {
   } finally {
     setLoading(false);
   }
-}, [products]); // Chỉ re-create khi `products` thay đổi
+}, [products]);
+
+  
+  
 
 // Sử dụng trong useEffect
 useEffect(() => {
   if (order && open) {
     fetchOrderDetails(order.id);
-    fetchAddressDetail(order.id_address);
     fetchPaymentDetail(order.id_payment);
     setStatus(order.status);
   }
@@ -146,24 +164,10 @@ useEffect(() => {
     }
   };
   
-  const API_ADDRESS = "https://gshopbackend-1.onrender.com/address/detail/";
 const API_PAYMENT = "https://gshopbackend-1.onrender.com/payment_method/detail/";
 
-const [addressDetail, setAddressDetail] = useState<string>("");
 const [paymentDetail, setPaymentDetail] = useState<string>("");
 
-const fetchAddressDetail = async (id_address: string) => {
-  try {
-    const response = await axios.get(`${API_ADDRESS}${id_address}`);
-    if (response.data.status) {
-      const { detail, commune, district, province } = response.data.data;
-      setAddressDetail(`${detail}, ${commune}, ${district}, ${province}`);
-    }
-  } catch (error) {
-    console.error("Lỗi khi lấy chi tiết địa chỉ:", error);
-    setAddressDetail("Lỗi khi tải địa chỉ");
-  }
-};
 
 const fetchPaymentDetail = async (id_payment: string) => {
   try {
@@ -181,13 +185,10 @@ const fetchPaymentDetail = async (id_payment: string) => {
 useEffect(() => {
   if (order) {
     fetchOrderDetails(order.id);
-    fetchAddressDetail(order.id_address);
     fetchPaymentDetail(order.id_payment);
     setStatus(order.status);
   }
 }, [order, open]);
-
-
   useEffect(() => {
     fetchProducts();
     fetchUsers();
@@ -202,7 +203,7 @@ useEffect(() => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <div className="bg-gray-200 rounded-lg min-w-[800px] w-fit max-h-[90vh] overflow-y-auto p-6">
         <DialogHeader>
           <div className="flex justify-center mb-4">Chi tiết đơn hàng</div>
         </DialogHeader>
@@ -213,25 +214,20 @@ useEffect(() => {
               <p className="pb-5"><strong>Mã đơn hàng:</strong> {order.id}</p>
 
               <p><strong>Khách hàng:</strong> {usersList[order.id_user]?.name || "Không xác định"}</p>
-              <p><strong>Số điện thoại:</strong> {usersList[order.id_user]?.phone_number || "Không có số điện thoại"}</p>
-              <p><strong>Địa chỉ:</strong> {addressDetail}</p>
+              <p><strong>Địa chỉ:</strong> {order?.address || "Không có địa chỉ"}</p>
+
 
               <h3 className="mt-4 mb-2 font-semibold">Sản phẩm trong đơn hàng:</h3>
-                {loading ? (
+              {loading ? (
                   <p>Đang tải chi tiết đơn hàng...</p>
                 ) : error ? (
                   <p className="text-red-500">{error}</p>
                 ) : orderDetails.length > 0 ? (
-                  <ul className="list-disc pl-5">
-                    {orderDetails.map((item, index) => (
-                      <li key={index}>
-                        <strong>{item.product_name}</strong> - {item.quantity} x {item.unit_price.toLocaleString()} VND
-                      </li>
-                    ))}
-                  </ul>
+                  <DataTable columns={columns} data={orderDetails} />
                 ) : (
                   <p>Không có sản phẩm nào.</p>
                 )}
+
               <p className="pt-4"><strong>Phương thức thanh toán:</strong> {paymentDetail} </p>
               <p><strong>Phí vận chuyển:</strong> {order.shipping_fee.toLocaleString()} VND</p>
               <p><strong>Tổng tiền:</strong> {order.amount.toLocaleString()} VND</p>
@@ -264,10 +260,10 @@ useEffect(() => {
 
         
 
-        <DialogFooter>
-          <Button onClick={onClose}>Đóng</Button>
-        </DialogFooter>
-      </DialogContent>
+        <div className="absolute top-10 right-72">
+          <Button onClick={onClose} className="bg-gray-200 text-red-500 hover:bg-gray-300">x</Button>
+        </div>
+      </div>
     </Dialog>
   );
 };
