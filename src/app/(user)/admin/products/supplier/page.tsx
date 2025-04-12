@@ -88,13 +88,16 @@ const SupplierPage = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   // In SupplierPage component
-  const dataWithAction = data.map((item) => ({
-    ...item,
-    onEdit: (supplier: Supplier) => {
-      setEditData(supplier);
-      setIsOpenEdit(true);
-    },
-  }));
+  const dataWithAction = Array.isArray(data)
+  ? data.map((item) => ({
+      ...item,
+      onEdit: (supplier: Supplier) => {
+        setEditData(supplier);
+        setIsOpenEdit(true);
+      },
+    }))
+  : [];
+
   
 
 
