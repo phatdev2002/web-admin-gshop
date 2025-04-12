@@ -138,9 +138,11 @@ const LoginForm = () => {
         <div className="mt-4 text-center">
           <Button 
             variant="link" 
-            onClick={() => toast.error("Chức năng này chưa được phát triển.")} 
-            className="text-sm text-blue-500">
+            onClick={() => toast.error("Liên hệ Admin để lấy mật khẩu")} 
+            className="text-sm text-blue-500"
+            type="button">
             Quên mật khẩu ?
+            
           </Button>
         </div>
       </form>

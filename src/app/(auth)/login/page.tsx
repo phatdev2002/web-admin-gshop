@@ -9,7 +9,7 @@ const LoginPage = () => {
       <div
         className="w-3/5 h-full bg-cover bg-center"
         style={{
-          backgroundImage: "url('/login/Banner.png')",
+          backgroundImage: "url('/login/Bannerfullhd.jpeg')",
         }}
       ></div>
 
