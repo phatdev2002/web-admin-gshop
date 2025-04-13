@@ -137,6 +137,9 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
   return (
     <div className="">
       <Dialog open={isOpen} onOpenChange={onClose}>
+        <div className="p-5">
+
+        
         <div className="flex justify-center mb-5"><p className="font-semibold">Thông tin khách hàng</p></div>
         <DialogContent>
           {isLoading ? (
@@ -206,7 +209,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                               <tr key={product._id} className="bg-gray-100">
                                 <td className="flex justify-center" colSpan={1}>
                                   <Image
-                                      src={productImages[product.id_product]?.[1] || "/phong.jpg"}
+                                      src={productImages[product.id_product]?.[1] || "/default-thumbnail.jpg"}
                                       alt="Product"
                                       width={80}
                                       height={80}
@@ -241,7 +244,9 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
             Đóng
           </Button>
         </div>
+        </div>
       </Dialog>
+      
     </div>
   );
 };

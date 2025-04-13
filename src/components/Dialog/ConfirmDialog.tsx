@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
+import { Dialog, DialogHeader} from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/button";
 
 interface ConfirmDialogProps {
@@ -13,9 +13,9 @@ interface ConfirmDialogProps {
 export default function ConfirmDialog({ title, message, onConfirm, onCancel }: ConfirmDialogProps) {
   return (
     <Dialog open={true} onOpenChange={onCancel}>
-      <DialogContent>
+      <div className="p-5">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <p>{title}</p>
         </DialogHeader>
         <p className="text-gray-700">{message}</p>
         <div className="flex justify-end mt-4">
@@ -26,7 +26,7 @@ export default function ConfirmDialog({ title, message, onConfirm, onCancel }: C
             Xác nhận
           </Button>
         </div>
-      </DialogContent>
+      </div>
     </Dialog>
   );
 }

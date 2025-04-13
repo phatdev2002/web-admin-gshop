@@ -203,7 +203,7 @@ useEffect(() => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <div className="bg-gray-200 rounded-lg min-w-[800px] w-fit max-h-[90vh] overflow-y-auto p-6">
+      <div className="bg-gray-200 rounded-lg min-w-[800px] w-96 max-h-[90vh] overflow-y-auto p-6">
         <DialogHeader>
           <div className="flex justify-center mb-4">Chi tiết đơn hàng</div>
         </DialogHeader>
@@ -211,7 +211,7 @@ useEffect(() => {
         {order && (
           <div>
             <div>
-              <p className="pb-5"><strong>Mã đơn hàng:</strong> {order.id}</p>
+              <p className="pb-4"><strong>Mã đơn hàng:</strong> {order.id}</p>
 
               <p><strong>Khách hàng:</strong> {usersList[order.id_user]?.name || "Không xác định"}</p>
               <p><strong>Địa chỉ:</strong> {order?.address || "Không có địa chỉ"}</p>
@@ -232,7 +232,7 @@ useEffect(() => {
               <p><strong>Phí vận chuyển:</strong> {order.shipping_fee.toLocaleString()} VND</p>
               <p><strong>Tổng tiền:</strong> {order.amount.toLocaleString()} VND</p>
               
-              <p className="pt-5"><strong>Ngày đặt hàng:</strong> {order.order_date}</p>
+              <p className="pt-4"><strong>Ngày đặt hàng:</strong> {order.order_date}</p>
             </div>
 
             {/* Thay đổi trạng thái đơn hàng */}

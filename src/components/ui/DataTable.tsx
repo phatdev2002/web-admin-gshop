@@ -47,7 +47,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   });
 
   const totalPages = table.getPageCount();
-  const currentPage = table.getState().pagination.pageIndex + 1;
 
   return (
     <div>
@@ -55,6 +54,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       <div className="rounded-xl border bg-white">
         <Table>
           <TableHeader>
+
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -73,6 +73,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                 ))}
               </TableRow>
             ))}
+
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
@@ -104,43 +105,120 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         </Button>
 
         <div className="flex space-x-2">
-          {/* Hiển thị trang đầu tiên nếu trang hiện tại cách xa đầu */}
-          {currentPage > 3 && (
+          {totalPages <= 4 ? (
+            // Hiển thị toàn bộ khi tổng trang ≤ 4
+            Array.from({ length: totalPages }, (_, i) => (
+              <Button
+                key={i}
+                variant="outline"
+                size="sm"
+                onClick={() => table.setPageIndex(i)}
+                className={pageIndex === i ? "bg-red-500 text-white" : ""}
+              >
+                {i + 1}
+              </Button>
+            ))
+          ) : (
             <>
-              <Button variant="outline" size="sm" onClick={() => table.setPageIndex(0)}>
+              {/* Trang đầu tiên */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.setPageIndex(0)}
+                className={pageIndex === 0 ? "bg-red-500 text-white" : ""}
+              >
                 1
               </Button>
-              <span className="px-2 text-gray-500">...</span>
-            </>
-          )}
 
-          {/* Hiển thị 3 trang trước và sau trang hiện tại */}
-          {Array.from({ length: totalPages }, (_, index) => {
-            if (index >= currentPage - 2 && index <= currentPage + 2) {
-              return (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => table.setPageIndex(index)}
-                  className={currentPage === index + 1 ? "bg-red-500 text-white" : ""}
-                >
-                  {index + 1}
-                </Button>
-              );
-            }
-          })}
+              {/* Trang 2 và 3 nếu đang ở đầu */}
+              {pageIndex <= 1 && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.setPageIndex(1)}
+                    className={pageIndex === 1 ? "bg-red-500 text-white" : ""}
+                  >
+                    2
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.setPageIndex(2)}
+                    className={pageIndex === 2 ? "bg-red-500 text-white" : ""}
+                  >
+                    3
+                  </Button>
+                  <span className="px-2 text-gray-500">...</span>
+                </>
+              )}
 
-          {/* Hiển thị trang cuối cùng nếu trang hiện tại cách xa cuối */}
-          {currentPage < totalPages - 2 && (
-            <>
-              <span className="px-2 text-gray-500">...</span>
-              <Button variant="outline" size="sm" onClick={() => table.setPageIndex(totalPages - 1)}>
+              {/* Ở giữa */}
+              {pageIndex > 1 && pageIndex < totalPages - 2 && (
+                <>
+                  <span className="px-2 text-gray-500">...</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.setPageIndex(pageIndex - 1)}
+                  >
+                    {pageIndex}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.setPageIndex(pageIndex)}
+                    className="bg-red-500 text-white"
+                  >
+                    {pageIndex + 1}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.setPageIndex(pageIndex + 1)}
+                  >
+                    {pageIndex + 2}
+                  </Button>
+                  <span className="px-2 text-gray-500">...</span>
+                </>
+              )}
+
+              {/* Ở gần cuối */}
+              {pageIndex >= totalPages - 2 && (
+                <>
+                  <span className="px-2 text-gray-500">...</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.setPageIndex(totalPages - 3)}
+                    className={pageIndex === totalPages - 3 ? "bg-red-500 text-white" : ""}
+                  >
+                    {totalPages - 2}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.setPageIndex(totalPages - 2)}
+                    className={pageIndex === totalPages - 2 ? "bg-red-500 text-white" : ""}
+                  >
+                    {totalPages - 1}
+                  </Button>
+                </>
+              )}
+
+              {/* Trang cuối */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.setPageIndex(totalPages - 1)}
+                className={pageIndex === totalPages - 1 ? "bg-red-500 text-white" : ""}
+              >
                 {totalPages}
               </Button>
             </>
           )}
         </div>
+
 
         {/* Nút "Tiếp theo" */}
         <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>

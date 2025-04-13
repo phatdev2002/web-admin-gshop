@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/Dialog";
+import { Dialog} from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -73,7 +73,7 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
             </Button>
 
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent>
+                <div className="p-5">
                     <div className="flex justify-center items-center">
                         <h1 className="mb-2 font-semibold">Thêm nhân viên</h1>
                     </div>
@@ -109,9 +109,9 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
 
                     <div className="flex justify-end space-x-2 mt-4">
                         <Button variant="outline" onClick={() => setOpen(false)}>Hủy</Button>
-                        <Button onClick={handleAddStaff}>Lưu</Button>
+                        <Button onClick={handleAddStaff} className="bg-red-500 hover:bg-red-600 rounded-2xl">Lưu</Button>
                     </div>
-                </DialogContent>
+                </div>
             </Dialog>
         </div>
     );

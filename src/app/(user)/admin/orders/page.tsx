@@ -23,7 +23,10 @@ interface Order {
   status: string;
   address?: string; // Make address optional if it's not always provided
 }
-
+function parseVNDate(dateStr: string): Date {
+  const [day, month, year] = dateStr.split("/");
+  return new Date(`${year}-${month}-${day}`);
+}
 
 const OrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -33,6 +36,15 @@ const OrderPage = () => {
   const [error, setError] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null); // Added state for selected status
+
+  const handleStatusClick = (status: string) => {
+    if (selectedStatus === status) {
+      setSelectedStatus(null); // Reset if the same status is clicked again
+    } else {
+      setSelectedStatus(status); // Set the new selected status
+    }
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -94,12 +106,18 @@ const OrderPage = () => {
     }
   };
 
-  const filteredOrders = orders.filter(
-    (order) =>
+  // Filtering orders by both search and selected status
+  const filteredOrders = orders.filter((order) => {
+    const matchesSearch =
       order.id.toLowerCase().includes(search.toLowerCase()) ||
       (users[order.id_user]?.toLowerCase().includes(search.toLowerCase())) ||
-      (order.address?.toLowerCase().includes(search.toLowerCase()))
-  );
+      (order.address?.toLowerCase().includes(search.toLowerCase()));
+
+    const matchesStatus =
+      !selectedStatus || order.status === selectedStatus; // If no status selected, show all orders
+
+    return matchesSearch && matchesStatus;
+  });
 
   const handleEdit = (order: Order) => {
     setSelectedOrder(order);
@@ -113,7 +131,6 @@ const OrderPage = () => {
           Tổng đơn hàng: {filteredOrders.length || 0}
         </p>
       </div>
-
       <div className="flex gap-2 justify-between mb-4">
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -124,10 +141,48 @@ const OrderPage = () => {
             className="pl-8 bg-white w-96"
           />
         </div>
-        <Button variant="outline" onClick={fetchOrders}>
-          Làm mới danh sách
-        </Button>
+        
       </div>
+    <div className="flex gap-2 justify-between mb-4">
+    <div>
+        <button
+          className={`${
+            selectedStatus === "Đang xử lý" ? "bg-red-500 text-white" : "bg-white text-red-500"
+          }  px-4 py-1 rounded mr-2`}
+          onClick={() => handleStatusClick("Đang xử lý")}
+        >
+          Đang xử lý
+        </button>
+        <button
+          className={`${
+            selectedStatus === "Đang giao hàng" ? "bg-orange-700 text-white" : "bg-white text-orange-500"
+          }  px-4 py-1 rounded mr-2`}
+          onClick={() => handleStatusClick("Đang giao hàng")}
+        >
+          Đang giao hàng
+        </button>
+        <button
+          className={`${
+            selectedStatus === "Đã giao" ? "bg-green-700 text-white" : "bg-white text-green-500"
+          }  px-4 py-1 rounded mr-2`}
+          onClick={() => handleStatusClick("Đã giao")}
+        >
+          Đã giao
+        </button>
+        <button
+          className={`${
+            selectedStatus === "Đã hủy" ? "bg-gray-700 text-white" : "bg-white text-gray-500"
+          }  px-4 py-1 rounded mr-2`}
+          onClick={() => handleStatusClick("Đã hủy")}
+        >
+          Đã hủy
+        </button>
+      </div>
+      <Button variant="outline" onClick={fetchOrders}>
+        Làm mới danh sách
+      </Button>
+    </div>
+      
 
       {loading && <p>Đang tải dữ liệu...</p>}
       {error && <p className="text-red-500">{error}</p>}
@@ -148,8 +203,6 @@ const OrderPage = () => {
         payments={{}}  // tạm thời nếu chưa dùng
         refreshOrders={fetchOrders}
       />
-
-
     </div>
   );
 };
@@ -174,7 +227,21 @@ const columns = (
     cell: ({ getValue }) =>
       `${(getValue() as number).toLocaleString("vi-VN")} đ`,
   },
-  { accessorKey: "order_date", header: "Ngày đặt" },
+  {
+    accessorKey: "order_date",
+    header: "Ngày đặt",
+    cell: ({ getValue }) => {
+      const rawDate = getValue() as string;
+      const date = parseVNDate(rawDate);
+      if (isNaN(date.getTime())) return "Không rõ";
+      return date.toLocaleDateString("vi-VN");
+    },
+    sortingFn: (rowA, rowB, columnId) => {
+      const dateA = parseVNDate(rowA.getValue(columnId));
+      const dateB = parseVNDate(rowB.getValue(columnId));
+      return dateB.getTime() - dateA.getTime(); // Sắp xếp giảm dần
+    },
+  },
   {
     accessorKey: "status",
     header: "Trạng thái",
