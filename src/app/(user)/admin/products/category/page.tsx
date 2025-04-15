@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/ui/DataTable";
 import { Button } from "@/components/ui/button";
-import { Box, Plus, UserSquareIcon } from "lucide-react";
+import { Box, Edit, Plus, UserSquareIcon } from "lucide-react";
 import AddCategoryDialog from "@/components/Dialog/AddCategoryDialog";
 import EditCategoryDialog from "@/components/Dialog/ViewCategoryDialog";
 import { columns as baseColumns, Category } from "./columns";
@@ -122,7 +122,7 @@ const CategoryPage = () => {
               className="text-blue-600 hover:underline"
               onClick={() => handleEditCategory(row.original)}
             >
-              Chỉnh sửa
+              <Edit size={20} className="text-blue-500 cursor-pointer" />
             </button>
           ),
         };
@@ -138,7 +138,7 @@ const CategoryPage = () => {
   const ClassNames = 'text-black';
   return (
     <div className={ClassNames}>
-      <div className="flex flex-row align-top mb-5 justify-between">
+      <div className="flex flex-row align-top mb-4 justify-between">
         <p className="bg-white p-2 text-black rounded-sm text-sm flex flex-row ">Thể loại Gundam: {data?.length || 0}</p>
         <div>
           <Link href="/admin/products/" className="text-red-600 ">

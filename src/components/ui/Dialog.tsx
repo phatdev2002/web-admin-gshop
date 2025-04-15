@@ -12,7 +12,7 @@ export const Dialog: React.FC<DialogProps> = ({ open, children }) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-gray-200 rounded-lg min-w-[800px] w-fit">
+      <div className="bg-white rounded-lg min-w-[500px] w-fit">
         {/* <button onClick={() => onOpenChange(false)} className="absolute top-2 right-2 text-xl">X</button> */}
         {children}
       </div>

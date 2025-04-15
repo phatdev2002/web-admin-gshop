@@ -15,15 +15,15 @@ export const columns: ColumnDef<Category>[] = [
   { accessorKey: "product_count", header: "Số lượng sản phẩm" },
   {
     id: "actions",
-    header: "Hành động",
+    header: "",
     cell: ({ row }) => {
       // Sẽ nhận được function editCategory từ props (hoặc thông qua context/hook) sau này
       return (
         <button
-          className="text-blue-600 hover:underline"
+          className="text-blue-600"
           onClick={() => row.original.handleEdit?.(row.original)}
         >
-          Chỉnh sửa
+          Ch
         </button>
       );
     },

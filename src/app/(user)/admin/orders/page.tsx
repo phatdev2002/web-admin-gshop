@@ -126,10 +126,13 @@ const OrderPage = () => {
 
   return (
     <div>
-      <div className="flex flex-row align-top mb-5 justify-between">
+      <div className="flex flex-row align-top mb-4 justify-between">
         <p className="bg-white p-2 text-black rounded-sm text-sm flex flex-row">
           Tổng đơn hàng: {filteredOrders.length || 0}
         </p>
+        <Button variant="outline" onClick={fetchOrders}>
+          Làm mới danh sách
+        </Button>
       </div>
       <div className="flex gap-2 justify-between mb-4">
         <div className="relative">
@@ -141,9 +144,7 @@ const OrderPage = () => {
             className="pl-8 bg-white w-96"
           />
         </div>
-        
-      </div>
-      <div className="flex gap-2 justify-between mb-4">
+        <div className="flex gap-2 justify-between">
         <div>
           <button
             className={`${
@@ -172,16 +173,16 @@ const OrderPage = () => {
           <button
             className={`${
               selectedStatus === "Đã hủy" ? "bg-gray-700 text-white" : "bg-white text-gray-500"
-            }  px-4 py-1 rounded-2xl mr-2`}
+            }  px-4 py-1 rounded-2xl`}
             onClick={() => handleStatusClick("Đã hủy")}
           >
             Đã hủy {orders.filter(order => order.status === "Đã hủy").length}
           </button>
         </div>
-        <Button variant="outline" onClick={fetchOrders}>
-          Làm mới danh sách
-        </Button>
+        
       </div>
+      </div>
+      
 
       
 

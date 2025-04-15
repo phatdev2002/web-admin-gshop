@@ -13,7 +13,7 @@ import EditSupplierDialog from "@/components/Dialog/EditSupplierDialog";
 // Loại dữ liệu nhà cung cấp
 export type Supplier = {
   _id: string;
-  supplier: string;
+  name: string;
   email: string;
   sdt: string;
   investor_name: string;
@@ -21,6 +21,7 @@ export type Supplier = {
   address: string;
   onEdit?: (supplier: Supplier) => void;
 };
+
 
 
 
@@ -64,7 +65,7 @@ export type Supplier = {
       address?: string; 
     }) => ({
       _id: item._id,
-      supplier: item.name,
+      name: item.name,
       email: item.email || "-",
       sdt: item.phone_number || "-",
       investor_name: item.representative || "-",
@@ -109,7 +110,7 @@ const SupplierPage = () => {
 
   return (
     <div>
-      <div className="flex flex-row align-top mb-5 justify-between">
+      <div className="flex flex-row align-top mb-4 justify-between">
         <p className="bg-white p-2 text-black rounded-sm text-sm flex flex-row ">Nhà cung cấp: {data.length}</p>
         <div>
           <Link href="/admin/products/" className="text-red-600 ">

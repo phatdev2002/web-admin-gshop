@@ -1,10 +1,10 @@
 'use client'
+import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Bell, Paintbrush2, Palette } from "lucide-react";
 import Link from "next/link";
-import { toast } from "sonner";
 import axios from "axios";
 
 export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) => void }) {
@@ -12,22 +12,24 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
     name: string;
     role: string;
     avatar?: string;
+    _id?: string;
   }
 
   interface Order {
     _id: string;
     status: string;
     name: string;
-    // Các thuộc tính khác nếu cần thiết
   }
-  
 
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [newOrdersCount, setNewOrdersCount] = useState(0);
+  const [unprocessedOrders, setUnprocessedOrders] = useState<Order[]>([]);
+  const [showNotificationPanel, setShowNotificationPanel] = useState(false);
   const pathname = usePathname();
   const colorInputRef = useRef<HTMLInputElement | null>(null);
-  const handledOrderIdsRef = useRef<string[]>([]); // lưu các ID đơn hàng đã xử lý thông báo
+  const handledOrderIdsRef = useRef<string[]>([]);
 
   const getPageTitle = () => {
     switch (pathname) {
@@ -54,11 +56,33 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+
+      // Fetch user details from the API using user ID
+      if (parsedUser._id) {
+        axios
+          .get(`https://gshopbackend-1.onrender.com/user/detail_user?_id=${parsedUser._id}`)
+          .then((response) => {
+            if (response.data.status) {
+              setUser((prevUser) => ({
+                ...prevUser,
+                avatar: response.data.data.avatar,
+                name: response.data.data.name,
+                role: prevUser?.role || "", // Ensure role is always defined
+              }));
+            }
+          })
+          .catch((err) => {
+            console.error("Error fetching user details:", err);
+          });
+      }
     }
   }, []);
 
   useEffect(() => {
+    if (!user) return;
+
     const fetchUnprocessedOrders = async () => {
       try {
         const res = await axios.get("https://gshopbackend-1.onrender.com/order/list");
@@ -67,37 +91,16 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
         const unprocessedOrders = orders.filter(
           (order: Order) => order.status === "Đang xử lý"
         );
-        
+
         const newUnseen = unprocessedOrders.filter(
           (order: Order) => !handledOrderIdsRef.current.includes(order._id)
         );
+
         if (newUnseen.length > 0) {
           setNewOrdersCount(newUnseen.length);
-          toast(
-            <>
-              <Bell className="inline-block w-5 h-5 mr-2" />
-              Có {newUnseen.length} đơn hàng chưa xử lý!
-            </>,
-            {
-              position: "top-right", // Đặt thông báo ở vị trí top
-              duration: 5000, // Thời gian hiển thị thông báo (tùy chỉnh)
-              icon: null, // Bạn có thể ẩn icon mặc định nếu cần
-              style: {
-                backgroundColor: "#fff", 
-                color: "#ff4d4f",
-                borderRadius: "8px", // Bo góc
-                padding: "12px", // Khoảng cách trong thông báo
-                marginTop: "40px", // Thêm khoảng cách phía trên
-              },
-            }
-          );
-          
-          
+          setUnprocessedOrders(unprocessedOrders);
         }
-        
-        
 
-        // Cập nhật danh sách đã xử lý
         handledOrderIdsRef.current = unprocessedOrders.map((order: Order) => order._id);
       } catch (err) {
         console.error("Lỗi khi lấy danh sách đơn hàng:", err);
@@ -105,9 +108,14 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
     };
 
     fetchUnprocessedOrders();
-    const interval = setInterval(fetchUnprocessedOrders, 15000);
+    const interval = setInterval(fetchUnprocessedOrders, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user, router, newOrdersCount]);
+
+  const handleBellClick = () => {
+    setShowNotificationPanel(!showNotificationPanel);
+    setNewOrdersCount(0);  // Reset the notification count when the bell is clicked
+  };
 
   const handleChangeColor = (color: string) => {
     setBgColor(color);
@@ -160,44 +168,45 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
         <div className="relative">
           <Bell
             className="bg-blue-50 rounded-full p-2 w-9 h-9 cursor-pointer hover:bg-blue-100"
-            onClick={() => {
-              if (newOrdersCount > 0) {
-                toast(
-                  <>
-                    <Bell className="inline-block w-5 h-5 mr-2" />
-                    Có {newOrdersCount} đơn hàng chưa xử lý!
-                  </>,
-                  {
-                    position: "top-right", // Đặt thông báo ở vị trí top
-                    duration: 5000, // Thời gian hiển thị thông báo (tùy chỉnh)
-                    icon: null, // Bạn có thể ẩn icon mặc định nếu cần
-                    style: {
-                      backgroundColor: "#fff", 
-                      color: "#ff4d4f",
-                      borderRadius: "8px", // Bo góc
-                      padding: "12px", // Khoảng cách trong thông báo
-                      marginTop: "40px", // Thêm khoảng cách phía trên
-                    },
-                  }
-                );
-              
-              } else {
-                toast.info("Không có đơn hàng mới");
-              }
-            }}
+            onClick={handleBellClick}  // Use the new handleBellClick function
           />
           {newOrdersCount > 0 && (
             <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
               {newOrdersCount}
             </span>
           )}
+
+          {/* Notification Panel */}
+          {showNotificationPanel && (
+            <div className="absolute right-0 mt-2 w-80 max-h-96 overflow-auto bg-white shadow-lg rounded-md border z-50">
+              <div className="p-4 border-b font-semibold text-gray-800">Đơn hàng chưa xử lý</div>
+              <div className="divide-y max-h-72 overflow-y-auto">
+                {unprocessedOrders.length > 0 ? (
+                  unprocessedOrders.map((order) => (
+                    <div
+                      key={order._id}
+                      className="p-3 hover:bg-gray-50 cursor-pointer"
+                      onClick={() => {
+                        router.push(user?.role === "staff" ? "/staff/orders" : "/admin/orders");
+                        setShowNotificationPanel(false);
+                      }}
+                    >
+                      <p className="text-sm font-medium">Khách hàng: {order.name}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="p-3 text-sm text-gray-500">Không có đơn hàng mới.</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Avatar + Tên */}
         <Link href={user?.role === "admin" ? "/admin/profile" : "/staff/profile"}>
           <div className="flex items-center">
-            <Image
-              src={user?.avatar || (user?.role === "staff" ? "/img/avtstaff.jpg" : "/img/avt.jpg")}
+            <img
+              src={user?.avatar ?? "/img/avatar_trang.jpg"}
               alt="avatar"
               width={40}
               height={40}

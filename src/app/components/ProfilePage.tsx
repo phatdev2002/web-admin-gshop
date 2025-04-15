@@ -132,6 +132,28 @@ const ProfilePage = () => {
     } finally {
       setIsUploading(false);
     }
+    if (selectedImage) {
+      const response = await fetch(
+        `https://gshopbackend-1.onrender.com/user/create-avatar/${user._id}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.status) {
+        const updatedUser = { ...user, avatar: result.data.avatar };
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        
+        // 👇 Dispatch một Custom Event
+        window.dispatchEvent(
+          new CustomEvent("userUpdated", { detail: updatedUser })
+        );
+      }
+    }
   };
 
   const handleChangePassword = () => {
@@ -191,11 +213,14 @@ const ProfilePage = () => {
   };
 
   const getAvatar = () => {
-    if (!user.avatar || user.avatar === "url1") {
-      return "/default-thumbnail.jpg";
+    if (!user.avatar || user.avatar === "url1" || !user.avatar.startsWith("http")) {
+      return "/img/avatar_trang.jpg";
     }
     return user.avatar;
   };
+
+  
+  
 
   return (
     <>
@@ -295,7 +320,8 @@ const ProfilePage = () => {
           <ChangePass 
             isOpen={isChangePassOpen} 
             onClose={() => setIsChangePassOpen(false)} 
-            userId={user._id} 
+            user_id={user._id} 
+            email={user.email}
           />
         </div>
 

@@ -153,6 +153,7 @@ useEffect(() => {
         toast("Cập nhật trạng thái thành công!");
         setStatus(newStatus); // Cập nhật UI
         refreshOrders(); // Cập nhật danh sách đơn hàng
+        onClose(); // Đóng dialog
       } else {
         alert("Cập nhật thất bại!");
       }
@@ -238,7 +239,7 @@ useEffect(() => {
             {/* Thay đổi trạng thái đơn hàng */}
             <div className="mt-3 flex flex-col">
               <label className="font-semibold mb-2">Trạng thái đơn hàng:</label>
-              <Select value={status} onValueChange={handleStatusChange}>
+              <Select key={status} value={status} onValueChange={handleStatusChange}>
                 <SelectTrigger className={`
                     ${status === "Đang xử lý" ? "bg-red-100 text-red-700 border-red-500" : ""}
                     ${status === "Đang giao hàng" ? "bg-orange-100 text-orange-700 border-orange-500" : ""}

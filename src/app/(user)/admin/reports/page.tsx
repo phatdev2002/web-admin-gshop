@@ -149,14 +149,14 @@ useEffect(() => {
             <LineChart data={Object.entries(revenueData.dailyRevenueLast7Days).reverse().map(([date, value]) => ({ name: date, total: Number(value) }))} />
           </CardContent>
           <CardContent>
-  <p className=" font-semibold">Thống kê lợi nhuận theo tháng</p>
-  <p className="pb-4 text-xs text-gray-500">Tổng doanh thu của các đơn hàng đã giao</p>
-  {monthlyRevenueData.length > 0 ? (
-    <BarChart2 data={monthlyRevenueData} />
-  ) : (
-    <p className="text-center p-4">Không có dữ liệu</p>
-  )}
-</CardContent>
+            <p className=" font-semibold">Thống kê lợi nhuận theo tháng</p>
+            <p className="pb-4 text-xs text-gray-500">Tổng doanh thu của các đơn hàng đã giao</p>
+            {monthlyRevenueData.length > 0 ? (
+              <BarChart2 data={monthlyRevenueData} />
+            ) : (
+              <p className="text-center p-4">Không có dữ liệu</p>
+            )}
+          </CardContent>
 
 
         </section>

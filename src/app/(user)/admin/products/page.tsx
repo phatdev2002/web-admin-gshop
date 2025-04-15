@@ -149,7 +149,6 @@ const ProductPage = () => {
     
     { accessorKey: "quantity", header: "Số lượng" },
     { accessorKey: "viewer", header: "Lượt xem" },
-    { accessorKey: "status", header: "Trạng thái" },
     {
       accessorKey: "isActive",
       header: "Tình trạng",
@@ -169,8 +168,8 @@ const ProductPage = () => {
       cell: ({ row }: { row: { original: Product } }) => {
         const product = row.original;
         return (
-          <Button size="sm" variant="logout" onClick={() => handleViewProduct(product)}>
-            <EditIcon/>
+          <Button variant="logout" onClick={() => handleViewProduct(product)}>
+            <EditIcon className="text-blue-600" />
           </Button>
         );
       },

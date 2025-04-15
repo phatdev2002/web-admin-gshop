@@ -20,7 +20,7 @@ const EditSupplierDialog = ({
 }: EditSupplierDialogProps) => {
   const [form, setForm] = useState<Supplier>({
     _id: "",
-    supplier: "",
+    name: "",
     email: "",
     sdt: "",
     investor_name: "",
@@ -60,7 +60,7 @@ const EditSupplierDialog = ({
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^\d{9}$/;
 
-    if (!form.supplier.trim()) newErrors.supplier = "Không được để trống";
+    if (!form.name.trim()) newErrors.name = "Không được để trống";
     if (!form.email.trim()) newErrors.email = "Không được để trống";
     else if (!emailRegex.test(form.email)) newErrors.email = "Email không hợp lệ";
 
@@ -91,7 +91,7 @@ const EditSupplierDialog = ({
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            supplier: form.supplier,
+            name: form.name,
             email: form.email,
             phone_number: form.sdt,
             representative: form.investor_name,
@@ -135,7 +135,7 @@ const EditSupplierDialog = ({
 
           {/* Form */}
           {[
-            { label: "Tên", key: "supplier" },
+            { label: "Tên", key: "name" },
             { label: "Email", key: "email" },
             { label: "Số điện thoại", key: "sdt" },
             { label: "Người đại diện", key: "investor_name" },

@@ -1,7 +1,5 @@
-"use client";
-
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/Dialog";
+import { Dialog, DialogHeader } from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react"; // Import icon X
@@ -10,16 +8,17 @@ import { toast } from "sonner";
 interface ChangePassProps {
   isOpen: boolean;
   onClose: () => void;
-  userId: string;
+  user_id: string;
+  email: string; // Ensure email is passed in props
 }
 
-const ChangePass: React.FC<ChangePassProps> = ({ isOpen, onClose, userId }) => {
+const ChangePass: React.FC<ChangePassProps> = ({ isOpen, onClose, user_id, email }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const isDisabled = !newPassword && !confirmPassword; // Chỉ bị mờ khi cả hai ô đều chưa nhập
+  const isDisabled = !newPassword || !confirmPassword; // Disable if any field is empty
 
   const handleChangePassword = async () => {
     if (newPassword.length < 4) {
@@ -41,7 +40,7 @@ const ChangePass: React.FC<ChangePassProps> = ({ isOpen, onClose, userId }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, newPassword, confirmPassword }),
+        body: JSON.stringify({ user_id, email, newPassword, confirmPassword }), // Pass email here
       });
 
       const text = await response.text();
@@ -67,7 +66,7 @@ const ChangePass: React.FC<ChangePassProps> = ({ isOpen, onClose, userId }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}> 
-      <DialogContent>
+      <div className="p-4">
         {/* Tiêu đề + nút đóng */}
         <div className="flex justify-between items-center mb-4">
           <DialogHeader>
@@ -113,7 +112,7 @@ const ChangePass: React.FC<ChangePassProps> = ({ isOpen, onClose, userId }) => {
             </Button>
           </div>
         </div>
-      </DialogContent>
+      </div>
     </Dialog>
   );
 };

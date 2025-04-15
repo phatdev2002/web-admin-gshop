@@ -70,14 +70,14 @@ export default function EditStaffDialog({ employee, onClose, onUpdated }: EditSt
         </div>
         <div className="space-y-2 m-5">
             <p>Email</p>
-            <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} disabled className="text-black bg-white"/>
+            <Input placeholder="Email" value={email} readOnly onChange={(e) => setEmail(e.target.value)} className="text-black "/>
             <p>Họ và tên</p>
-            <Input placeholder="Tên nhân viên" value={name} onChange={(e) => setName(e.target.value)} className="bg-white"/>
+            <Input placeholder="Tên nhân viên" value={name} onChange={(e) => setName(e.target.value)} className="bg-blue-100"/>
             <p>Số điện thoại</p>
-            <Input placeholder="Số điện thoại" value={phone} onChange={(e) => setPhone(e.target.value)} className="bg-white"/>
+            <Input placeholder="Số điện thoại" value={phone} onChange={(e) => setPhone(e.target.value)} className="bg-blue-100"/>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <p>Mật khẩu</p>
-            <Input placeholder="Mật khẩu" value={password} onChange={(e) => setPass(e.target.value)} readOnly className="bg-gray-300"/>
+            <Input placeholder="Mật khẩu" value={password} onChange={(e) => setPass(e.target.value)} readOnly className="bg-blue-100"/>
             <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline"  onClick={onClose} disabled={loading}>Hủy</Button>
             <Button variant="destructive" onClick={handleUpdate} disabled={loading}>{loading ? "Đang lưu..." : "Lưu"}</Button>

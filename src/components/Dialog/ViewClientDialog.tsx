@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Dialog, DialogContent } from "@/components/ui/Dialog";
+import { Dialog } from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,11 +11,21 @@ interface ViewClientDialogProps {
   clientId: string;
 }
 
+interface Address {
+  detail: string;
+  commune: string;
+  district: string;
+  province: string;
+  selected: boolean;
+}
+
+
 const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, clientId }) => {
   interface ClientData {
     name: string;
     email: string;
     phone_number: string;
+    avatar?: string;
   }
 
   interface OrderData {
@@ -45,6 +55,9 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
   const [productNames, setProductNames] = useState<Record<string, string>>({});
   const [productImages, setProductImages] = useState<Record<string, string[]>>({}); // Store images here
   const [isLoadingProducts, setIsLoadingProducts] = useState<Record<string, boolean>>({});
+  const [address, setAddress] = useState<string>("");
+
+
 
   useEffect(() => {
     if (!isOpen || !clientId) return;
@@ -134,51 +147,105 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
       });
   }, [isOpen, clientId]);
 
+  useEffect(() => {
+    if (!clientId) return;
+  
+    // Reset địa chỉ trước khi fetch client mới
+    setAddress("");
+  
+    fetch(`https://gshopbackend-1.onrender.com/address/list/${clientId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status && Array.isArray(data.data)) {
+          const selectedAddress = data.data.find((addr: Address) => addr.selected);
+          if (selectedAddress) {
+            const { detail, commune, district, province } = selectedAddress;
+            setAddress(`${detail}, ${commune}, ${district}, ${province}`);
+          }
+        }
+      })
+      .catch(() => {
+        console.error("Lỗi khi lấy địa chỉ.");
+      });
+  }, [clientId]);
+  
+
+
+
   return (
     <div className="">
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <div className="p-5">
-
-        
-        <div className="flex justify-center mb-5"><p className="font-semibold">Thông tin khách hàng</p></div>
-        <DialogContent>
-          {isLoading ? (
-            <Skeleton className="h-6 w-3/4" />
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
-          ) : (
-            <>
-              <div className="mb-4 gap-2 flex flex-col">
-                <label className="block text-sm font-semibold">Tên khách hàng</label>
-                <Input value={clientData?.name || ''} readOnly className="bg-white"/>
-              </div>
-              <div className=" gap-2 flex flex-row flex-1">
-                <div className="mb-4 gap-2 flex flex-col flex-1">
-                  <label className="block text-sm font-semibold">Email</label>
-                  <Input value={clientData?.email || ''} readOnly className="bg-white"/>
+        <div className="p-5 h-[600px] bg-gray-300 rounded-lg relative">    
+          <div className="flex justify-end absolute  right-2 top-2">       
+                <Button variant="outline" onClick={onClose} className="text-red-500 w-8 h-8 rounded-sm font-semibold">
+                  X
+                </Button> 
+            </div>   
+          <div className="flex flex-col">
+            <div className={`flex ${orders.length === 0 ? "flex-col" : "flex-row"} mb-5 gap-5 `}>
+            
+            {isLoading ? (
+              <Skeleton className="h-6 w-3/4" />
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <>
+              <div className=" flex flex-col">
+                <div className="flex justify-center">
+                  <Image
+                    src={
+                      clientData?.avatar && clientData.avatar.startsWith("http")
+                        ? clientData.avatar
+                        : "/img/avatar_trang.jpg"
+                    }
+                    alt="Avatar"
+                    width={150}
+                    height={150}
+                    className="rounded-full object-cover w-36 h-36"
+                  />
                 </div>
-                <div className="mb-4 gap-2 flex flex-col flex-1">
-                  <label className="block text-sm font-semibold">Số điện thoại</label>
-                  <Input value={clientData?.phone_number || ''} readOnly className="bg-white"/>
+
+                <div className="flex flex-col mt-4 w-full min-w-80">
+                  <div className="mb-4 gap-2 flex flex-col">
+                    <label className="block text-sm font-semibold">Tên khách hàng</label>
+                    <Input value={clientData?.name || ''} readOnly className="bg-blue-50"/>
+                  </div>
+                    <div className="mb-4 gap-2 flex flex-col flex-1">
+                      <label className="block text-sm font-semibold">Email</label>
+                      <Input value={clientData?.email || ''} readOnly className="bg-blue-50"/>
+                    </div>
+                    <div className=" gap-2 flex flex-col flex-1">
+                      <label className="block text-sm font-semibold">Số điện thoại</label>
+                      <Input value={clientData?.phone_number || ''} readOnly className="bg-blue-50"/>
+                    </div>
+                
+                  <div className="mt-4 gap-2 flex flex-col">
+                    <label className="block text-sm font-semibold">Địa chỉ</label>
+                    <Input value={address || "Chưa có địa chỉ"} readOnly className="bg-blue-50" />
+                  </div>
                 </div>
               </div>
-            </>
-          )}
+                
+              </>
+            )}
 
-          <div className=" mb-4">
-            <label className="block text-sm font-semibold">Lịch sử đơn hàng</label>
+            <div className="h-[550px]">
+              <label className="block text-sm font-semibold">Lịch sử đơn hàng</label>
+              
+              
+            
             {isOrdersLoading ? (
               <Skeleton className="h-6 w-full mt-2" />
             ) : orderError ? (
               <p className="text-red-500">{orderError}</p>
             ) : (
-              <div className="max-h-80 overflow-y-auto mt-2 border rounded-lg p-0">
+              <div className="max-h-[500px] overflow-y-auto mt-4 rounded-lg p-0 w-full flex-1">
                 {orders.length === 0 ? (
-                  <p className="text-gray-500">Không có đơn hàng nào.</p>
+                    <p className="text-gray-500 ">Không có đơn hàng nào.</p>
                 ) : (
                   <table className="w-full border-collapse text-sm">
                     <thead className="sticky top-0 bg-white z-10">
-                      <tr className="bg-white">
+                      <tr className="bg-blue-100">
                         <th className="text-left p-3">Mã đơn</th>
                         <th className="text-left p-3">Ngày</th>
                         <th className="text-right p-3">Tổng tiền</th>
@@ -211,8 +278,8 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                                   <Image
                                       src={productImages[product.id_product]?.[1] || "/default-thumbnail.jpg"}
                                       alt="Product"
-                                      width={80}
-                                      height={80}
+                                      width={120}
+                                      height={120}
                                       className="object-cover"
                                     />
                                 </td>
@@ -238,12 +305,9 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
               </div>
             )}
           </div>
-        </DialogContent>
-        <div className="flex justify-end">
-          <Button variant="outline" onClick={onClose}>
-            Đóng
-          </Button>
-        </div>
+          </div> 
+                
+          </div>
         </div>
       </Dialog>
       

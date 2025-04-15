@@ -108,7 +108,7 @@ export default function StaffPage() {
           {filteredEmployees.map((employee) => (
             <CardContent key={employee._id} className="relative p-4 border rounded-lg shadow-md">
               <img 
-                src={employee.avatar && employee.avatar.startsWith('http') ? employee.avatar : '/img/avtstaff.jpg'} 
+                src={employee.avatar && employee.avatar.startsWith('http') ? employee.avatar : '/img/avatar_trang.jpg'} 
                 alt={employee.name} 
                 width={80} 
                 height={80} 

@@ -6,11 +6,15 @@ interface PieChartComponentProps {
 }
 
 export default function PieChartComponent({ piedata }: PieChartComponentProps) {
-  const formattedData = piedata.map((item, index) => ({
-    id: index,
+  const formattedData = [...piedata]
+  .sort((a, b) => b.value - a.value) // sắp xếp giảm dần theo value
+  .map((item) => ({
+    id: item.name,
     value: item.value,
     label: item.name,
   }));
+
+
 
   return (
     <div style={{ display: 'flex' }}>
