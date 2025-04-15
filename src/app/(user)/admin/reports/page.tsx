@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import BarChart from '@/components/ui/BarChart';
+import BarChart2 from '@/components/ui/BarChart/BarChart2';
 import Card, { CardContent, CardProps } from '@/components/ui/Card';
 import { HandCoinsIcon, Landmark, ShoppingCart } from 'lucide-react';
 import LineChart from '@/components/ui/LineChart';
@@ -13,6 +13,59 @@ const ReportPage = () => {
     toDayOrders: 0,
     dailyRevenueLast7Days: {},
   });
+
+  type MonthlyRevenue = {
+    name: string; // Ví dụ: "Tháng 1"
+    totalRevenue: number; // Tổng doanh thu của tháng
+  };
+
+
+  const [monthlyRevenueData, setMonthlyRevenueData] = useState<MonthlyRevenue[]>([]);
+
+useEffect(() => {
+  const fetchMonthlyRevenueData = async () => {
+    try {
+      const response = await fetch('https://gshopbackend-1.onrender.com/order/list');
+      const result = await response.json();
+
+      if (result.status) {
+        const orders = result.data;
+
+        type Order = {
+          status: string;
+          date: string;
+          total_price: number;
+        };
+
+        const completedOrders = orders.filter((order: Order) => order.status === "Đã giao");
+
+        // Gom nhóm theo tháng và tính tổng total_price
+        const monthRevenue: { [key: string]: number } = {};
+        completedOrders.forEach((order: Order) => {
+          const [, month,] = order.date.split("/");
+          const key = `Tháng ${Number(month)}`;
+          monthRevenue[key] = (monthRevenue[key] || 0) + order.total_price;
+        });
+
+        // Sắp xếp theo tháng tăng dần
+        const sortedData = Object.entries(monthRevenue)
+          .sort((a, b) => {
+            const getMonthNumber = (text: string) => parseInt(text.replace("Tháng ", ""));
+            return getMonthNumber(a[0]) - getMonthNumber(b[0]);
+          })
+          .map(([name, totalRevenue]) => ({ name, totalRevenue }));
+
+        setMonthlyRevenueData(sortedData);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu doanh thu theo tháng:", error);
+    }
+  };
+
+  fetchMonthlyRevenueData();
+}, []);
+
+
 
   useEffect(() => {
     const fetchRevenueData = async () => {
@@ -56,20 +109,30 @@ const ReportPage = () => {
     },
   ];
 
-  const pieData = [
-    { id: 0, value: 100, label: 'High Grade' },
-    { id: 1, value: 54, label: 'Master Grade' },
-    { id: 2, value: 25, label: 'Real Grade' },
-    { id: 3, value: 30, label: 'Super Deformed' },
-    { id: 4, value: 10, label: 'Perfect Grade' },
-    { id: 5, value: 10, label: 'Entry Grade' },
-  ];
+  const [categoryRatioData, setCategoryRatioData] = useState<{ name: string; percentage: string }[]>([]);
 
-  const total = pieData.reduce((sum, item) => sum + item.value, 0);
-  const dataWithPercentage = pieData.map((item) => ({
-    ...item,
-    label: `${item.label} (${((item.value / total) * 100).toFixed(0)}%)`,
+  useEffect(() => {
+    const fetchTopProductsData = async () => {
+      try {
+        const response = await fetch('https://gshopbackend-1.onrender.com/order/top-products');
+        const result = await response.json();
+        if (result.status) {
+          setCategoryRatioData(result.categoryRatio);
+        }
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu tỉ lệ loại Gundam:', error);
+      }
+    };
+
+    fetchTopProductsData();
+  }, []);
+  const pieChartDataFromApi = categoryRatioData.map((item, index) => ({
+    id: index,
+    value: parseFloat(item.percentage),
+    name: `${item.name} (${item.percentage})`,
   }));
+
+
 
   return (
     <div>
@@ -86,19 +149,28 @@ const ReportPage = () => {
             <LineChart data={Object.entries(revenueData.dailyRevenueLast7Days).reverse().map(([date, value]) => ({ name: date, total: Number(value) }))} />
           </CardContent>
           <CardContent>
-            <p className=" font-semibold">Thống kê đơn đặt hàng</p>
-            <p className="pb-4 text-xs text-gray-500">Chờ gọi API ( HIỆN ĐANG CODE CỨNG )</p>
-            <BarChart />
-          </CardContent>
+  <p className=" font-semibold">Thống kê lợi nhuận theo tháng</p>
+  <p className="pb-4 text-xs text-gray-500">Tổng doanh thu của các đơn hàng đã giao</p>
+  {monthlyRevenueData.length > 0 ? (
+    <BarChart2 data={monthlyRevenueData} />
+  ) : (
+    <p className="text-center p-4">Không có dữ liệu</p>
+  )}
+</CardContent>
+
+
         </section>
         <section>
-          <CardContent>
-            <section>
-              <p className="font-semibold">Tỉ lệ bán chạy của các loại Gundam</p>
-              <p className="pb-4 text-xs text-gray-500">Chờ gọi API ( HIỆN ĐANG CODE CỨNG )</p>
-            </section>
-            <PieChartComponent piedata={dataWithPercentage.map(({ label, ...rest }) => ({ name: label, ...rest }))} />
-          </CardContent>
+        <CardContent>
+          <section>
+            <p className="font-semibold pb-2">Tỉ lệ loại Gundam trên tổng số đã bán</p>
+            <p className="pb-4 text-xs text-gray-500">
+              Phần trăm bán chạy của thể loại Gundam
+            </p>
+          </section>
+          <PieChartComponent piedata={pieChartDataFromApi} />
+        </CardContent>
+
         </section>
       </section>
     </div>

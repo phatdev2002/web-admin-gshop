@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import BarChart from "@/components/ui/BarChart";
+import BarChart from "@/components/ui/BarChart/BarChart1";
 import Card, { CardContent, CardProps } from "@/components/ui/Card";
 import TenGundamCard, { TenGundamProps } from "@/components/ui/TenGundamCard";
 import { BookCheck, BoxesIcon, UserCircle, UserSquare2 } from "lucide-react";
@@ -36,6 +36,50 @@ const OverviewPage = () => {
     fetchData("https://gshopbackend-1.onrender.com/user/list_staff", setTotalStaff);
     fetchData("https://gshopbackend-1.onrender.com/order/list", setTotalOrders);
   }, []);
+
+  const [ordersByMonth, setOrdersByMonth] = useState<Record<string, number>>({});
+
+useEffect(() => {
+  const fetchOrdersByMonth = async () => {
+    try {
+      const response = await fetch("https://gshopbackend-1.onrender.com/order/list");
+      const result = await response.json();
+
+      if (result.status && Array.isArray(result.data)) {
+        type Order = { status: string; date: string }; // Define the expected structure of an order
+        const deliveredOrders = result.data.filter((order: Order) => order.status === "Đã giao");
+
+        const monthlyCounts: Record<string, number> = {};
+
+        deliveredOrders.forEach((order: Order) => {
+          const [, month,] = order.date.split("/");
+          const monthKey = `Tháng ${month}`; // Ví dụ: "Tháng 03"
+
+          if (monthlyCounts[monthKey]) {
+            monthlyCounts[monthKey]++;
+          } else {
+            monthlyCounts[monthKey] = 1;
+          }
+        });
+
+        setOrdersByMonth(monthlyCounts);
+      } else {
+        setOrdersByMonth({});
+      }
+    } catch (error) {
+      console.error("Lỗi khi thống kê đơn hàng theo tháng:", error);
+      setOrdersByMonth({});
+    }
+  };
+
+  fetchOrdersByMonth();
+}, []);
+
+const orderBarChartData = Object.entries(ordersByMonth).map(([month, count]) => ({
+  name: month,
+  total: count,
+}));
+
 
   // Fetch doanh thu theo tháng
   useEffect(() => {
@@ -91,18 +135,32 @@ const OverviewPage = () => {
     },
   ];
 
-  const gundamData: TenGundamProps[] = [
-    { name: "Rx 78-2", amount: "8.500 bộ" },
-    { name: "Wing Gundam Zero", amount: "7.800 bộ" },
-    { name: "Strike Freedom Gundam", amount: "6.900 bộ" },
-    { name: "Unicorn Gundam", amount: "6.500 bộ" },
-    { name: "Gundam Exia", amount: "6.200 bộ" },
-    { name: "Zeta Gundam", amount: "5.800 bộ" },
-    { name: "Nu Gundam", amount: "5.400 bộ" },
-    { name: "Strike Gundam", amount: "5.100 bộ" },
-    { name: "Barbatos Gundam", amount: "4.800 bộ" },
-    { name: "Sazabi", amount: "4.300 bộ" },
-  ];
+  const [topProducts, setTopProducts] = useState<TenGundamProps[]>([]);
+  useEffect(() => {
+    const fetchTopProducts = async () => {
+      try {
+        const response = await fetch("https://gshopbackend-1.onrender.com/order/top-products");
+        const result = await response.json();
+  
+        if (result.status && Array.isArray(result.byQuantity)) {
+          type ProductItem = { name: string; totalSold: number };
+          const top10 = result.byQuantity.slice(0, 10).map((item: ProductItem) => ({
+            name: item.name,
+            amount: `${item.totalSold} bộ`,
+          }));
+          setTopProducts(top10);
+        } else {
+          setTopProducts([]);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy top sản phẩm:", error);
+        setTopProducts([]);
+      }
+    };
+  
+    fetchTopProducts();
+  }, []);
+  
 
   return (
     <div>
@@ -121,21 +179,31 @@ const OverviewPage = () => {
           </CardContent>
 
           <CardContent>
-            <p className=" font-semibold">Thống kê đơn đặt hàng</p>
-            <p className="pb-4 text-xs text-gray-500">Chờ gọi API ( HIỆN ĐANG CODE CỨNG )</p>
-            <BarChart />
+            <p className="font-semibold">Thống kê đơn đặt hàng</p>
+            <p className="pb-4 text-xs text-gray-500">Đơn hàng đã giao theo tháng</p>
+            {orderBarChartData.length > 0 ? (
+              <BarChart data={orderBarChartData} />
+            ) : (
+              <p className="text-center p-4">Không có dữ liệu</p>
+            )}
           </CardContent>
+
         </section>
 
         <section>
           <CardContent>
             <section>
-              <p className="font-semibold">Xếp hạng 10 bộ Gundam bán chạy nhất</p>
-              <p className="pb-4 text-xs text-gray-500">Chờ gọi API ( HIỆN ĐANG CODE CỨNG )</p>
+              <p className="font-semibold">Top 10 Gundam</p>
+              <p className="pb-4 text-xs text-gray-500">Xếp hạng 10 bộ Gundam bán chạy nhất</p>
             </section>
-            {gundamData.map((d, i) => (
-              <TenGundamCard key={i} name={d.name} amount={d.amount} />
-            ))}
+            {topProducts.length > 0 ? (
+              topProducts.map((d, i) => (
+                <TenGundamCard key={i} name={d.name} amount={d.amount} />
+              ))
+            ) : (
+              <p className="text-center text-sm text-gray-500">Không có dữ liệu</p>
+            )}
+
           </CardContent>
         </section>
       </section>

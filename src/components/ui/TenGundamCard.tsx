@@ -8,13 +8,11 @@ export type TenGundamProps = {
 
 export default function TenGundamCard(props: TenGundamProps) {
   return (
-    <div className='flex flex-wrap justify-between gap-3'>
-        <div className='text-sm'>
-            <p>
-                {props.name}
-            </p>
-        </div>
-        <p>{props.amount}</p>
+    <div className='flex justify-around my-2'>
+        <p className=' flex-1'>
+                {props.name}           
+        </p>
+        <p className='ml-2 flex font-semibold'>{props.amount}</p>
     </div>
   )
 }

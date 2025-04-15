@@ -143,45 +143,46 @@ const OrderPage = () => {
         </div>
         
       </div>
-    <div className="flex gap-2 justify-between mb-4">
-    <div>
-        <button
-          className={`${
-            selectedStatus === "Đang xử lý" ? "bg-red-500 text-white" : "bg-white text-red-500"
-          }  px-4 py-1 rounded mr-2`}
-          onClick={() => handleStatusClick("Đang xử lý")}
-        >
-          Đang xử lý
-        </button>
-        <button
-          className={`${
-            selectedStatus === "Đang giao hàng" ? "bg-orange-700 text-white" : "bg-white text-orange-500"
-          }  px-4 py-1 rounded mr-2`}
-          onClick={() => handleStatusClick("Đang giao hàng")}
-        >
-          Đang giao hàng
-        </button>
-        <button
-          className={`${
-            selectedStatus === "Đã giao" ? "bg-green-700 text-white" : "bg-white text-green-500"
-          }  px-4 py-1 rounded mr-2`}
-          onClick={() => handleStatusClick("Đã giao")}
-        >
-          Đã giao
-        </button>
-        <button
-          className={`${
-            selectedStatus === "Đã hủy" ? "bg-gray-700 text-white" : "bg-white text-gray-500"
-          }  px-4 py-1 rounded mr-2`}
-          onClick={() => handleStatusClick("Đã hủy")}
-        >
-          Đã hủy
-        </button>
+      <div className="flex gap-2 justify-between mb-4">
+        <div>
+          <button
+            className={`${
+              selectedStatus === "Đang xử lý" ? "bg-red-500 text-white" : "bg-white text-red-500"
+            }  px-4 py-1 rounded-2xl mr-2`}
+            onClick={() => handleStatusClick("Đang xử lý")}
+          >
+            Đang xử lý {orders.filter(order => order.status === "Đang xử lý").length}
+          </button>
+          <button
+            className={`${
+              selectedStatus === "Đang giao hàng" ? "bg-orange-700 text-white" : "bg-white text-orange-500"
+            }  px-4 py-1 rounded-2xl mr-2`}
+            onClick={() => handleStatusClick("Đang giao hàng")}
+          >
+            Đang giao hàng {orders.filter(order => order.status === "Đang giao hàng").length}
+          </button>
+          <button
+            className={`${
+              selectedStatus === "Đã giao" ? "bg-green-700 text-white" : "bg-white text-green-500"
+            }  px-4 py-1 rounded-2xl mr-2`}
+            onClick={() => handleStatusClick("Đã giao")}
+          >
+            Đã giao {orders.filter(order => order.status === "Đã giao").length}
+          </button>
+          <button
+            className={`${
+              selectedStatus === "Đã hủy" ? "bg-gray-700 text-white" : "bg-white text-gray-500"
+            }  px-4 py-1 rounded-2xl mr-2`}
+            onClick={() => handleStatusClick("Đã hủy")}
+          >
+            Đã hủy {orders.filter(order => order.status === "Đã hủy").length}
+          </button>
+        </div>
+        <Button variant="outline" onClick={fetchOrders}>
+          Làm mới danh sách
+        </Button>
       </div>
-      <Button variant="outline" onClick={fetchOrders}>
-        Làm mới danh sách
-      </Button>
-    </div>
+
       
 
       {loading && <p>Đang tải dữ liệu...</p>}
