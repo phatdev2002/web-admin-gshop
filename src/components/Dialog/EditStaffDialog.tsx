@@ -10,6 +10,7 @@ interface EditStaffDialogProps {
     name: string;
     email: string;
     phone_number: string;
+    password: string;
   };
   onClose: () => void;
   onUpdated: () => void;
@@ -19,12 +20,20 @@ export default function EditStaffDialog({ employee, onClose, onUpdated }: EditSt
   const [name, setName] = useState(employee.name);
   const [email, setEmail] = useState(employee.email);
   const [phone, setPhone] = useState(employee.phone_number);
+  const [password, setPass] = useState(employee.password);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleUpdate = () => {
     setLoading(true);
     setError(null);
+
+    const phoneRegex = /^[0-9]{9}$/; // Check for exactly 9 digits
+      if (!phoneRegex.test(phone)) {
+        setError("Số điện thoại phải có 9 chữ số.");
+        setLoading(false);
+        return;
+      }
     
     fetch("https://gshopbackend-1.onrender.com/user/update", {
       method: "PUT",
@@ -35,6 +44,7 @@ export default function EditStaffDialog({ employee, onClose, onUpdated }: EditSt
         email,
         name,
         phone_number: phone,
+        password,
       }),
     })
       .then((res) => res.json())
@@ -66,10 +76,13 @@ export default function EditStaffDialog({ employee, onClose, onUpdated }: EditSt
             <p>Số điện thoại</p>
             <Input placeholder="Số điện thoại" value={phone} onChange={(e) => setPhone(e.target.value)} className="bg-white"/>
             {error && <p className="text-red-500 text-sm">{error}</p>}
+            <p>Mật khẩu</p>
+            <Input placeholder="Mật khẩu" value={password} onChange={(e) => setPass(e.target.value)} readOnly className="bg-gray-300"/>
             <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline"  onClick={onClose} disabled={loading}>Hủy</Button>
             <Button variant="destructive" onClick={handleUpdate} disabled={loading}>{loading ? "Đang lưu..." : "Lưu"}</Button>
             </div>
+
         </div>
         </DialogContent>
 

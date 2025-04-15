@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from "react";
-import Image from 'next/image';
 import { Input } from "@/components/ui/input";
 import { Search, Mail, Phone, Edit, Trash2 } from "lucide-react";
 import { CardContent } from "@/components/ui/Card";
@@ -16,6 +15,8 @@ interface Employee {
   email: string;
   phone_number: string;
   role: string;
+  avatar: string;
+  password: string;
 }
 
 export default function StaffPage() {
@@ -25,7 +26,7 @@ export default function StaffPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
-  
+
   const fetchEmployees = () => {
     setLoading(true);
     fetch("https://gshopbackend-1.onrender.com/user/list_staff")
@@ -106,14 +107,20 @@ export default function StaffPage() {
         <div className="grid grid-cols-3 gap-6">
           {filteredEmployees.map((employee) => (
             <CardContent key={employee._id} className="relative p-4 border rounded-lg shadow-md">
-              <Image src={"/img/avtstaff.jpg"} alt={employee.name} width={80} height={80} className="rounded-full mx-auto mb-4" />
+              <img 
+                src={employee.avatar && employee.avatar.startsWith('http') ? employee.avatar : '/img/avtstaff.jpg'} 
+                alt={employee.name} 
+                width={80} 
+                height={80} 
+                className="rounded-full mx-auto mb-4 w-20 h-20 object-cover" 
+              />
+
               <h2 className="text-center text-lg font-semibold">{employee.name}</h2>
               <p className="flex items-center justify-center text-gray-700">
                 <Mail className="mr-2" /> {employee.email}
               </p>
               <p className="flex items-center justify-center text-gray-700">
                 <Phone className="mr-2" /> {formatPhoneNumber(employee.phone_number)}
-
               </p>
               <div className="absolute top-2 right-2 flex space-x-2">
                 <Button
