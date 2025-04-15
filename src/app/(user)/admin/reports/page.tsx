@@ -92,19 +92,19 @@ useEffect(() => {
     {
       label: 'Tổng toàn bộ doanh thu',
       amount: `${revenueData.totalRevenue.toLocaleString()} đ`,
-      discription: 'Số khách đã mua hàng',
+      discription: 'Doanh thu sản phẩm đã bán',
       icon: Landmark,
     },
     {
       label: 'Tổng doanh thu hôm nay',
       amount: `${revenueData.toDayRevenue.toLocaleString()} đ`,
-      discription: 'Số tiền kiếm được hôm nay',
+      discription: 'Số tiền kiếm được trong hôm nay',
       icon: HandCoinsIcon,
     },
     {
-      label: 'Tổng đơn hàng hôm nay',
+      label: 'Tổng đơn hàng đã giao',
       amount: revenueData.toDayOrders.toString(),
-      discription: 'Các đơn hàng đã giao thành công',
+      discription: 'Tất cả đơn hàng đã giao thành công',
       icon: ShoppingCart,
     },
   ];
