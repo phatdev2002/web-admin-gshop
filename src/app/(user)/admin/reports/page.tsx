@@ -140,13 +140,11 @@ useEffect(() => {
           <Card key={i} amount={d.amount} discription={d.discription} icon={d.icon} label={d.label} />
         ))}
       </section>
-      <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-[7fr_3fr]">
+      <section className=" gap-4 transition-all lg:grid-cols-[7fr_3fr] gap-6 grid-cols-1 lg:grid">
         <section className="grid grid-cols-1 gap-4 transition-all">
-          
-
-          <CardContent>
-            <p className=" font-semibold">Thống kê lợi nhuận theo tháng</p>
-            <p className="pb-4 text-xs text-gray-500">Tổng doanh thu của các đơn hàng đã giao</p>
+          <CardContent className="h-[500px]">
+            <p className=" font-semibold">Thống kê doanh thu theo tháng</p>
+            <p className="pb-4 text-xs text-gray-500">Tổng tiền của các đơn hàng đã giao chưa trừ chi phí gốc</p>
             {monthlyRevenueData.length > 0 ? (
               <BarChart2 data={monthlyRevenueData} />
             ) : (
@@ -157,15 +155,15 @@ useEffect(() => {
 
         </section>
         <section>
-        <CardContent>
-          <section>
-            <p className="font-semibold pb-2">Tỉ lệ loại Gundam trên tổng số đã bán</p>
-            <p className="pb-4 text-xs text-gray-500">
-              Phần trăm bán chạy của thể loại Gundam
-            </p>
-          </section>
-          <PieChartComponent piedata={pieChartDataFromApi} />
-        </CardContent>
+          <CardContent>
+            <section>
+              <p className="font-semibold pb-2">Tỉ lệ loại Gundam trên tổng số đã bán</p>
+              <p className="pb-4 text-xs text-gray-500">
+                Phần trăm bán chạy của thể loại Gundam
+              </p>
+            </section>
+            <PieChartComponent piedata={pieChartDataFromApi} />
+          </CardContent>
 
         </section>
       </section>

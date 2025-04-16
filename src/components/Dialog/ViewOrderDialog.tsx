@@ -54,6 +54,7 @@ interface ViewOrderDialogProps {
   }
   
 
+
 const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ open, onClose, order, refreshOrders }) => {
   const [orderDetails, setOrderDetails] = useState<OrderDetail[]>([]);
   const [products, setProducts] = useState<{ [key: string]: string }>({});
@@ -215,6 +216,7 @@ useEffect(() => {
               <p className="pb-4"><strong>Mã đơn hàng:</strong> {order.id}</p>
 
               <p><strong>Khách hàng:</strong> {usersList[order.id_user]?.name || "Không xác định"}</p>
+              <p><strong>Số điện thoại:</strong> {usersList[order.id_user]?.phone_number || "Không xác định"}</p>
               <p><strong>Địa chỉ:</strong> {order?.address || "Không có địa chỉ"}</p>
 
 

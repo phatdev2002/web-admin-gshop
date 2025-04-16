@@ -7,14 +7,15 @@ interface PieChartComponentProps {
 
 export default function PieChartComponent({ piedata }: PieChartComponentProps) {
   const formattedData = [...piedata]
-  .sort((a, b) => b.value - a.value) // sắp xếp giảm dần theo value
-  .map((item) => ({
-    id: item.name,
-    value: item.value,
-    label: item.name,
-  }));
+    .sort((a, b) => b.value - a.value)
+    .map((item) => ({
+      id: item.name,
+      value: item.value,
+      label: item.name,
+    }));
 
-
+  // Tính chiều cao động: 150px cơ bản + 50px cho mỗi loại Gundam
+  const dynamicHeight = 150 + piedata.length * 50;
 
   return (
     <div style={{ display: 'flex' }}>
@@ -31,7 +32,7 @@ export default function PieChartComponent({ piedata }: PieChartComponentProps) {
           },
         ]}
         width={350}
-        height={500}
+        height={dynamicHeight}
         slotProps={{
           legend: {
             direction: 'column',
