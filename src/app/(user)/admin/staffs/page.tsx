@@ -72,7 +72,7 @@ export default function StaffPage() {
   );
 
   const formatPhoneNumber = (phone: string) => {
-    return phone.replace(/\D/g, '').replace(/(\d{3})(?=\d)/g, '$1 ');
+    return phone.replace(/\D/g, '').replace(/^(\d{4})(\d{3})(\d{3})$/, "$1 $2 $3");
   };
 
   return (

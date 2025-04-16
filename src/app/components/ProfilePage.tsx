@@ -170,9 +170,9 @@ const ProfilePage = () => {
     }
 
     // Kiểm tra số điện thoại
-    const phoneRegex = /^[0-9]{9}$/;
+    const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(user.phone_number)) {
-      setPhoneError("Số điện thoại phải có đúng 9 chữ số");
+      setPhoneError("Số điện thoại phải có đúng 10 chữ số");
       return;
     } else {
       setPhoneError(null);

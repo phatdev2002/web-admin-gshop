@@ -11,11 +11,10 @@ export const columns: ColumnDef<Supplier>[] = [
     accessorKey: "sdt",
     cell: ({ row }) => {
       const phone = row.original.sdt.replace(/\D/g, "");
-      const formatted = phone.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+      const formatted = phone.replace(/^(\d{4})(\d{3})(\d{3})$/, "$1 $2 $3");
       return <span>{formatted}</span>;
     },
-  },
-  
+  },  
   { accessorKey: "investor_name", header: "Tên người đại diện" },
   { accessorKey: "cooperation_day", header: "Ngày hợp tác" },
   { accessorKey: "address", header: "Địa chỉ" },

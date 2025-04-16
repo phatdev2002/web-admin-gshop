@@ -13,8 +13,11 @@ const OverviewPage = () => {
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [totalStaff, setTotalStaff] = useState<number>(0);
   const [monthlyRevenue, setMonthlyRevenue] = useState<Record<string, number>>({});
+  const [revenueData, setRevenueData] = useState({
+    dailyRevenueLast7Days: {},
+  });
 
-  // Fetch dữ liệu từ API
+  // Fetch dữ liệu tổng quan
   useEffect(() => {
     const fetchData = async (url: string, setter: (value: number) => void) => {
       try {
@@ -39,73 +42,66 @@ const OverviewPage = () => {
 
   const [ordersByMonth, setOrdersByMonth] = useState<Record<string, number>>({});
 
-useEffect(() => {
-  const fetchOrdersByMonth = async () => {
-    try {
-      const response = await fetch("https://gshopbackend-1.onrender.com/order/list");
-      const result = await response.json();
-
-      if (result.status && Array.isArray(result.data)) {
-        type Order = { status: string; date: string }; // Define the expected structure of an order
-        const deliveredOrders = result.data.filter((order: Order) => order.status === "Đã giao");
-
-        const monthlyCounts: Record<string, number> = {};
-
-        deliveredOrders.forEach((order: Order) => {
-          const [, month,] = order.date.split("/");
-          const monthKey = `Tháng ${month}`; // Ví dụ: "Tháng 03"
-
-          if (monthlyCounts[monthKey]) {
-            monthlyCounts[monthKey]++;
-          } else {
-            monthlyCounts[monthKey] = 1;
-          }
-        });
-
-        setOrdersByMonth(monthlyCounts);
-      } else {
-        setOrdersByMonth({});
-      }
-    } catch (error) {
-      console.error("Lỗi khi thống kê đơn hàng theo tháng:", error);
-      setOrdersByMonth({});
-    }
-  };
-
-  fetchOrdersByMonth();
-}, []);
-
-const orderBarChartData = Object.entries(ordersByMonth).map(([month, count]) => ({
-  name: month,
-  total: count,
-}));
-
-
-  // Fetch doanh thu theo tháng
+  // Thống kê đơn hàng theo tháng
   useEffect(() => {
-    const fetchRevenue = async () => {
+    const fetchOrdersByMonth = async () => {
       try {
-        const response = await fetch("https://gshopbackend-1.onrender.com/order/revenue");
+        const response = await fetch("https://gshopbackend-1.onrender.com/order/list");
         const result = await response.json();
 
-        if (result.status && result.data?.monthlyRevenue) {
-          setMonthlyRevenue(result.data.monthlyRevenue);
+        if (result.status && Array.isArray(result.data)) {
+          type Order = { status: string; date: string };
+          const deliveredOrders = result.data.filter((order: Order) => order.status === "Đã giao");
+
+          const monthlyCounts: Record<string, number> = {};
+          deliveredOrders.forEach((order: Order) => {
+            const [, month] = order.date.split("/");
+            const monthKey = `Tháng ${month}`;
+            monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
+          });
+
+          setOrdersByMonth(monthlyCounts);
         } else {
-          setMonthlyRevenue({});
+          setOrdersByMonth({});
         }
       } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu doanh thu:", error);
-        setMonthlyRevenue({});
+        console.error("Lỗi khi thống kê đơn hàng theo tháng:", error);
+        setOrdersByMonth({});
       }
     };
 
-    fetchRevenue();
+    fetchOrdersByMonth();
   }, []);
 
-  // Chuyển đổi dữ liệu doanh thu để hiển thị biểu đồ
-  const revenueData = Object.entries(monthlyRevenue ?? {}).map(([month, value]) => ({
+  const orderBarChartData = Object.entries(ordersByMonth).map(([month, count]) => ({
     name: month,
-    total: value || 0, // Tránh lỗi undefined
+    total: count,
+  }));
+
+  // Fetch doanh thu
+  useEffect(() => {
+    const fetchRevenueData = async () => {
+      try {
+        const response = await fetch("https://gshopbackend-1.onrender.com/order/revenue");
+        const result = await response.json();
+        if (result.status) {
+          setRevenueData({
+            dailyRevenueLast7Days: result.data.dailyRevenueLast7Days,
+          });
+          setMonthlyRevenue(result.data.monthlyRevenue || {});
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu doanh thu:", error);
+      }
+    };
+
+    fetchRevenueData();
+  }, []);
+
+  // Dữ liệu biểu đồ doanh thu theo tháng
+  const monthlyRevenueChartData = Object.entries(monthlyRevenue ?? {}).map(([month, value]) => ({
+    name: month,
+    total: value || 0,
   }));
 
   const cardData: CardProps[] = [
@@ -136,12 +132,13 @@ const orderBarChartData = Object.entries(ordersByMonth).map(([month, count]) => 
   ];
 
   const [topProducts, setTopProducts] = useState<TenGundamProps[]>([]);
+
   useEffect(() => {
     const fetchTopProducts = async () => {
       try {
         const response = await fetch("https://gshopbackend-1.onrender.com/order/top-products");
         const result = await response.json();
-  
+
         if (result.status && Array.isArray(result.byQuantity)) {
           type ProductItem = { name: string; totalSold: number };
           const top10 = result.byQuantity.slice(0, 10).map((item: ProductItem) => ({
@@ -157,10 +154,9 @@ const orderBarChartData = Object.entries(ordersByMonth).map(([month, count]) => 
         setTopProducts([]);
       }
     };
-  
+
     fetchTopProducts();
   }, []);
-  
 
   return (
     <div>
@@ -175,7 +171,24 @@ const orderBarChartData = Object.entries(ordersByMonth).map(([month, count]) => 
           <CardContent>
             <p className="font-semibold">Thống kê doanh thu</p>
             <p className="pb-4 text-xs text-gray-500">Doanh thu trong năm nay</p>
-            {revenueData.length > 0 ? <LineChart data={revenueData} /> : <p className="text-center p-4">Không có dữ liệu</p>}
+            {monthlyRevenueChartData.length > 0 ? (
+              <LineChart data={monthlyRevenueChartData} />
+            ) : (
+              <p className="text-center p-4">Không có dữ liệu</p>
+            )}
+          </CardContent>
+
+          <CardContent>
+            <p className="font-semibold">Thống kê doanh thu</p>
+            <p className="pb-4 text-xs text-gray-500">Doanh thu trong 7 ngày gần nhất</p>
+            <LineChart
+              data={Object.entries(revenueData.dailyRevenueLast7Days)
+                .reverse()
+                .map(([date, value]) => ({
+                  name: date,
+                  total: Number(value),
+                }))}
+            />
           </CardContent>
 
           <CardContent>
@@ -187,7 +200,6 @@ const orderBarChartData = Object.entries(ordersByMonth).map(([month, count]) => 
               <p className="text-center p-4">Không có dữ liệu</p>
             )}
           </CardContent>
-
         </section>
 
         <section>
@@ -197,13 +209,10 @@ const orderBarChartData = Object.entries(ordersByMonth).map(([month, count]) => 
               <p className="pb-4 text-xs text-gray-500">Xếp hạng 10 bộ Gundam bán chạy nhất</p>
             </section>
             {topProducts.length > 0 ? (
-              topProducts.map((d, i) => (
-                <TenGundamCard key={i} name={d.name} amount={d.amount} />
-              ))
+              topProducts.map((d, i) => <TenGundamCard key={i} name={d.name} amount={d.amount} />)
             ) : (
               <p className="text-center text-sm text-gray-500">Không có dữ liệu</p>
             )}
-
           </CardContent>
         </section>
       </section>

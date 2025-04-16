@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import BarChart2 from '@/components/ui/BarChart/BarChart2';
 import Card, { CardContent, CardProps } from '@/components/ui/Card';
 import { HandCoinsIcon, Landmark, ShoppingCart } from 'lucide-react';
-import LineChart from '@/components/ui/LineChart';
 import PieChartComponent from '@/components/ui/PieChart';
 
 const ReportPage = () => {
@@ -143,11 +142,8 @@ useEffect(() => {
       </section>
       <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-[7fr_3fr]">
         <section className="grid grid-cols-1 gap-4 transition-all">
-          <CardContent>
-            <p className=" font-semibold">Thống kê doanh thu</p>
-            <p className="pb-4 text-xs text-gray-500">Doanh thu trong năm nay</p>
-            <LineChart data={Object.entries(revenueData.dailyRevenueLast7Days).reverse().map(([date, value]) => ({ name: date, total: Number(value) }))} />
-          </CardContent>
+          
+
           <CardContent>
             <p className=" font-semibold">Thống kê lợi nhuận theo tháng</p>
             <p className="pb-4 text-xs text-gray-500">Tổng doanh thu của các đơn hàng đã giao</p>

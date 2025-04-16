@@ -28,9 +28,9 @@ export default function EditStaffDialog({ employee, onClose, onUpdated }: EditSt
     setLoading(true);
     setError(null);
 
-    const phoneRegex = /^[0-9]{9}$/; // Check for exactly 9 digits
+    const phoneRegex = /^[0-9]{10}$/;
       if (!phoneRegex.test(phone)) {
-        setError("Số điện thoại phải có 9 chữ số.");
+        setError("Số điện thoại phải có 10 chữ số.");
         setLoading(false);
         return;
       }
@@ -70,7 +70,7 @@ export default function EditStaffDialog({ employee, onClose, onUpdated }: EditSt
         </div>
         <div className="space-y-2 m-5">
             <p>Email</p>
-            <Input placeholder="Email" value={email} readOnly onChange={(e) => setEmail(e.target.value)} className="text-black "/>
+            <Input placeholder="Email" value={email} readOnly onChange={(e) => setEmail(e.target.value)} className="text-black bg-gray-200"/>
             <p>Họ và tên</p>
             <Input placeholder="Tên nhân viên" value={name} onChange={(e) => setName(e.target.value)} className="bg-blue-100"/>
             <p>Số điện thoại</p>

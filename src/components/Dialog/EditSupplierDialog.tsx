@@ -58,14 +58,14 @@ const EditSupplierDialog = ({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\d{9}$/;
+    const phoneRegex = /^\d{10}$/;
 
     if (!form.name.trim()) newErrors.name = "Không được để trống";
     if (!form.email.trim()) newErrors.email = "Không được để trống";
     else if (!emailRegex.test(form.email)) newErrors.email = "Email không hợp lệ";
 
     if (!form.sdt.trim()) newErrors.sdt = "Không được để trống";
-    else if (!phoneRegex.test(form.sdt)) newErrors.sdt = "Số điện thoại phải 9 số";
+    else if (!phoneRegex.test(form.sdt)) newErrors.sdt = "Số điện thoại phải 10 số";
 
     if (!form.investor_name.trim()) newErrors.investor_name = "Không được để trống";
     if (!form.cooperation_day.trim()) newErrors.cooperation_day = "Không được để trống";

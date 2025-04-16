@@ -55,9 +55,13 @@ const EditCategoryDialog = ({ isOpen, setIsOpen, category, onUpdate }: EditCateg
               />
             </div>
             <div className="mt-4">
-              <Button variant="destructive" className="w-full" onClick={handleSubmit}>
+              <Button
+                variant="destructive"
+                className="w-full"
+                onClick={handleSubmit}
+                disabled={!editedCategory.name_type} // Vô hiệu hóa nút khi ô nhập trống
+              >
                 Cập nhật
-                
               </Button>
             </div>
           </form>

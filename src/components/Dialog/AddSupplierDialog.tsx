@@ -39,7 +39,7 @@ const AddSupplierDialog = ({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\d{9}$/;
+    const phoneRegex = /^\d{10}$/;
 
     if (!newSupplier.name.trim()) {
       newErrors.name = "Không được để trống";
@@ -54,7 +54,7 @@ const AddSupplierDialog = ({
     if (!newSupplier.phone_number.trim()) {
       newErrors.phone_number = "Không được để trống";
     } else if (!phoneRegex.test(newSupplier.phone_number)) {
-      newErrors.phone_number = "Số điện thoại phải gồm 9 số";
+      newErrors.phone_number = "Số điện thoại phải gồm 10 số";
     }
 
     if (!newSupplier.representative.trim()) {
@@ -114,12 +114,14 @@ const AddSupplierDialog = ({
 
     if (name === "phone_number") {
       const digitsOnly = value.replace(/\D/g, '');
-      const truncatedValue = digitsOnly.slice(0, 9);
+      const truncatedValue = digitsOnly.slice(0, 10);
       setNewSupplier({ ...newSupplier, [name]: truncatedValue });
     } else {
       setNewSupplier({ ...newSupplier, [name]: value });
     }
   };
+
+  const isFormComplete = Object.values(newSupplier).every((field) => field.trim() !== "");
 
   return (
     <Dialog
@@ -139,24 +141,23 @@ const AddSupplierDialog = ({
     >
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <Dialog.Panel className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full relative">
-        <button
-          className="absolute top-3 right-3 text-red-600 hover:text-red-900"
-          onClick={() => {
-            setIsOpen(false);
-            setNewSupplier({
-              name: "",
-              email: "",
-              phone_number: "",
-              representative: "",
-              cooperation_date: "",
-              address: "",
-            });
-            setErrors({});
-          }}
-        >
-          <X size={20} />
-        </button>
-
+          <button
+            className="absolute top-3 right-3 text-red-600 hover:text-red-900"
+            onClick={() => {
+              setIsOpen(false);
+              setNewSupplier({
+                name: "",
+                email: "",
+                phone_number: "",
+                representative: "",
+                cooperation_date: "",
+                address: "",
+              });
+              setErrors({});
+            }}
+          >
+            <X size={20} />
+          </button>
 
           <Dialog.Title className="text-xl font-bold text-center">
             Thêm nhà cung cấp
@@ -177,9 +178,7 @@ const AddSupplierDialog = ({
               <input
                 type="text"
                 name="name"
-                className={`w-full p-2 border rounded mt-1 ${
-                  errors.name ? "border-red-500 bg-red-50" : "bg-blue-50"
-                }`}
+                className={`w-full p-2 border rounded mt-1 ${errors.name ? "border-red-500 bg-red-50" : "bg-blue-50"}`}
                 value={newSupplier.name}
                 onChange={handleChange}
               />
@@ -194,9 +193,7 @@ const AddSupplierDialog = ({
               <input
                 type="text"
                 name="email"
-                className={`w-full p-2 border rounded mt-1 ${
-                  errors.email ? "border-red-500 bg-red-50" : "bg-blue-50"
-                }`}
+                className={`w-full p-2 border rounded mt-1 ${errors.email ? "border-red-500 bg-red-50" : "bg-blue-50"}`}
                 value={newSupplier.email}
                 onChange={handleChange}
               />
@@ -206,20 +203,16 @@ const AddSupplierDialog = ({
             <div className="my-3">
               <div className="flex items-center justify-between">
                 <label className="block text-sm font-medium">Số điện thoại</label>
-                {errors.phone_number && (
-                  <span className="text-sm text-red-600">{errors.phone_number}</span>
-                )}
+                {errors.phone_number && <span className="text-sm text-red-600">{errors.phone_number}</span>}
               </div>
               <input
                 type="text"
                 name="phone_number"
-                className={`w-full p-2 border rounded mt-1 ${
-                  errors.phone_number ? "border-red-500 bg-red-50" : "bg-blue-50"
-                }`}
+                className={`w-full p-2 border rounded mt-1 ${errors.phone_number ? "border-red-500 bg-red-50" : "bg-blue-50"}`}
                 value={newSupplier.phone_number}
                 onChange={handleChange}
                 inputMode="numeric"
-                placeholder="123456789"
+                placeholder="0123 456 789"
               />
             </div>
 
@@ -227,16 +220,12 @@ const AddSupplierDialog = ({
             <div className="my-3">
               <div className="flex items-center justify-between">
                 <label className="block text-sm font-medium">Người đại diện</label>
-                {errors.representative && (
-                  <span className="text-sm text-red-600">{errors.representative}</span>
-                )}
+                {errors.representative && <span className="text-sm text-red-600">{errors.representative}</span>}
               </div>
               <input
                 type="text"
                 name="representative"
-                className={`w-full p-2 border rounded mt-1 ${
-                  errors.representative ? "border-red-500 bg-red-50" : "bg-blue-50"
-                }`}
+                className={`w-full p-2 border rounded mt-1 ${errors.representative ? "border-red-500 bg-red-50" : "bg-blue-50"}`}
                 value={newSupplier.representative}
                 onChange={handleChange}
               />
@@ -246,19 +235,14 @@ const AddSupplierDialog = ({
             <div className="my-3">
               <div className="flex items-center justify-between">
                 <label className="block text-sm font-medium">Ngày hợp tác</label>
-                {errors.cooperation_date && (
-                  <span className="text-sm text-red-600">{errors.cooperation_date}</span>
-                )}
+                {errors.cooperation_date && <span className="text-sm text-red-600">{errors.cooperation_date}</span>}
               </div>
               <input
                 type="date"
                 name="cooperation_date"
-                className={`w-full p-2 border rounded mt-1 ${
-                  errors.cooperation_date ? "border-red-500 bg-red-50" : "bg-blue-50"
-                }`}
+                className={`w-full p-2 border rounded mt-1 ${errors.cooperation_date ? "border-red-500 bg-red-50" : "bg-blue-50"}`}
                 value={newSupplier.cooperation_date}
                 onChange={handleChange}
-                placeholder="dd/mm/yyyy"
               />
             </div>
 
@@ -266,16 +250,12 @@ const AddSupplierDialog = ({
             <div className="my-3">
               <div className="flex items-center justify-between">
                 <label className="block text-sm font-medium">Địa chỉ</label>
-                {errors.address && (
-                  <span className="text-sm text-red-600">{errors.address}</span>
-                )}
+                {errors.address && <span className="text-sm text-red-600">{errors.address}</span>}
               </div>
               <input
                 type="text"
                 name="address"
-                className={`w-full p-2 border rounded mt-1 ${
-                  errors.address ? "border-red-500 bg-red-50" : "bg-blue-50"
-                }`}
+                className={`w-full p-2 border rounded mt-1 ${errors.address ? "border-red-500 bg-red-50" : "bg-blue-50"}`}
                 value={newSupplier.address}
                 onChange={handleChange}
               />
@@ -287,14 +267,12 @@ const AddSupplierDialog = ({
                 variant="destructive"
                 className="w-full"
                 type="submit"
-                disabled={loading}
+                disabled={loading || !isFormComplete} // Disable the button if form is incomplete
               >
                 {loading ? "Đang gửi..." : "Thêm nhà cung cấp"}
               </Button>
             </div>
           </form>
-
-
         </Dialog.Panel>
       </div>
     </Dialog>

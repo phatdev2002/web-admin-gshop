@@ -175,7 +175,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
   return (
     <div className="">
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <div className="p-5 h-[600px] bg-gray-300 rounded-lg relative">    
+        <div className="p-5 h-[590px] bg-gray-300 rounded-lg relative">    
           <div className="flex justify-end absolute  right-2 top-2">       
                 <Button variant="outline" onClick={onClose} className="text-red-500 w-8 h-8 rounded-sm font-semibold">
                   X
@@ -216,7 +216,16 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                     </div>
                     <div className=" gap-2 flex flex-col flex-1">
                       <label className="block text-sm font-semibold">Số điện thoại</label>
-                      <Input value={clientData?.phone_number || ''} readOnly className="bg-blue-50"/>
+                      <Input
+                        value={
+                          clientData?.phone_number
+                            ? `${clientData.phone_number.slice(0, 4)} ${clientData.phone_number.slice(4, 7)} ${clientData.phone_number.slice(7)}`
+                            : ''
+                        }
+                        readOnly
+                        className="bg-blue-50"
+                      />
+
                     </div>
                 
                   <div className="mt-4 gap-2 flex flex-col">

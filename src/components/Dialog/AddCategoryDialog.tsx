@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 type AddCategoryDialogProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onSubmit: (newCategory: { category: string; }) => void;
+  onSubmit: (newCategory: { category: string }) => void;
 };
 
 const AddCategoryDialog = ({ isOpen, setIsOpen, onSubmit }: AddCategoryDialogProps) => {
@@ -30,8 +30,14 @@ const AddCategoryDialog = ({ isOpen, setIsOpen, onSubmit }: AddCategoryDialogPro
       if (!res.ok) {
         throw new Error("Thêm thể loại thất bại");
       }
+
       // Nếu thành công, gọi hàm onSubmit từ CategoryPage để refetch dữ liệu hoặc cập nhật UI
       onSubmit({ category: newCategory.category });
+
+      // Reset dữ liệu nhập vào
+      setNewCategory({ category: "" });
+
+      // Đóng dialog sau khi thêm thành công
       setIsOpen(false);
     } catch (error) {
       console.error("Lỗi khi thêm thể loại:", error);
@@ -64,7 +70,12 @@ const AddCategoryDialog = ({ isOpen, setIsOpen, onSubmit }: AddCategoryDialogPro
               />
             </div>
             <div className="mt-4">
-              <Button variant="destructive" className="w-full" onClick={handleSubmit}>
+              <Button
+                variant="destructive"
+                className={`w-full ${!newCategory.category ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={handleSubmit}
+                disabled={!newCategory.category}
+              >
                 Thêm
               </Button>
             </div>

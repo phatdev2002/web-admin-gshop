@@ -19,6 +19,8 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
         return emailRegex.test(email);
     };
 
+    
+
     // Xử lý mở dialog (reset input)
     const handleOpen = () => {
         setName("");
@@ -40,8 +42,8 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
             return;
         }
 
-        if (phone.length < 9) {
-            setMessage({ type: "error", text: "Số điện thoại phải có ít nhất 9 ký tự!" });
+        if (phone.length !== 10) {
+            setMessage({ type: "error", text: "Số điện thoại phải có đúng 10 chữ số!" });
             return;
         }
 
@@ -84,10 +86,10 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
                         </p>
                     )}
                     <p>Tên nhân viên</p>
-                    <Input value={name} onChange={(e) => setName(e.target.value)} className="my-2 bg-white" />
+                    <Input value={name} onChange={(e) => setName(e.target.value)} className="my-2 bg-blue-100" />
 
                     <p>Email</p>
-                    <Input value={email} onChange={(e) => setEmail(e.target.value)} className="my-2 bg-white" />
+                    <Input value={email} onChange={(e) => setEmail(e.target.value)} className="my-2 bg-blue-100" />
 
                     <p>Số điện thoại</p>
                     <Input
@@ -100,12 +102,12 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
                                 setPhone(value);
                             }
                         }}
-                        className="my-2 bg-white"
+                        className="my-2 bg-blue-100"
                     />
 
 
                     <p>Mật khẩu</p>
-                    <Input value={password} onChange={(e) => setPassword(e.target.value)} className="my-2 bg-white" />
+                    <Input value={password} onChange={(e) => setPassword(e.target.value)} className="my-2 bg-blue-100" />
 
                     <div className="flex justify-end space-x-2 mt-4">
                         <Button variant="outline" onClick={() => setOpen(false)}>Hủy</Button>

@@ -59,14 +59,14 @@ const LoginForm = () => {
         } else if (user.role === "staff") {
           router.push("/staff/overview");
         } else {
-          alert("Bạn không có quyền truy cập!");
+          toast("Bạn không có quyền truy cập!");
         }
       } else {
         let errorMessage = "Lỗi đăng nhập!";
         if (result.message) {
           errorMessage = result.message; // Hiển thị lỗi cụ thể từ server nếu có
         }
-        alert(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (error) {
       let errorMessage = "Không thể kết nối tới server. Vui lòng thử lại sau!";
@@ -82,7 +82,7 @@ const LoginForm = () => {
         errorMessage = `Lỗi: ${error.message}`;
       }
   
-      alert(errorMessage);
+      toast(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -134,17 +134,6 @@ const LoginForm = () => {
         <Button type="submit" className="!mt-8 w-full" disabled={loading}>
           {loading ? "Đang đăng nhập..." : "Đăng nhập"}
         </Button>
-        
-        <div className="mt-4 text-center">
-          <Button 
-            variant="link" 
-            onClick={() => toast.error("Liên hệ Admin để lấy mật khẩu")} 
-            className="text-sm text-blue-500"
-            type="button">
-            Quên mật khẩu ?
-            
-          </Button>
-        </div>
       </form>
     </Form>
   );
