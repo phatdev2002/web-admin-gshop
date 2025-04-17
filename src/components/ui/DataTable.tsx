@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
@@ -34,9 +34,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     state: { sorting, pagination: { pageIndex, pageSize: 10 } },
     onSortingChange: setSorting,
     onPaginationChange: (updater) => {
@@ -44,9 +41,15 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         typeof updater === "function" ? updater({ pageIndex: prev, pageSize: 10 }).pageIndex : updater.pageIndex
       );
     },
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    manualPagination: true, // 👈 Thêm dòng này
   });
+  
+  
 
-  const totalPages = table.getPageCount();
+  // const totalPages = table.getPageCount();
 
   return (
     <div>
@@ -98,133 +101,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       </div>
 
       {/* Điều hướng phân trang */}
-      <div className="flex items-center justify-center space-x-2 py-4">
-        {/* Nút "Trở lại" */}
-        <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-          Trở lại
-        </Button>
-
-        <div className="flex space-x-2">
-          {totalPages <= 4 ? (
-            // Hiển thị toàn bộ khi tổng trang ≤ 4
-            Array.from({ length: totalPages }, (_, i) => (
-              <Button
-                key={i}
-                variant="outline"
-                size="sm"
-                onClick={() => table.setPageIndex(i)}
-                className={pageIndex === i ? "bg-red-500 text-white" : ""}
-              >
-                {i + 1}
-              </Button>
-            ))
-          ) : (
-            <>
-              {/* Trang đầu tiên */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.setPageIndex(0)}
-                className={pageIndex === 0 ? "bg-red-500 text-white" : ""}
-              >
-                1
-              </Button>
-
-              {/* Trang 2 và 3 nếu đang ở đầu */}
-              {pageIndex <= 1 && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.setPageIndex(1)}
-                    className={pageIndex === 1 ? "bg-red-500 text-white" : ""}
-                  >
-                    2
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.setPageIndex(2)}
-                    className={pageIndex === 2 ? "bg-red-500 text-white" : ""}
-                  >
-                    3
-                  </Button>
-                  <span className="px-2 text-gray-500">...</span>
-                </>
-              )}
-
-              {/* Ở giữa */}
-              {pageIndex > 1 && pageIndex < totalPages - 2 && (
-                <>
-                  <span className="px-2 text-gray-500">...</span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.setPageIndex(pageIndex - 1)}
-                  >
-                    {pageIndex}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.setPageIndex(pageIndex)}
-                    className="bg-red-500 text-white"
-                  >
-                    {pageIndex + 1}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.setPageIndex(pageIndex + 1)}
-                  >
-                    {pageIndex + 2}
-                  </Button>
-                  <span className="px-2 text-gray-500">...</span>
-                </>
-              )}
-
-              {/* Ở gần cuối */}
-              {pageIndex >= totalPages - 2 && (
-                <>
-                  <span className="px-2 text-gray-500">...</span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.setPageIndex(totalPages - 3)}
-                    className={pageIndex === totalPages - 3 ? "bg-red-500 text-white" : ""}
-                  >
-                    {totalPages - 2}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.setPageIndex(totalPages - 2)}
-                    className={pageIndex === totalPages - 2 ? "bg-red-500 text-white" : ""}
-                  >
-                    {totalPages - 1}
-                  </Button>
-                </>
-              )}
-
-              {/* Trang cuối */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.setPageIndex(totalPages - 1)}
-                className={pageIndex === totalPages - 1 ? "bg-red-500 text-white" : ""}
-              >
-                {totalPages}
-              </Button>
-            </>
-          )}
-        </div>
-
-
-        {/* Nút "Tiếp theo" */}
-        <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-          Tiếp theo
-        </Button>
-      </div>
+      
     </div>
   );
 }
