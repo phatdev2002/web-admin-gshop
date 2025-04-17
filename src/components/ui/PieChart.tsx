@@ -27,11 +27,11 @@ export default function PieChartComponent({ piedata }: PieChartComponentProps) {
             innerRadius: 50,
             paddingAngle: 5,
             cornerRadius: 5,
-            cx: 170,
-            cy: 150,
+            cx: 150,
+            cy: 110,
           },
         ]}
-        width={350}
+        width={320}
         height={dynamicHeight}
         slotProps={{
           legend: {
