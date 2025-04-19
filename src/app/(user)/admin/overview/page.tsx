@@ -12,7 +12,7 @@ const OverviewPage = () => {
   const [totalProducts, setTotalProducts] = useState<number>(0);
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [totalStaff, setTotalStaff] = useState<number>(0);
-  const [monthlyRevenue, setMonthlyRevenue] = useState<Record<string, number>>({});
+  //const [monthlyRevenue, setMonthlyRevenue] = useState<Record<string, number>>({});
   const [revenueData, setRevenueData] = useState({
     dailyRevenueLast7Days: {},
   });
@@ -88,7 +88,7 @@ const OverviewPage = () => {
           setRevenueData({
             dailyRevenueLast7Days: result.data.dailyRevenueLast7Days,
           });
-          setMonthlyRevenue(result.data.monthlyRevenue || {});
+          //setMonthlyRevenue(result.data.monthlyRevenue || {});
         }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu doanh thu:", error);
@@ -98,11 +98,11 @@ const OverviewPage = () => {
     fetchRevenueData();
   }, []);
 
-  // Dữ liệu biểu đồ doanh thu theo tháng
-  const monthlyRevenueChartData = Object.entries(monthlyRevenue ?? {}).map(([month, value]) => ({
-    name: month,
-    total: value || 0,
-  }));
+  // // Dữ liệu biểu đồ doanh thu theo tháng
+  // const monthlyRevenueChartData = Object.entries(monthlyRevenue ?? {}).map(([month, value]) => ({
+  //   name: month,
+  //   total: value || 0,
+  // }));
 
   const cardData: CardProps[] = [
     {
@@ -168,7 +168,7 @@ const OverviewPage = () => {
 
       <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-[7fr_3fr]">
         <section className="grid grid-cols-1 gap-4 transition-all">
-          <CardContent>
+          {/* <CardContent>
             <p className="font-semibold">Thống kê doanh thu</p>
             <p className="pb-4 text-xs text-gray-500">Doanh thu trong năm nay</p>
             {monthlyRevenueChartData.length > 0 ? (
@@ -176,7 +176,7 @@ const OverviewPage = () => {
             ) : (
               <p className="text-center p-4">Không có dữ liệu</p>
             )}
-          </CardContent>
+          </CardContent> */}
 
           <CardContent>
             <p className="font-semibold">Thống kê doanh thu</p>

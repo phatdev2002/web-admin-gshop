@@ -306,10 +306,10 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
 
                 <div className="my-2">
                   <label className="block text-sm font-medium">Mô tả</label>
-                  <Input
-                    type="text"
+                  <textarea
                     className="w-full p-2 border rounded mt-1 bg-blue-50"
                     value={newProduct.description}
+                    rows={3}
                     onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
                     required
                   />

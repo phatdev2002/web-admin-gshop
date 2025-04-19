@@ -175,7 +175,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
   return (
     <div className="">
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <div className="p-5 h-[590px] bg-gray-300 rounded-lg relative">    
+        <div className="p-5 h-[590px] rounded-lg relative">    
           <div className="flex justify-end absolute  right-2 top-2">       
                 <Button variant="outline" onClick={onClose} className="text-red-500 w-8 h-8 rounded-sm font-semibold">
                   X
@@ -230,7 +230,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                 
                   <div className="mt-4 gap-2 flex flex-col">
                     <label className="block text-sm font-semibold">Địa chỉ</label>
-                    <Input value={address || "Chưa có địa chỉ"} readOnly className="bg-blue-50" />
+                    <Input value={address || "Chưa chọn địa chỉ giao hàng"} readOnly className="bg-blue-50" />
                   </div>
                 </div>
               </div>
@@ -248,12 +248,12 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
             ) : orderError ? (
               <p className="text-red-500">{orderError}</p>
             ) : (
-              <div className="max-h-[500px] overflow-y-auto mt-4 rounded-lg p-0 w-full flex-1">
+              <div className="max-h-[500px] overflow-y-auto mt-4 rounded-lg p-0 w-full flex-1 ">
                 {orders.length === 0 ? (
                     <p className="text-gray-500 ">Không có đơn hàng nào.</p>
                 ) : (
                   <table className="w-full border-collapse text-sm">
-                    <thead className="sticky top-0 bg-white z-10">
+                    <thead className="sticky top-0 z-10">
                       <tr className="bg-blue-100">
                         <th className="text-left p-3">Mã đơn</th>
                         <th className="text-left p-3">Ngày</th>
@@ -264,7 +264,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                     <tbody>
                       {orders.map((order, index) => (
                         <React.Fragment key={order._id}>
-                          <tr className={`border ${index % 2 === 0 ? "bg-white" : "bg-white"}`}>
+                          <tr className={`border ${index % 2 === 0 ? "bg-gray-300" : "bg-gray-300"}`}>
                             <td className="p-3 font-medium">{order._id}</td>
                             <td className="p-3">{order.date}</td>
                             <td className="p-3 text-right font-semibold">{order.total_price.toLocaleString()} đ</td>
@@ -282,7 +282,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                             <tr><td colSpan={4} className="text-center">Đang tải sản phẩm...</td></tr>
                           ) : (
                             orderDetails[order._id]?.map((product) => (
-                              <tr key={product._id} className="bg-gray-100">
+                              <tr key={product._id}>
                                 <td className="flex justify-center" colSpan={1}>
                                   <Image
                                       src={productImages[product.id_product]?.[1] || "/default-thumbnail.jpg"}
@@ -305,7 +305,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                             ))
                           )}
 
-                          <tr><td colSpan={4} className="h-3"></td></tr>
+                          <tr><td colSpan={4}></td></tr>
                         </React.Fragment>
                       ))}
                     </tbody>

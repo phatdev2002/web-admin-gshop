@@ -413,7 +413,6 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
               <div className="my-2">
                 <label className="block text-sm font-medium">Lượt xem</label>
                 <Input
@@ -424,19 +423,10 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
                   readOnly
                 />
               </div>
-              <div className="my-2">
-                <label className="block text-sm font-medium">Status</label>
-                <Input
-                  type="text"
-                  className="w-full p-2 border rounded mt-1 bg-gray-200"
-                  value={editedProduct.status} 
-                  readOnly
-                />
-              </div>
-            </div>
+              
 
             <div className="my-1">
-              <label className="block text-sm font-medium">Mô tả</label>
+              <label className="block text-sm font-medium">Mô tả (Chưa dùng CK editor) </label>
               <textarea
                 className="w-full p-2 border rounded mt-1 bg-blue-50"
                 value={editedProduct.description}
