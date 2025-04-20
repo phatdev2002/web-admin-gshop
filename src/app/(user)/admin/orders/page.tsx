@@ -205,7 +205,8 @@ const OrderPage = () => {
       <ViewOrderDialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        order={selectedOrder ? { ...selectedOrder, address: selectedOrder.address || "" } : null}
+        order={selectedOrder ? { ...selectedOrder, address: selectedOrder.address,phone: selectedOrder.phone, name: selectedOrder.name|| "" } : null}
+        
         users={users}
         addresses={{}} // tạm thời nếu chưa dùng
         payments={{}}  // tạm thời nếu chưa dùng

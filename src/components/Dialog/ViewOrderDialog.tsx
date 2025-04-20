@@ -23,8 +23,8 @@ interface Order {
   total_price: number;
   shipping_fee: number;
   amount: number;
-  phone: string;
-  name: string;
+  phone?: string;
+  name?: string;
   order_date: string;
   status: string;
   address?: string; // Make address optional if it's not always provided
