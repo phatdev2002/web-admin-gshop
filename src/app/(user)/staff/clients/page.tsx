@@ -62,7 +62,13 @@ const ClientPage = () => {
   const columns: ColumnDef<Client>[] = [
     { accessorKey: "clientname", header: "Tên khách hàng" },
     { accessorKey: "email", header: "Email" },
-    { accessorKey: "sdt", header: "Số điện thoại" },
+    { accessorKey: "sdt", header: "Số điện thoại", 
+      cell: ({ row }) => {
+        const phone = row.original.sdt.replace(/\D/g, "");
+        const formatted = phone.replace(/^(\d{4})(\d{3})(\d{3})$/, "$1 $2 $3");
+        return <span>{formatted}</span>;
+      },
+    },
     {
       id: "actions",
       header: "",

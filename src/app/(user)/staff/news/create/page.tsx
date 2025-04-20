@@ -79,7 +79,7 @@ export default function CreateNews() {
       }
 
       toast.success("Tạo bài viết thành công!");
-      router.push("/admin/news");
+      router.push("/staff/news");
     } catch (error) {
       console.error("Lỗi:", error);
       toast.error(error instanceof Error ? error.message : "Đã xảy ra lỗi không xác định.");

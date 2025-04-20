@@ -135,7 +135,7 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
         <div className="relative flex items-center">
           {showColorPicker && (
             <div className="absolute right-10 flex gap-2 p-2 rounded-lg border bg-white shadow-md">
-              {["#d6d6d6", "#e4c58a", "#e6a5a1", "#92b79d", "#8aa1c1", "#f0f0f0"].map((color) => (
+              {["#E6E6E6", "#F6E3B4", "#F6C4B9", "#B8D6B2", "#A5BCE4", "#E9F1FB"].map((color) => (
                 <button
                   key={color}
                   className="w-8 h-8 rounded-full border cursor-pointer"
@@ -206,13 +206,15 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
         {/* Avatar + Tên */}
         <Link href={user?.role === "admin" ? "/admin/profile" : "/staff/profile"}>
           <div className="flex items-center">
-            <img
-              src={user?.avatar ?? "/img/avatar_trang.jpg"}
-              alt="avatar"
-              width={40}
-              height={40}
-              className="rounded-full mr-2 w-8 h-8 object-cover"
-            />
+          <Image
+            src={user?.avatar && user.avatar.startsWith("http") ? user.avatar : "/img/avatar_trang.jpg"}
+            alt="avatar"
+            width={40}
+            height={40}
+            className="rounded-full mr-2 w-8 h-8 object-cover"
+            loader={({ src }) => src}
+          />
+
             <p className="font-semibold">{user?.name}</p>
           </div>
         </Link>
