@@ -9,7 +9,7 @@ import { CKEditor, useCKEditorCloud } from '@ckeditor/ckeditor5-react';
 import '@/components/ui/editor.css';
 
 const LICENSE_KEY =
-	'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NDU3OTgzOTksImp0aSI6ImJlNTk1MmJhLTE4ZjItNDAwOS05MTBmLTJjYzkwMTM5NTJlOSIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6ImQzYjNlNGY0In0.zT_4McJSh0TYYvACF55rckb8dNMAD5Gu3NS96An0fvdaI-xNE0pr3slnrtPuHYnf4sCIlyA64Ckj1ogQpER6xA';
+	'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NzY2NDMxOTksImp0aSI6Ijg0NzEzZDhkLTU5MGYtNGQyYi04MDVhLTY2MDNmNThhNzM4MyIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiXSwiZmVhdHVyZXMiOlsiRFJVUCIsIkJPWCJdLCJ2YyI6ImY5MzhjMDQ3In0.bdpi9xQvcJ1NCvmv5WH3ec4YOvnhsVCVo-9KIHdBUF93LR6VAHxD4Qz4GSE9Kpx6Ho14aa-V4IjXbmYJqRMSQQ';
 
 const CLOUD_SERVICES_TOKEN_URL =
 'https://fcpres4l8r92.cke-cs.com/token/dev/4dbcfd5a3d9d3d7e4b46ee24db890870325195ca00d1148ef7cfc8691971?limit=10';
@@ -36,36 +36,35 @@ const CLOUD_SERVICES_TOKEN_URL =
   
       const {
         ClassicEditor,
-        Autoformat, AutoImage, AutoLink, Autosave, Bold, CKBox, CKBoxImageEdit,
+        Autoformat, AutoImage, AutoLink, Autosave, Bold, CKBox,
         CloudServices, Code, CodeBlock, Emoji, Essentials, GeneralHtmlSupport,
         Heading, HtmlComment, HtmlEmbed, ImageBlock, ImageCaption, ImageInline,
         ImageInsert, ImageInsertViaUrl, ImageResize, ImageStyle, ImageTextAlternative,
         ImageToolbar, ImageUpload, Italic, Link, LinkImage, List, ListProperties,
-        Mention, Paragraph, PasteFromOffice, PictureEditing, ShowBlocks, Table,
+        Mention, Paragraph, PictureEditing, ShowBlocks, Table,
         TableCaption, TableCellProperties, TableColumnResize, TableProperties,
         TableToolbar, TextTransformation
       } = cloud.CKEditor;
-  
-      const { PasteFromOfficeEnhanced, SourceEditingEnhanced } = cloud.CKEditorPremiumFeatures;
+
   
       return {
         ClassicEditor,
         editorConfig: {
           toolbar: {
             items: [
-              'sourceEditingEnhanced', 'showBlocks', '|', 'heading', '|', 'bold', 'italic',
+              'showBlocks', '|', 'heading', '|', 'bold', 'italic',
               'code', '|', 'emoji', 'link', 'insertImage', 'ckbox', 'insertTable',
               'codeBlock', 'htmlEmbed', '|', 'bulletedList', 'numberedList'
             ],
             shouldNotGroupWhenFull: false
           },
           plugins: [
-            Autoformat, AutoImage, AutoLink, Autosave, Bold, CKBox, CKBoxImageEdit, CloudServices,
+            Autoformat, AutoImage, AutoLink, Autosave, Bold, CKBox, CloudServices,
             Code, CodeBlock, Emoji, Essentials, GeneralHtmlSupport, Heading, HtmlComment, HtmlEmbed,
             ImageBlock, ImageCaption, ImageInline, ImageInsert, ImageInsertViaUrl, ImageResize,
             ImageStyle, ImageTextAlternative, ImageToolbar, ImageUpload, Italic, Link, LinkImage,
-            List, ListProperties, Mention, Paragraph, PasteFromOffice, PasteFromOfficeEnhanced,
-            PictureEditing, ShowBlocks, SourceEditingEnhanced, Table, TableCaption, TableCellProperties,
+            List, ListProperties, Mention, Paragraph,
+            PictureEditing, ShowBlocks, Table, TableCaption, TableCellProperties,
             TableColumnResize, TableProperties, TableToolbar, TextTransformation
           ],
           cloudServices: {

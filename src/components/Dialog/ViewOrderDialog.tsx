@@ -23,6 +23,8 @@ interface Order {
   total_price: number;
   shipping_fee: number;
   amount: number;
+  phone: string;
+  name: string;
   order_date: string;
   status: string;
   address?: string; // Make address optional if it's not always provided
@@ -58,7 +60,6 @@ interface ViewOrderDialogProps {
 const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ open, onClose, order, refreshOrders }) => {
   const [orderDetails, setOrderDetails] = useState<OrderDetail[]>([]);
   const [products, setProducts] = useState<{ [key: string]: string }>({});
-  const [usersList, setUsersList] = useState<{ [key: string]: User }>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState(order?.status || "Đang xử lý");
@@ -88,7 +89,6 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ open, onClose, order,
         response.data.data.forEach((user: User) => {
           userMap[user._id] = user;
         });
-        setUsersList(userMap);
       }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách người dùng:", error);
@@ -215,8 +215,8 @@ useEffect(() => {
             <div>
               <p className="pb-4"><strong>Mã đơn hàng:</strong> {order.id}</p>
 
-              <p><strong>Khách hàng:</strong> {usersList[order.id_user]?.name || "Không xác định"}</p>
-              <p><strong>Số điện thoại:</strong> {usersList[order.id_user]?.phone_number || "Không xác định"}</p>
+              <p><strong>Khách hàng:</strong> {order?.name || "Không xác định"}</p>
+              <p><strong>Số điện thoại:</strong> {order?.phone || "Không xác định"}</p>
               <p><strong>Địa chỉ:</strong> {order?.address || "Không có địa chỉ"}</p>
 
 

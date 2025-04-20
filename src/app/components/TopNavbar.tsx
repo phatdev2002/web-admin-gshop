@@ -100,6 +100,7 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
           setNewOrdersCount(newUnseen.length);
           setUnprocessedOrders(unprocessedOrders);
         }
+        console.log("Đơn hàng:", unprocessedOrders);
 
         handledOrderIdsRef.current = unprocessedOrders.map((order: Order) => order._id);
       } catch (err) {
@@ -108,7 +109,7 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
     };
 
     fetchUnprocessedOrders();
-    const interval = setInterval(fetchUnprocessedOrders, 4000);
+    const interval = setInterval(fetchUnprocessedOrders, 60000);
     return () => clearInterval(interval);
   }, [user, router, newOrdersCount]);
 

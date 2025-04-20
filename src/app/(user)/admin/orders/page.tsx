@@ -17,7 +17,9 @@ interface Order {
   id_payment: string;
   id_address: string;
   total_price: number;
+  phone: string;
   shipping_fee: number;
+  name: string; 
   amount: number;
   order_date: string;
   status: string;
@@ -63,6 +65,8 @@ const OrderPage = () => {
           id_payment: string;
           id_address: string;
           address?: string;
+          name: string;
+          phone: string;
           total_price: number;
           shipping_fee: number;
           date: string;
@@ -72,13 +76,15 @@ const OrderPage = () => {
           id_user: order.id_user,
           id_payment: order.id_payment,
           id_address: order.id_address,
+          phone: order.phone,
+          name: order.name, // Lấy trực tiếp từ API nếu có
           address: order.address, // Lấy trực tiếp từ API nếu có
           total_price: order.total_price,
           shipping_fee: order.shipping_fee,
           amount: order.total_price,
           order_date: order.date,
           status: order.status,
-        }));
+        })).reverse();
         setOrders(apiData);
       } else {
         setError("Dữ liệu không hợp lệ từ server.");
@@ -219,10 +225,10 @@ const columns = (
 ): ColumnDef<Order>[] => [
   { accessorKey: "id", header: "Mã đơn hàng" },
   {
-    accessorKey: "id_user",
+    accessorKey: "name",
     header: "Khách hàng",
-    cell: ({ getValue }) => users[getValue() as string] || "Không xác định",
   },
+  
   {
     accessorKey: "amount",
     header: "Tổng tiền thanh toán",
