@@ -4,6 +4,7 @@ import Editor from "@/components/Editor";
 import { News } from "@/types/News";
 import Image from "next/image";
 import { toast } from "sonner";
+import { ImageUp } from "lucide-react";
 
 export interface UserProfile {
   name: string;
@@ -29,7 +30,11 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState(news?.thumbnail || "");
 
-
+  const handleClose = () => {
+    setThumbnail(null);
+    onClose();
+  };
+  
   useEffect(() => {
     if (news) {
       setContent(news.content || "");
@@ -125,7 +130,9 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
         {/* Ảnh bài viết */}
         <div>
           <p className="font-semibold">Thumbnail</p>
-          <input type="file" onChange={(e) => setThumbnail(e.target.files?.[0] || null)} className="mt-2" />
+
+
+
 
           {thumbnails.length > 0 ? (
             thumbnails.map((image, index) => (
@@ -142,6 +149,24 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
           ) : (
             <p className="text-gray-500 italic">Không có ảnh Thumbnail</p>
           )}
+          <div className="mt-2 flex flex-row gap-2">
+            <label htmlFor="thumbnail-upload" className="flex items-center gap-2 cursor-pointer text-blue-600 hover:text-blue-800">
+              <ImageUp className="w-6 h-6" />
+              Đổi ảnh thumbnail
+            </label>
+            <input
+              id="thumbnail-upload"
+              type="file"
+              className="hidden"
+              onChange={(e) => setThumbnail(e.target.files?.[0] || null)}
+            />
+            
+            {thumbnail && (
+              <p className="text-sm text-gray-700 mt-1 italic">
+                Đã chọn: {thumbnail.name}
+              </p>
+            )}
+          </div>
 
         </div>
 
@@ -186,13 +211,14 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
 
       {/* Nút đóng */}
       <div className="top-7 right-72 z-0 flex justify-end absolute">
-        <button 
-          onClick={onClose} 
-          aria-label="Đóng hộp thoại" 
-          className="text-red-500 hover:text-red-600 p-2 bg-gray-100 w-10 h-10 rounded-lg"
-        >
-          ✖
-        </button>
+      <button 
+        onClick={handleClose} 
+        aria-label="Đóng hộp thoại" 
+        className="text-red-500 hover:text-red-600 p-2 bg-gray-100 w-10 h-10 rounded-lg"
+      >
+        ✖
+      </button>
+
       </div>
     </div>
   );
