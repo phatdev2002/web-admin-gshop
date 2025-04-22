@@ -10,6 +10,7 @@ export default function CreateNews() {
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  
 
   const handleSubmit = async () => {
     if (!title.trim() || !content.trim()) {
@@ -109,6 +110,7 @@ export default function CreateNews() {
       </div>
       {/* Nội dung */}
       <Editor value={content} onChange={setContent} />
+
 
       {/* Upload ảnh */}
       <div className="mt-4">

@@ -7,6 +7,7 @@ import { ImagePlus, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Editor from "@/components/Editor";
 
 interface EditProductDialogProps {
   isOpen: boolean;
@@ -98,6 +99,7 @@ const deleteProductImage = async (id_product: string, imageUrl: string) => {
 
 const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditProductDialogProps) => {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [content, setContent] = useState("");
   const [editedProduct, setEditedProduct] = useState({
     name: "",
     id_category: "",
@@ -135,6 +137,9 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
       setSelectedImages(files); // Cập nhật state với các file đã chọn
     }
   };
+  // Mô tả sản phẩm
+  
+
 
   // Hàm upload hình ảnh
   const uploadImages = async (id_product: string) => {
@@ -170,24 +175,12 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
   
 
   // Khởi tạo giá trị ban đầu dựa trên productToEdit
-  useEffect(() => {
-    if (productToEdit) {
-      setEditedProduct({
-        name: productToEdit.name,
-        id_category: productToEdit.id_category,
-        id_supplier: productToEdit.id_supplier,
-        price: productToEdit.price.toString(),
-        isActive: productToEdit.isActive,
-        quantity: productToEdit.quantity.toString(),
-        description: productToEdit.description,
-        status: productToEdit.status,
-        viewer: productToEdit.viewer.toString(),
-      });
-    }
-  }, [productToEdit]);
+  
 
   const handleSubmit = async () => {
     try {
+      console.log("Mô tả sản phẩm trước khi gửi: ", content);  // Kiểm tra mô tả
+      
       const endpoint = `https://gshopbackend-1.onrender.com/product/update/${productToEdit._id}`;
       const response = await fetch(endpoint, {
         method: "PUT",
@@ -198,7 +191,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
           name: editedProduct.name,
           price: Number(editedProduct.price),
           quantity: Number(editedProduct.quantity),
-          description: editedProduct.description,
+          description: content,  // Đảm bảo mô tả được gửi đúng
           id_category: editedProduct.id_category,
           id_supplier: editedProduct.id_supplier,
           isActive: editedProduct.isActive,
@@ -206,25 +199,30 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
           viewer: Number(editedProduct.viewer),
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to update product");
       }
-
+  
       const result = await response.json();
       console.log("Sản phẩm đã được cập nhật:", result);
+  
       onSubmit({
         ...editedProduct,
         price: Number(editedProduct.price),
         quantity: Number(editedProduct.quantity),
         viewer: Number(editedProduct.viewer),
       });
-      setIsOpen(false);
+  
+      setIsOpen(false);  // Đóng dialog sau khi cập nhật thành công
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
       alert("Lỗi khi cập nhật sản phẩm, vui lòng thử lại!");
     }
   };
+  
+  
+  
   useEffect(() => {
     if (!isOpen) {
       setSelectedImages([]); // Xóa ảnh đã chọn khi đóng dialog
@@ -240,10 +238,23 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
       alert("Xóa ảnh thất bại, vui lòng thử lại!");
     }
   };
+  useEffect(() => {
+    if (productToEdit) {
+      setEditedProduct({
+        ...productToEdit,
+        price: productToEdit.price.toString(),
+        quantity: productToEdit.quantity.toString(),
+        viewer: productToEdit.viewer.toString(),
+        description: productToEdit.description // Đảm bảo description được set
+      });
+      setContent(productToEdit.description);
+    }
+  }, [productToEdit]);
+  
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <Dialog.Panel className="bg-white p-6 rounded-lg shadow-lg w-fit relative">
+      <div className="fixed inset-0 flex //items-center justify-center bg-black bg-opacity-50 overflow-x-auto">
+        <div className="bg-white p-3 rounded-lg relative m-5 w-fit overflow-y-auto ">
           <button
             className="absolute top-3 right-3 text-red-600 hover:text-red-900"
             onClick={() => setIsOpen(false)}
@@ -425,18 +436,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
               </div>
               
 
-            <div className="my-1">
-              <label className="block text-sm font-medium">Mô tả (Chưa dùng CK editor) </label>
-              <textarea
-                className="w-full p-2 border rounded mt-1 bg-blue-50"
-                value={editedProduct.description}
-                onChange={(e) =>
-                  setEditedProduct({ ...editedProduct, description: e.target.value })
-                }
-                rows={3}
-                required
-              />
-            </div>
+            
 
             <div className="my-2">
               <label className="block text-sm font-medium">Tình trạng</label>
@@ -454,6 +454,17 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
           </form>
             {/* /////////// */}
           </div> 
+          <div className="my-1">
+            <label className="block text-sm font-medium mb-1">Mô tả sản phẩm</label>
+            <Editor 
+              value={content}
+              onChange={(newContent) => {
+                setContent(newContent);
+                setEditedProduct(prev => ({...prev, description: newContent}));
+              }}
+            />
+
+            </div>
           <Button
             className="w-full mt-3"
             variant="destructive"
@@ -465,7 +476,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
             Cập nhật sản phẩm
           </Button>
 
-        </Dialog.Panel>
+        </div>
       </div>
     </Dialog>
   );
