@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import BarChart from "@/components/ui/BarChart/BarChart1";
 import Card, { CardContent, CardProps } from "@/components/ui/Card";
 import TenGundamCard, { TenGundamProps } from "@/components/ui/TenGundamCard";
-import { BookCheck, BoxesIcon, UserCircle, UserSquare2 } from "lucide-react";
+import { BookCheck, BoxesIcon, ChevronDown, UserCircle, UserSquare2 } from "lucide-react";
 import React from "react";
 import LineChart from "@/components/ui/LineChart";
 
@@ -12,12 +12,7 @@ const OverviewPage = () => {
   const [totalProducts, setTotalProducts] = useState<number>(0);
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [totalStaff, setTotalStaff] = useState<number>(0);
-  //const [monthlyRevenue, setMonthlyRevenue] = useState<Record<string, number>>({});
-  const [revenueData, setRevenueData] = useState({
-    dailyRevenueLast7Days: {},
-  });
 
-  // Fetch dữ liệu tổng quan
   useEffect(() => {
     const fetchData = async (url: string, setter: (value: number) => void) => {
       try {
@@ -42,24 +37,20 @@ const OverviewPage = () => {
 
   const [ordersByMonth, setOrdersByMonth] = useState<Record<string, number>>({});
 
-  // Thống kê đơn hàng theo tháng
   useEffect(() => {
     const fetchOrdersByMonth = async () => {
       try {
         const response = await fetch("https://gshopbackend-1.onrender.com/order/list");
         const result = await response.json();
-
         if (result.status && Array.isArray(result.data)) {
           type Order = { status: string; date: string };
           const deliveredOrders = result.data.filter((order: Order) => order.status === "Đã giao");
-
           const monthlyCounts: Record<string, number> = {};
           deliveredOrders.forEach((order: Order) => {
             const [, month] = order.date.split("/");
             const monthKey = `Tháng ${month}`;
             monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
           });
-
           setOrdersByMonth(monthlyCounts);
         } else {
           setOrdersByMonth({});
@@ -78,31 +69,7 @@ const OverviewPage = () => {
     total: count,
   }));
 
-  // Fetch doanh thu
-  useEffect(() => {
-    const fetchRevenueData = async () => {
-      try {
-        const response = await fetch("https://gshopbackend-1.onrender.com/order/revenue");
-        const result = await response.json();
-        if (result.status) {
-          setRevenueData({
-            dailyRevenueLast7Days: result.data.dailyRevenueLast7Days,
-          });
-          //setMonthlyRevenue(result.data.monthlyRevenue || {});
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu doanh thu:", error);
-      }
-    };
-
-    fetchRevenueData();
-  }, []);
-
-  // // Dữ liệu biểu đồ doanh thu theo tháng
-  // const monthlyRevenueChartData = Object.entries(monthlyRevenue ?? {}).map(([month, value]) => ({
-  //   name: month,
-  //   total: value || 0,
-  // }));
+ 
 
   const cardData: CardProps[] = [
     {
@@ -132,13 +99,11 @@ const OverviewPage = () => {
   ];
 
   const [topProducts, setTopProducts] = useState<TenGundamProps[]>([]);
-
   useEffect(() => {
     const fetchTopProducts = async () => {
       try {
         const response = await fetch("https://gshopbackend-1.onrender.com/order/top-products");
         const result = await response.json();
-
         if (result.status && Array.isArray(result.byQuantity)) {
           type ProductItem = { name: string; totalSold: number };
           const top10 = result.byQuantity.slice(0, 10).map((item: ProductItem) => ({
@@ -158,6 +123,66 @@ const OverviewPage = () => {
     fetchTopProducts();
   }, []);
 
+  const [customRevenueData, setCustomRevenueData] = useState<Record<string, number>>({});
+  const [timePeriod, setTimePeriod] = useState("7");
+
+  const handleTimePeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setTimePeriod(event.target.value);
+  };
+
+  const fetchRevenueByPeriod = async (timePeriod: string) => {
+    const today = new Date();
+    const startDate = new Date();
+    const formatDate = (d: Date) => {
+      const day = d.getDate().toString().padStart(2, "0");
+      const month = (d.getMonth() + 1).toString().padStart(2, "0");
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`; // <-- có thể cần đổi thành định dạng này
+    };
+  
+    switch (timePeriod) {
+      case "7":
+        startDate.setDate(today.getDate() - 7);
+        break;
+      case "30":
+        startDate.setDate(today.getDate() - 30);
+        break;
+      case "60":
+        startDate.setDate(today.getDate() - 60);
+        break;
+      case "365":
+        startDate.setFullYear(today.getFullYear() - 1);
+        break;
+    }
+  
+    const startFormatted = formatDate(startDate);
+    const endFormatted = formatDate(today);
+  
+    try {
+      const response = await fetch("https://gshopbackend-1.onrender.com/order/revenue-daily", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ start: startFormatted, end: endFormatted }),
+      });
+  
+      const result = await response.json();
+      console.log("Kết quả doanh thu:", result); // debug
+      if (result.status && result.data?.dailyRevenue) {
+        setCustomRevenueData(result.data.dailyRevenue);
+      } else {
+        setCustomRevenueData({});
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu doanh thu tùy chỉnh:", error);
+      setCustomRevenueData({});
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchRevenueByPeriod(timePeriod);
+  }, [timePeriod]);
+
   return (
     <div>
       <section className="grid w-full pb-5 grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-4">
@@ -165,33 +190,51 @@ const OverviewPage = () => {
           <Card key={i} amount={d.amount} discription={d.discription} icon={d.icon} label={d.label} />
         ))}
       </section>
+      <section className="grid grid-cols-1 transition-all pb-5">
+        <CardContent className="gap-4">
+            <div className="flex justify-between ">
+              <div className="flex flex-col">
+                <p className="font-semibold mb-2">Thống kê doanh thu</p>
+                <p className=" text-xs text-gray-500">
+                Doanh thu từ {timePeriod === "7" ? "7 ngày gần nhất" : timePeriod === "30" ? "30 ngày gần nhất" : timePeriod === "60" ? "60 ngày gần nhất" : "1 năm"}
+                </p>
+              </div>
+              <div className="relative flex items-center">
+                <select
+                  className="appearance-none p-2 pr-8 border rounded-lg bg-blue-50"
+                  value={timePeriod}
+                  onChange={handleTimePeriodChange}
+                >
+                  <option value="7">7 ngày gần nhất</option>
+                  <option value="30">30 ngày gần nhất</option>
+                  <option value="60">60 ngày gần nhất</option>
+                  <option value="365">365 ngày gần nhất</option>
+                </select>
+                <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-600">
+                  <ChevronDown size={20} />
+                </div>
+              </div>
 
-      <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-[7fr_3fr]">
-        <section className="grid grid-cols-1 gap-4 transition-all">
-          {/* <CardContent>
-            <p className="font-semibold">Thống kê doanh thu</p>
-            <p className="pb-4 text-xs text-gray-500">Doanh thu trong năm nay</p>
-            {monthlyRevenueChartData.length > 0 ? (
-              <LineChart data={monthlyRevenueChartData} />
-            ) : (
-              <p className="text-center p-4">Không có dữ liệu</p>
-            )}
-          </CardContent> */}
+            </div>
+            
+            
 
-          <CardContent>
-            <p className="font-semibold">Thống kê doanh thu</p>
-            <p className="pb-4 text-xs text-gray-500">Doanh thu trong 7 ngày gần nhất</p>
-            <LineChart
-              data={Object.entries(revenueData.dailyRevenueLast7Days)
-                .reverse()
-                .map(([date, value]) => ({
+            {Object.keys(customRevenueData).length > 0 ? (
+              <LineChart
+                data={Object.entries(customRevenueData).map(([date, value]) => ({
                   name: date,
                   total: Number(value),
                 }))}
-            />
+              />
+            ) : (
+              <p className="text-center p-4">Không có dữ liệu</p>
+            )}
           </CardContent>
-
-          <CardContent>
+        </section>
+      <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-[7fr_3fr]">
+        <section className="grid grid-cols-1 gap-4 transition-all">
+          {/* Đơn hàng đã giao */}
+          <CardContent className="h-[480px]">
             <p className="font-semibold">Thống kê đơn đặt hàng</p>
             <p className="pb-4 text-xs text-gray-500">Đơn hàng đã giao theo tháng</p>
             {orderBarChartData.length > 0 ? (
@@ -202,6 +245,7 @@ const OverviewPage = () => {
           </CardContent>
         </section>
 
+        {/* Top 10 Gundam */}
         <section>
           <CardContent>
             <section>

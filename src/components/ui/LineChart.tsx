@@ -36,29 +36,30 @@ const CustomTooltip = ({
 
 export default function LineGraphComponent({ data }: LineGraphProps) {
   return (
-    <ResponsiveContainer width="100%" height={350}>
+    <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data}>
-        <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+        <CartesianGrid stroke="#ccc" strokeDasharray="2" vertical={false} />
         <XAxis
           dataKey="name"
           tickLine={false}
           axisLine={false}
           stroke="#888888"
-          fontSize={12}
+          fontSize={13}
+          interval="preserveStartEnd"
+          minTickGap={50}
         />
         <YAxis
-          width={80}
+          width={100}
           tickLine={false}
           axisLine={false}
           stroke="#888888"
           fontSize={13}
           tickFormatter={(value) => value.toLocaleString()}
         />
-        
-        {/* ✅ Dùng CustomTooltip để bỏ chữ "total" */}
         <Tooltip content={<CustomTooltip />} />
 
-        <Line dataKey="total" stroke="#E43727" strokeWidth={2} />
+        <Line dataKey="total" stroke="#E43727"  dot={false} />
+
       </LineChart>
     </ResponsiveContainer>
   );

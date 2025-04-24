@@ -267,7 +267,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
           </Dialog.Title>
           <div className="flex flex-row ">
             {/* /////////// */}
-            <div className=" max-w-[400px] mr-5">
+            <div className=" w-[400px] mr-5">
               <label className="block text-sm font-medium">Hình ảnh sản phẩm </label>
               {isLoading ? (
                 <p>Đang tải ảnh...</p>
