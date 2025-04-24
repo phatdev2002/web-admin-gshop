@@ -184,11 +184,23 @@ const ReportPage = () => {
                   label="Ngày bắt đầu"
                   value={startDate}
                   onChange={(value) => setStartDate(value)}
+                  slotProps={{
+                    textField: {
+                      size: "small", // Làm input nhỏ lại
+                      fullWidth: false,
+                    },
+                  }}
                 />
                 <DatePicker
                   label="Ngày kết thúc"
                   value={endDate}
                   onChange={(value) => setEndDate(value)}
+                  slotProps={{
+                    textField: {
+                      size: "small", // Làm input nhỏ lại
+                      fullWidth: false,
+                    },
+                  }}
                 />
                 <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={fetchRangeRevenue}>
                   Xem biểu đồ
