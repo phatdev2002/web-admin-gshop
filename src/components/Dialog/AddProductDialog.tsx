@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import {  ImagePlus, X } from "lucide-react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Editor from "@/components/Editor";
+import { BASE_URL } from "@/constants";
 
 interface AddProductDialogProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ interface AddProductDialogProps {
 }
 
 export const fetchCategories = async () => {
-  const res = await fetch("https://gshopbackend-1.onrender.com/category/list");
+  const res = await fetch(`${BASE_URL}/category/list`);
   const result = await res.json();
   const categoryList = result.categories || result.data || result;
   if (!Array.isArray(categoryList)) throw new Error("Invalid category format");
@@ -38,7 +39,7 @@ export const fetchCategories = async () => {
 };
 
 export const fetchSuppliers = async () => {
-  const res = await fetch("https://gshopbackend-1.onrender.com/supplier/list");
+  const res = await fetch(`${BASE_URL}/supplier/list`);
   const result = await res.json();
   const supplierList = result.suppliers || result.data || result;
   if (!Array.isArray(supplierList)) throw new Error("Invalid supplier format");
@@ -92,7 +93,7 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
 
     try {
       const uploadResponse = await fetch(
-        `https://gshopbackend-1.onrender.com/image_product/upload/${id_product}`,
+        `${BASE_URL}/image_product/upload/${id_product}`,
         {
           method: "POST",
           body: formData,
@@ -125,7 +126,7 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
     setIsLoading(true);
 
     try {
-      const response = await fetch("https://gshopbackend-1.onrender.com/product/create", {
+      const response = await fetch(`${BASE_URL}/product/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...newProduct, description: content }),
@@ -174,6 +175,10 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
     setSelectedImages([]);
     setContent("");
   };
+  const handleRemoveImage = (index: number) => {
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+  
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
@@ -189,33 +194,59 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
           <div className="text-xl font-bold text-center">Thêm sản phẩm</div>
           <form onSubmit={(e) => e.preventDefault()} className="mt-1 w-full">
             <div className="flex flex-row">
-              <div className="my-3 w-96 mr-10">
-                <label className="block text-sm font-medium">Hình ảnh</label>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  className="w-96 p-2 border rounded mt-1"
-                  onChange={handleImageChange}
-                />
-                {selectedImages.length > 10 && (
-                  <p className="text-red-500 text-sm mt-1">Bạn chỉ có thể tải lên tối đa 10 hình!</p>
-                )}
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {selectedImages.map((file, index) => (
+            <div className="my-3 w-96 mr-10">
+              <label className="block text-sm font-medium mb-1">Hình ảnh</label>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('fileInput')?.click()}
+                  className="p-2 border rounded bg-blue-50 hover:bg-blue-100"
+                >
+                  <ImagePlus size={24} className="text-blue-500" />
+                </button>
+
+                <span className="text-sm text-gray-500">{selectedImages.length} hình đã chọn</span>
+              </div>
+
+              <input
+                id="fileInput"
+                type="file"
+                multiple
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+
+              {selectedImages.length > 10 && (
+                <p className="text-red-500 text-sm mt-1">Bạn chỉ có thể tải lên tối đa 10 hình!</p>
+              )}
+
+              <div className="flex flex-wrap gap-2 mt-2">
+                {selectedImages.map((file, index) => (
+                  <div key={index} className="relative">
                     <Image
-                      key={index}
                       src={URL.createObjectURL(file)}
                       alt="preview"
-                      width={100}
-                      height={100}
+                      width={index === 0 ? 500: 70}
+                      height={index === 0 ? 500 : 70}
                       className={`object-cover rounded border ${
                         index === 0 ? "w-96 h-[200px]" : "w-[70px] h-[70px]"
                       }`}
                     />
-                  ))}
-                </div>
+                    <button
+                      type="button"
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-sm p-1 hover:bg-red-600"
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
               </div>
+
+            </div>
+
 
               <div className="flex flex-col w-96">
                 <div className="my-0">
@@ -315,12 +346,11 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
               </div>
             </div>
             <div className="my-2">
-                  <label className="block text-sm font-medium">Mô tả</label>
-                  
-            <Editor value={content} onChange={setContent}/>
-          
-
-                </div>
+              <label className="block text-sm font-medium">Mô tả</label>
+              <div className="w-full border rounded max-h-[500px] overflow-y-auto">
+                <Editor value={content} onChange={setContent}/>
+              </div>
+            </div>
             <Button
               className={`w-full mt-4 ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""}`}
               variant="destructive"

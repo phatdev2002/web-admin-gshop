@@ -4,6 +4,8 @@ import { Dialog } from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BASE_URL } from "@/constants";
+import { Textarea } from "@headlessui/react";
 
 interface ViewClientDialogProps {
   isOpen: boolean;
@@ -66,7 +68,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
       if (productNames[productId]) return;
       setIsLoadingProducts((prev) => ({ ...prev, [productId]: true }));
       try {
-        const res = await fetch(`https://gshopbackend-1.onrender.com/product/detail/${productId}`);
+        const res = await fetch(`${BASE_URL}/product/detail/${productId}`);
         const data = await res.json();
         if (data.status) {
           setProductNames((prev) => ({ ...prev, [productId]: data.data.name }));
@@ -81,7 +83,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
     const fetchProductImages = async (productId: string) => {
       if (productImages[productId]) return;
       try {
-        const res = await fetch(`https://gshopbackend-1.onrender.com/image_product/list-images/${productId}`);
+        const res = await fetch(`${BASE_URL}/image_product/list-images/${productId}`);
         const data = await res.json();
         if (data.status) {
           setProductImages((prev) => ({ ...prev, [productId]: data.data[0]?.image || [] }));
@@ -94,7 +96,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
     const fetchOrderDetails = async (orderId: string) => {
       setIsLoadingDetails((prev) => ({ ...prev, [orderId]: true }));
       try {
-        const res = await fetch(`https://gshopbackend-1.onrender.com/detail_order/list-by-order/${orderId}`);
+        const res = await fetch(`${BASE_URL}/detail_order/list-by-order/${orderId}`);
         const data = await res.json();
         if (data.status) {
           setOrderDetails((prev) => ({ ...prev, [orderId]: data.data }));
@@ -113,7 +115,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
     setIsLoading(true);
     setIsOrdersLoading(true);
     
-    fetch(`https://gshopbackend-1.onrender.com/user/detail_user?_id=${clientId}`)
+    fetch(`${BASE_URL}/user/detail_user?_id=${clientId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status) {
@@ -128,7 +130,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
         setIsLoading(false);
       });
 
-    fetch(`https://gshopbackend-1.onrender.com/order/list-order-user/${clientId}`)
+    fetch(`${BASE_URL}/order/list-order-user/${clientId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status) {
@@ -153,7 +155,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
     // Reset địa chỉ trước khi fetch client mới
     setAddress("");
   
-    fetch(`https://gshopbackend-1.onrender.com/address/list/${clientId}`)
+    fetch(`${BASE_URL}/address/list/${clientId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.status && Array.isArray(data.data)) {
@@ -175,14 +177,14 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
   return (
     <div className="">
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <div className="p-5 h-[590px] rounded-lg relative">    
-          <div className="flex justify-end absolute  right-2 top-2">       
+        <div className=" h-[580px] w-[1200px] rounded-lg relative ">    
+          <div className="flex justify-end absolute  right-2 top-2 ">       
                 <Button variant="outline" onClick={onClose} className="text-red-500 w-8 h-8 rounded-sm font-semibold">
                   X
                 </Button> 
             </div>   
           <div className="flex flex-col">
-            <div className={`flex ${orders.length === 0 ? "flex-col" : "flex-row"} mb-5 gap-5 `}>
+            <div className="flex flex-row mb-5 gap-5 ">
             
             {isLoading ? (
               <Skeleton className="h-6 w-3/4" />
@@ -190,7 +192,7 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
               <p className="text-red-500">{error}</p>
             ) : (
               <>
-              <div className=" flex flex-col">
+              <div className=" flex flex-col bg-gray-200 rounded-lg p-5">
                 <div className="flex justify-center">
                   <Image
                     src={
@@ -208,11 +210,11 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                 <div className="flex flex-col mt-4 w-full min-w-80">
                   <div className="mb-4 gap-2 flex flex-col">
                     <label className="block text-sm font-semibold">Tên khách hàng</label>
-                    <Input value={clientData?.name || ''} readOnly className="bg-blue-50"/>
+                    <Input value={clientData?.name || ''} readOnly className="bg-gray-100"/>
                   </div>
                     <div className="mb-4 gap-2 flex flex-col flex-1">
                       <label className="block text-sm font-semibold">Email</label>
-                      <Input value={clientData?.email || ''} readOnly className="bg-blue-50"/>
+                      <Input value={clientData?.email || ''} readOnly className="bg-gray-100"/>
                     </div>
                     <div className=" gap-2 flex flex-col flex-1">
                       <label className="block text-sm font-semibold">Số điện thoại</label>
@@ -223,22 +225,29 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                             : ''
                         }
                         readOnly
-                        className="bg-blue-50"
+                        className="bg-gray-100"
                       />
 
                     </div>
                 
-                  <div className="mt-4 gap-2 flex flex-col">
-                    <label className="block text-sm font-semibold">Địa chỉ</label>
-                    <Input value={address || "Chưa chọn địa chỉ giao hàng"} readOnly className="bg-blue-50" />
-                  </div>
+                    <div className="mt-4 gap-2 flex flex-col">
+                      <label className="block text-sm font-semibold">Địa chỉ</label>
+                      <Textarea
+                        value={address || "Chưa chọn địa chỉ giao hàng"}
+                        readOnly
+                        rows={3}
+                        className="bg-gray-100 resize-none text-sm p-3 rounded-lg"
+                      />
+                    </div>
+
                 </div>
               </div>
                 
               </>
             )}
 
-            <div className="h-[550px]">
+
+            <div className="h-[580px] py-5 pr-4">
               <label className="block text-sm font-semibold">Lịch sử đơn hàng</label>
               
               
@@ -248,13 +257,13 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
             ) : orderError ? (
               <p className="text-red-500">{orderError}</p>
             ) : (
-              <div className="max-h-[500px] overflow-y-auto mt-4 rounded-lg p-0 w-full flex-1 ">
+              <div className="h-[500px] overflow-y-auto mt-4 rounded-lg p-0 w-[790px] flex-1 ">
                 {orders.length === 0 ? (
                     <p className="text-gray-500 ">Không có đơn hàng nào.</p>
                 ) : (
                   <table className="w-full border-collapse text-sm">
                     <thead className="sticky top-0 z-10">
-                      <tr className="bg-blue-100">
+                      <tr className="bg-blue-50">
                         <th className="text-left p-3">Mã đơn</th>
                         <th className="text-left p-3">Ngày</th>
                         <th className="text-right p-3">Tổng tiền</th>
@@ -262,9 +271,9 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                       </tr>
                     </thead>
                     <tbody>
-                      {orders.map((order, index) => (
+                      {orders.map((order) => (
                         <React.Fragment key={order._id}>
-                          <tr className={`border ${index % 2 === 0 ? "bg-gray-300" : "bg-gray-300"}`}>
+                          <tr className={"border bg-gray-200"}>
                             <td className="p-3 font-medium">{order._id}</td>
                             <td className="p-3">{order.date}</td>
                             <td className="p-3 text-right font-semibold">{order.total_price.toLocaleString()} đ</td>
@@ -282,14 +291,14 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                             <tr><td colSpan={4} className="text-center">Đang tải sản phẩm...</td></tr>
                           ) : (
                             orderDetails[order._id]?.map((product) => (
-                              <tr key={product._id}>
-                                <td className="flex justify-center" colSpan={1}>
+                              <tr key={product._id} className="border bg-gray-100">
+                                <td className="flex justify-center " colSpan={1}>
                                   <Image
-                                      src={productImages[product.id_product]?.[1] || "/default-thumbnail.jpg"}
+                                      src={productImages[product.id_product]?.[0] || "/default-thumbnail.jpg"}
                                       alt="Product"
-                                      width={120}
-                                      height={120}
-                                      className="object-cover"
+                                      width={90}
+                                      height={90}
+                                      className="object-cover w-full h-24"
                                     />
                                 </td>
                                 
@@ -300,12 +309,11 @@ const ViewClientDialog: React.FC<ViewClientDialogProps> = ({ isOpen, onClose, cl
                                   {product.unit_price.toLocaleString()} đ
                                 </td>
                                 <td className="p-3 text-right">SL: {product.quantity}</td>
-                                
                               </tr>
                             ))
                           )}
+                          <tr><td colSpan={4} className="h-[20px] p-0"></td></tr>
 
-                          <tr><td colSpan={4}></td></tr>
                         </React.Fragment>
                       ))}
                     </tbody>

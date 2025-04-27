@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
+import { BASE_URL } from "@/constants";
 
 type AddSupplierDialogProps = {
   isOpen: boolean;
@@ -80,7 +81,7 @@ const AddSupplierDialog = ({
       setLoading(true);
 
       const response = await axios.post(
-        "https://gshopbackend-1.onrender.com/supplier/add",
+        `${BASE_URL}/supplier/add`,
         newSupplier
       );
 

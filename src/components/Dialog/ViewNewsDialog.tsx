@@ -5,6 +5,7 @@ import { News } from "@/types/News";
 import Image from "next/image";
 import { toast } from "sonner";
 import { ImageUp } from "lucide-react";
+import { BASE_URL } from "@/constants";
 
 export interface UserProfile {
   name: string;
@@ -47,7 +48,7 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
     if (!news?.id_user) return;
     const fetchUserName = async () => {
       try {
-        const response = await fetch("https://gshopbackend-1.onrender.com/user/list");
+        const response = await fetch(`${BASE_URL}/user/list`);
         const data = await response.json();
         const userList = Array.isArray(data) ? data : data.data;
         if (!Array.isArray(userList)) throw new Error("Unexpected response format");
@@ -68,7 +69,7 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
     const formData = new FormData();
     formData.append("image", thumbnail);
     try {
-      const response = await fetch(`https://gshopbackend-1.onrender.com/news/upload-thumbnail?id_news=${news._id}`, {
+      const response = await fetch(`${BASE_URL}/news/upload-thumbnail?id_news=${news._id}`, {
         method: "POST",
         body: formData,
       });
@@ -104,7 +105,7 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
         toast.error("Không tìm thấy ID người dùng.");
         return;
       }
-      const response = await fetch(`https://gshopbackend-1.onrender.com/news/edit?_id=${news._id}`, {
+      const response = await fetch(`${BASE_URL}/news/edit?_id=${news._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, content, id_user: userProfile._id, thumbnail: thumbnailUrl }),
@@ -142,7 +143,7 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
                 alt={`Chưa có ảnh`} 
                 width={500} 
                 height={300} 
-                className="w-[350px] max-h-60 my-4 rounded-lg" 
+                className="w-[350px] my-4 rounded-lg h-48 object-cover" 
                 priority={index === 0} // Prioritize the first image
               />
             ))

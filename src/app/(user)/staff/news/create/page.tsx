@@ -3,6 +3,7 @@ import { useState } from "react";
 import Editor from "@/components/Editor";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/constants";
 
 export default function CreateNews() {
   const [title, setTitle] = useState("");
@@ -10,6 +11,7 @@ export default function CreateNews() {
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  
 
   const handleSubmit = async () => {
     if (!title.trim() || !content.trim()) {
@@ -24,7 +26,7 @@ export default function CreateNews() {
       if (!userProfile._id) throw new Error("Không tìm thấy ID người dùng.");
 
       // 2️⃣ Gửi request tạo bài viết
-      const response = await fetch("https://gshopbackend-1.onrender.com/news/add", {
+      const response = await fetch(`${BASE_URL}/news/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, content, id_user: userProfile._id }),
@@ -47,11 +49,10 @@ export default function CreateNews() {
         const formData = new FormData();
         formData.append("image", thumbnail);
 
-        //console.log("Upload URL:", `https://gshopbackend-1.onrender.com/news/upload-thumbnail?id_news=${newsId}`);
 
         try {
           const uploadResponse = await fetch(
-            `https://gshopbackend-1.onrender.com/news/upload-thumbnail?id_news=${encodeURIComponent(newsId)}`,
+            `${BASE_URL}/news/upload-thumbnail?id_news=${encodeURIComponent(newsId)}`,
             { method: "POST", body: formData }
           );
 
@@ -71,7 +72,7 @@ export default function CreateNews() {
 
       // 4️⃣ Nếu có ảnh, cập nhật bài viết với thumbnail
       if (uploadedThumbnailUrl) {
-        await fetch(`https://gshopbackend-1.onrender.com/news/edit?_id=${newsId}`, {
+        await fetch(`${BASE_URL}/news/edit?_id=${newsId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ thumbnail: uploadedThumbnailUrl }),
@@ -109,6 +110,7 @@ export default function CreateNews() {
       </div>
       {/* Nội dung */}
       <Editor value={content} onChange={setContent} />
+
 
       {/* Upload ảnh */}
       <div className="mt-4">

@@ -4,6 +4,7 @@ import { Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 import { toast } from "sonner";
 import { Supplier } from "@/app/(user)/admin/products/supplier/page";
+import { BASE_URL } from "@/constants";
 
 type EditSupplierDialogProps = {
   isOpen: boolean;
@@ -86,7 +87,7 @@ const EditSupplierDialog = ({
     try {
       setLoading(true);
       const response = await fetch(
-        `https://gshopbackend-1.onrender.com/supplier/update/${form._id}`,
+        `${BASE_URL}/supplier/update/${form._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

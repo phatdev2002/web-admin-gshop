@@ -8,6 +8,7 @@ import AddSupplierDialog from "@/components/Dialog/AddSupplierDialog";
 import { columns } from "./colums";
 import Link from "next/link";
 import EditSupplierDialog from "@/components/Dialog/EditSupplierDialog";
+import { BASE_URL } from "@/constants";
 
 
 // Loại dữ liệu nhà cung cấp
@@ -28,7 +29,7 @@ export type Supplier = {
 // Fetch API function
   const fetchSuppliers = async (): Promise<Supplier[]> => {
     try {
-      const res = await fetch("https://gshopbackend-1.onrender.com/supplier/list");
+      const res = await fetch(`${BASE_URL}/supplier/list`);
       if (!res.ok) throw new Error("Failed to fetch suppliers");
 
       const result = await res.json();

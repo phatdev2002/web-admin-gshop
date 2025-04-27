@@ -142,7 +142,11 @@ export default function NewsPage() {
             />
             <div className="p-4 flex flex-col flex-grow">
               <h2 className="text-lg font-semibold flex-grow">{news.title}</h2>
-              <p className="text-sm text-gray-600 mt-1">{news.date}</p>
+              <div className="flex gap-2">
+                {/* <p className="text-sm text-gray-600 mt-1">{news.time}</p> */}
+                <p className="text-sm text-gray-600 mt-1">{news.date}</p>
+              </div>
+              
             </div>
           </div>
 

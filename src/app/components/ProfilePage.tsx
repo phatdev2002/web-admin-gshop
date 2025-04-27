@@ -7,6 +7,7 @@ import { Button } from "@headlessui/react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { ArrowRightIcon, ImageUp, LockIcon } from "lucide-react";
+import { BASE_URL } from "@/constants";
 
 export type UserRole = "admin" | "user" | "manager" | "";
 
@@ -59,7 +60,7 @@ const ProfilePage = () => {
 
   const fetchUserDetail = useCallback(async (_id: string) => {
     try {
-      const response = await fetch(`https://gshopbackend-1.onrender.com/user/detail_user?_id=${_id}`);
+      const response = await fetch(`${BASE_URL}/user/detail_user?_id=${_id}`);
       const result = await response.json();
       if (result.status) {
         setUser(result.data);
@@ -108,7 +109,7 @@ const ProfilePage = () => {
 
     try {
       const response = await fetch(
-        `https://gshopbackend-1.onrender.com/user/create-avatar/${user._id}`,
+        `${BASE_URL}/user/create-avatar/${user._id}`,
         {
           method: "POST",
           body: formData,
@@ -134,7 +135,7 @@ const ProfilePage = () => {
     }
     if (selectedImage) {
       const response = await fetch(
-        `https://gshopbackend-1.onrender.com/user/create-avatar/${user._id}`,
+        `${BASE_URL}/user/create-avatar/${user._id}`,
         {
           method: "POST",
           body: formData,
@@ -182,7 +183,7 @@ const ProfilePage = () => {
     setMessage(null);
 
     try {
-      const response = await fetch("https://gshopbackend-1.onrender.com/user/update", {
+      const response = await fetch(`${BASE_URL}/user/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

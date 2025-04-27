@@ -6,6 +6,7 @@ import { HandCoinsIcon, Landmark, ShoppingCart } from "lucide-react";
 import PieChartComponent from "@/components/ui/PieChart";
 import LineChart from "@/components/ui/LineChart";
 import { Button } from "@/components/ui/button";
+import { BASE_URL } from "@/constants";
 
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -32,7 +33,7 @@ const ReportPage = () => {
   useEffect(() => {
     const fetchMonthlyRevenueData = async () => {
       try {
-        const response = await fetch("https://gshopbackend-1.onrender.com/order/list");
+        const response = await fetch(`${BASE_URL}/order/list`);
         const result = await response.json();
 
         if (result.status) {
@@ -64,7 +65,7 @@ const ReportPage = () => {
   useEffect(() => {
     const fetchRevenueData = async () => {
       try {
-        const response = await fetch("https://gshopbackend-1.onrender.com/order/revenue");
+        const response = await fetch(`${BASE_URL}/order/revenue`);
         const result = await response.json();
         if (result.status) {
           setRevenueData({
@@ -85,7 +86,7 @@ const ReportPage = () => {
   useEffect(() => {
     const fetchTopProductsData = async () => {
       try {
-        const response = await fetch("https://gshopbackend-1.onrender.com/order/top-products");
+        const response = await fetch(`${BASE_URL}/order/top-products`);
         const result = await response.json();
         if (result.status) {
           setCategoryRatioData(result.categoryRatio);
@@ -141,7 +142,7 @@ const ReportPage = () => {
     };
 
     try {
-      const res = await fetch("https://gshopbackend-1.onrender.com/order/revenue-daily", {
+      const res = await fetch(`${BASE_URL}/order/revenue-daily`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -202,7 +203,7 @@ const ReportPage = () => {
                     },
                   }}
                 />
-                <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={fetchRangeRevenue}>
+                <Button className="bg-red-500 hover:bg-red-600 text-white rounded-full" onClick={fetchRangeRevenue}>
                   Xem biểu đồ
                 </Button>
               </div>

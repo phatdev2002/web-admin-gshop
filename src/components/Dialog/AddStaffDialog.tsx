@@ -4,6 +4,7 @@ import { Dialog} from "@/components/ui/Dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { BASE_URL } from "@/constants";
 
 export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => void }) {
     const [open, setOpen] = useState(false);
@@ -48,7 +49,7 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
         }
 
         setMessage(null);
-        const response = await fetch("https://gshopbackend-1.onrender.com/user/create-staff", {
+        const response = await fetch(`${BASE_URL}/user/create-staff`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, email, phone_number: phone, password }),
@@ -86,10 +87,10 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
                         </p>
                     )}
                     <p>Tên nhân viên</p>
-                    <Input value={name} onChange={(e) => setName(e.target.value)} className="my-2 bg-blue-100" />
+                    <Input value={name} onChange={(e) => setName(e.target.value)} className="my-2 bg-blue-50" />
 
                     <p>Email</p>
-                    <Input value={email} onChange={(e) => setEmail(e.target.value)} className="my-2 bg-blue-100" />
+                    <Input value={email} onChange={(e) => setEmail(e.target.value)} className="my-2 bg-blue-50" />
 
                     <p>Số điện thoại</p>
                     <Input
@@ -102,12 +103,12 @@ export default function AddStaffDialog({ onStaffAdded }: { onStaffAdded: () => v
                                 setPhone(value);
                             }
                         }}
-                        className="my-2 bg-blue-100"
+                        className="my-2 bg-blue-50"
                     />
 
 
                     <p>Mật khẩu</p>
-                    <Input value={password} onChange={(e) => setPassword(e.target.value)} className="my-2 bg-blue-100" />
+                    <Input value={password} onChange={(e) => setPassword(e.target.value)} className="my-2 bg-blue-50" />
 
                     <div className="flex justify-end space-x-2 mt-4">
                         <Button variant="outline" onClick={() => setOpen(false)}>Hủy</Button>

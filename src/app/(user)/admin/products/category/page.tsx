@@ -9,16 +9,17 @@ import EditCategoryDialog from "@/components/Dialog/ViewCategoryDialog";
 import { columns as baseColumns, Category } from "./columns";
 import { toast } from "sonner";
 import Link from "next/link";
+import { BASE_URL } from "@/constants";
 
 async function fetchCategories() {
   try {
-    const categoryRes = await fetch("https://gshopbackend-1.onrender.com/category/list");
+    const categoryRes = await fetch(`${BASE_URL}/category/list`);
     if (!categoryRes.ok) throw new Error("Failed to fetch categories");
     const categoryData = await categoryRes.json();
     const categoryList = categoryData.category || categoryData.data || categoryData;
     if (!Array.isArray(categoryList)) throw new Error("Unexpected API format for categories");
 
-    const productRes = await fetch("https://gshopbackend-1.onrender.com/product/list");
+    const productRes = await fetch(`${BASE_URL}/product/list`);
     if (!productRes.ok) throw new Error("Failed to fetch products");
     const productData = await productRes.json();
     const productList = productData.data || productData.products || productData;
@@ -54,7 +55,7 @@ const CategoryPage = () => {
 
   const handleAddCategory = async (newCategory: { category: string }) => {
     try {
-      const res = await fetch("https://gshopbackend-1.onrender.com/category/create", {
+      const res = await fetch(`${BASE_URL}/category/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,7 +83,7 @@ const CategoryPage = () => {
 
   const handleUpdateCategory = async (updatedCategory: Category) => {
     try {
-      const res = await fetch(`https://gshopbackend-1.onrender.com/category/update/${updatedCategory.id}`, {
+      const res = await fetch(`${BASE_URL}/category/update/${updatedCategory.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

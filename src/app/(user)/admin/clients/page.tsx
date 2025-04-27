@@ -8,11 +8,12 @@ import { Eye, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import ViewClientDialog from "@/components/Dialog/ViewClientDialog";
+import { BASE_URL } from "@/constants";
 
 // Fetch API function
 const fetchClients = async () => {
   try {
-    const res = await fetch("https://gshopbackend-1.onrender.com/user/list");
+    const res = await fetch(`${BASE_URL}/user/list`);
     if (!res.ok) throw new Error("Failed to fetch clients");
     const result = await res.json();
     
@@ -51,12 +52,19 @@ const ClientPage = () => {
 
   // Tối ưu hiệu suất tìm kiếm
   const filteredData = useMemo(() => {
+    const lowerSearch = search.toLowerCase();
     return data.filter(
       (client) =>
         client.role.toLowerCase() === "user" &&
-        client.clientname.toLowerCase().includes(search.toLowerCase())
+        (
+          client.clientname.toLowerCase().includes(lowerSearch) ||
+          client.email.toLowerCase().includes(lowerSearch) ||
+          client.sdt.replace(/\s+/g, "").includes(lowerSearch)
+        )
     );
   }, [data, search]);
+  
+  
 
   // Định nghĩa cột
   const columns: ColumnDef<Client>[] = [
@@ -90,10 +98,10 @@ const ClientPage = () => {
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Tìm kiếm theo tên"
+              placeholder="Tìm kiếm theo tên, email hoặc sđt"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 bg-white w-64"
+              className="pl-8 bg-white w-72"
             />
           </div>
           <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>

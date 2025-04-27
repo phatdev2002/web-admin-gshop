@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react"; // Import icon X
 import { toast } from "sonner";
+import { BASE_URL } from "@/constants";
 
 interface ChangePassProps {
   isOpen: boolean;
@@ -35,7 +36,7 @@ const ChangePass: React.FC<ChangePassProps> = ({ isOpen, onClose, user_id, email
     setError("");
 
     try {
-      const response = await fetch("https://gshopbackend-1.onrender.com/user/changPass", { 
+      const response = await fetch(`${BASE_URL}/user/changPass`, { 
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { BASE_URL } from "@/constants";
 
 type AddCategoryDialogProps = {
   isOpen: boolean;
@@ -18,7 +19,7 @@ const AddCategoryDialog = ({ isOpen, setIsOpen, onSubmit }: AddCategoryDialogPro
   const handleSubmit = async () => {
     try {
       // Gọi API thêm thể loại
-      const res = await fetch("https://gshopbackend-1.onrender.com/category/create", {
+      const res = await fetch(`${BASE_URL}/category/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import ViewNewsDialog from "@/components/Dialog/ViewNewsDialog"; // Import Dialog
 import { News } from "@/types/News";
 import { BASE_URL } from "@/constants";
+import { toast } from "sonner";
+import ConfirmDialog from "@/components/Dialog/ConfirmDialog";
 
 export default function NewsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +16,9 @@ export default function NewsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedNews, setSelectedNews] = useState<News | null>(null);
   const router = useRouter();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [newsToDelete, setNewsToDelete] = useState<News | null>(null);
+
 
   // Hàm lấy danh sách tin tức từ server
   const fetchNews = async () => {
@@ -58,6 +63,31 @@ export default function NewsPage() {
     const firstImage = thumbnail.split(",")[0].trim(); // Lấy URL đầu tiên và bỏ khoảng trắng
     return firstImage.startsWith("http") ? firstImage : "/default-thumbnail.jpg";
   };
+
+  const handleDelete = async (_id: string) => {
+    try {
+      const res = await fetch(`${BASE_URL}/news/delete?_id=${_id}`, {
+        method: "DELETE",
+      });
+  
+      const data = await res.json();
+  
+      if (data.status) {
+        toast.success("Xoá bài viết thành công!");
+        fetchNews();
+      } else {
+        alert("Xoá thất bại. Vui lòng thử lại!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi xoá bài viết:", error);
+      alert("Đã xảy ra lỗi khi xoá bài viết!");
+    } finally {
+      setShowConfirm(false);
+      setNewsToDelete(null);
+    }
+  };
+  
+  
   
   
 
@@ -93,14 +123,16 @@ export default function NewsPage() {
       {loading && <p className="text-center">Đang tải tin tức...</p>}
 
       {/* Danh sách tin tức */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredNews.map((news) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative">
+      {filteredNews.map((news) => (
+        <div
+          key={news._id}
+          className="block h-full group relative"
+        >
           <div
-            key={news._id}
             onClick={() => setSelectedNews(news)}
-            className="block h-full cursor-pointer"
+            className="bg-white border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col h-full cursor-pointer"
           >
-            <div className="bg-white border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col h-full">
             <Image
               src={getValidThumbnail(news.thumbnail)}
               alt={news.title}
@@ -108,14 +140,31 @@ export default function NewsPage() {
               height={250}
               className="w-full h-48 object-cover"
             />
-
-              <div className="p-4 flex flex-col flex-grow">
-                <h2 className="text-lg font-semibold flex-grow">{news.title}</h2>
+            <div className="p-4 flex flex-col flex-grow">
+              <h2 className="text-lg font-semibold flex-grow">{news.title}</h2>
+              <div className="flex gap-2">
+                {/* <p className="text-sm text-gray-600 mt-1">{news.time}</p> */}
                 <p className="text-sm text-gray-600 mt-1">{news.date}</p>
               </div>
+              
             </div>
           </div>
-        ))}
+
+          {/* Nút xoá */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); 
+              setNewsToDelete(news);
+              setShowConfirm(true);
+            }}
+            className="absolute top-2 right-2 bg-red-500 text-white rounded-sm w-6 h-6 hover:bg-red-600 transition-opacity opacity-0 group-hover:opacity-100"
+            title="Xoá bài viết"
+          >
+            X
+          </button>
+        </div>
+      ))}
+
       </div>
 
       {/* Không tìm thấy kết quả */}
@@ -129,6 +178,18 @@ export default function NewsPage() {
         onClose={() => setSelectedNews(null)} 
         onUpdate={fetchNews} 
       />
+      {showConfirm && newsToDelete && (
+        <ConfirmDialog
+          title="Xác nhận xoá"
+          message={`Bạn có chắc muốn xoá bài viết "${newsToDelete.title}"?`}
+          onConfirm={() => handleDelete(newsToDelete._id)}
+          onCancel={() => {
+            setShowConfirm(false);
+            setNewsToDelete(null);
+          }}
+        />
+      )}
+
     </div>
   );
 }

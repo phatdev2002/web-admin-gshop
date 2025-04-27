@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Bell, Paintbrush2, Palette } from "lucide-react";
 import Link from "next/link";
 import axios from "axios";
+import { BASE_URL } from "@/constants";
 
 export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) => void }) {
   interface User {
@@ -62,7 +63,7 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
       // Fetch user details from the API using user ID
       if (parsedUser._id) {
         axios
-          .get(`https://gshopbackend-1.onrender.com/user/detail_user?_id=${parsedUser._id}`)
+          .get(`${BASE_URL}/user/detail_user?_id=${parsedUser._id}`)
           .then((response) => {
             if (response.data.status) {
               setUser((prevUser) => ({
@@ -85,7 +86,7 @@ export default function TopNavbar({ setBgColor }: { setBgColor: (color: string) 
 
     const fetchUnprocessedOrders = async () => {
       try {
-        const res = await axios.get("https://gshopbackend-1.onrender.com/order/list");
+        const res = await axios.get(`${BASE_URL}/order/list`);
         const orders = res.data.data;
 
         const unprocessedOrders = orders.filter(

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Editor from "@/components/Editor";
+import { BASE_URL } from "@/constants";
 
 interface EditProductDialogProps {
   isOpen: boolean;
@@ -38,7 +39,7 @@ interface EditProductDialogProps {
 }
 
 export const fetchCategories = async () => {
-  const res = await fetch("https://gshopbackend-1.onrender.com/category/list");
+  const res = await fetch(`${BASE_URL}/category/list`);
   const result = await res.json();
   const categoryList = result.categories || result.data || result;
   if (!Array.isArray(categoryList)) throw new Error("Invalid category format");
@@ -50,7 +51,7 @@ export const fetchCategories = async () => {
 };
 
 export const fetchSuppliers = async () => {
-  const res = await fetch("https://gshopbackend-1.onrender.com/supplier/list");
+  const res = await fetch(`${BASE_URL}/supplier/list`);
   const result = await res.json();
   const supplierList = result.suppliers || result.data || result;
   if (!Array.isArray(supplierList)) throw new Error("Invalid supplier format");
@@ -63,7 +64,7 @@ export const fetchSuppliers = async () => {
 
 const fetchProductImages = async (id_product: string) => {
   if (!id_product) return [];
-  const res = await fetch(`https://gshopbackend-1.onrender.com/image_product/list-images/${id_product}`);
+  const res = await fetch(`${BASE_URL}/image_product/list-images/${id_product}`);
   const result = await res.json();
   if (!result.status || !Array.isArray(result.data)) throw new Error("Invalid image format");
 
@@ -75,7 +76,7 @@ const fetchProductImages = async (id_product: string) => {
 const deleteProductImage = async (id_product: string, imageUrl: string) => {
   try {
     const res = await fetch(
-      `https://gshopbackend-1.onrender.com/image_product/delete-image/${id_product}`,
+      `${BASE_URL}/image_product/delete-image/${id_product}`,
       {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -150,7 +151,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
 
     try {
       const uploadResponse = await fetch(
-        `https://gshopbackend-1.onrender.com/image_product/upload/${id_product}`,
+        `${BASE_URL}/image_product/upload/${id_product}`,
         {
           method: "POST",
           body: formData,
@@ -181,7 +182,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
     try {
       console.log("Mô tả sản phẩm trước khi gửi: ", content);  // Kiểm tra mô tả
       
-      const endpoint = `https://gshopbackend-1.onrender.com/product/update/${productToEdit._id}`;
+      const endpoint = `${BASE_URL}/product/update/${productToEdit._id}`;
       const response = await fetch(endpoint, {
         method: "PUT",
         headers: {
@@ -280,8 +281,8 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
                         <Image
                           src={imgUrl}
                           alt="Ảnh sản phẩm"
-                          width={80}
-                          height={80}
+                          width={index === 0 ? 384 : 70}  // ảnh đầu tiên sẽ có kích thước lớn
+                          height={index === 0 ? 200 : 70}
                           className={`object-cover rounded border ${index === 0 ? "w-96 h-[200px]" : "w-[70px] h-[70px] block"}`}
                         />
                         <button
@@ -456,13 +457,16 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
           </div> 
           <div className="my-1">
             <label className="block text-sm font-medium mb-1">Mô tả sản phẩm</label>
-            <Editor 
-              value={content}
-              onChange={(newContent) => {
-                setContent(newContent);
-                setEditedProduct(prev => ({...prev, description: newContent}));
-              }}
-            />
+            <div className="w-full border rounded h-[550px] overflow-y-auto">
+              <Editor 
+                value={content}
+                onChange={(newContent) => {
+                  setContent(newContent);
+                  setEditedProduct(prev => ({...prev, description: newContent}));
+                }}
+              />
+            </div>
+            
 
             </div>
           <Button

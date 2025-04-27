@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Edit, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ViewOrderDialog from "@/components/Dialog/ViewOrderDialog";
+import { BASE_URL } from "@/constants";
 
-const API_ORDERS = "https://gshopbackend-1.onrender.com/order/list";
-const API_USERS = "https://gshopbackend-1.onrender.com/user/list";
+const API_ORDERS = `${BASE_URL}/order/list`;
+const API_USERS = `${BASE_URL}/user/list`;
 
 interface Order {
   id: string;

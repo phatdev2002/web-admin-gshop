@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Card, { CardContent, CardProps } from "@/components/ui/Card";
 import { CheckCircleIcon, Settings, ShoppingCart } from "lucide-react";
 import LineChart from "@/components/ui/LineChart";
+import { BASE_URL } from "@/constants";
 
 const OverviewPage = () => {
   const [totalOrders, setTotalOrders] = useState(0);
@@ -13,7 +14,7 @@ const OverviewPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch("https://gshopbackend-1.onrender.com/order/list");
+        const response = await fetch(`${BASE_URL}/order/list`);
         const result = await response.json();
 
         if (result.status) {

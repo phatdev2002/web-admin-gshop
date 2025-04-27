@@ -1,7 +1,7 @@
-
+import { BASE_URL } from "@/constants";
 const loginUser = async (email, password) => {
   try {
-    const response = await fetch("https://gshopbackend-1.onrender.com/user/login", {
+    const response = await fetch(`${BASE_URL}/user/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

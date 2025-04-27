@@ -7,11 +7,12 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { toast } from "sonner";
 import { DataTable } from "@/components/ui/DataTable";
 import { columns } from "@/app/(user)/admin/orders/columns";
+import { BASE_URL } from "@/constants";
 
-const API_ORDER_DETAIL = "https://gshopbackend-1.onrender.com/detail_order/list-by-order/";
-const API_PRODUCTS = "https://gshopbackend-1.onrender.com/product/list";
-const API_USERS = "https://gshopbackend-1.onrender.com/user/list";
-const API_UPDATE_ORDER = "https://gshopbackend-1.onrender.com/order/update/";
+const API_ORDER_DETAIL = `${BASE_URL}/detail_order/list-by-order/`;
+const API_PRODUCTS = `${BASE_URL}/product/list`;
+const API_USERS = `${BASE_URL}/user/list`;
+const API_UPDATE_ORDER = `${BASE_URL}/order/update/`;
 
 
 
@@ -103,7 +104,7 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ open, onClose, order,
     const response = await axios.get(API_ORDER_DETAIL + orderId);
     if (response.data.status) {
       const details = await Promise.all(response.data.data.map(async (item: { id_product: string; quantity: number; unit_price: number; address: string }) => {
-        const imageResponse = await axios.get(`https://gshopbackend-1.onrender.com/image_product/list-images/${item.id_product}`);
+        const imageResponse = await axios.get(`${BASE_URL}/image_product/list-images/${item.id_product}`);
         const imageUrl = imageResponse.data.status && Array.isArray(imageResponse.data.data) && imageResponse.data.data.length > 0
           ? imageResponse.data.data[0].image[1]
           : '';
@@ -166,7 +167,7 @@ useEffect(() => {
     }
   };
   
-const API_PAYMENT = "https://gshopbackend-1.onrender.com/payment_method/detail/";
+const API_PAYMENT = `${BASE_URL}/payment_method/detail/`;
 
 const [paymentDetail, setPaymentDetail] = useState<string>("");
 

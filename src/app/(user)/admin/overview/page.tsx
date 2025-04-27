@@ -6,6 +6,7 @@ import TenGundamCard, { TenGundamProps } from "@/components/ui/TenGundamCard";
 import { BookCheck, BoxesIcon, ChevronDown, UserCircle, UserSquare2 } from "lucide-react";
 import React from "react";
 import LineChart from "@/components/ui/LineChart";
+import { BASE_URL } from "@/constants";
 
 const OverviewPage = () => {
   const [totalCustomers, setTotalCustomers] = useState<number>(0);
@@ -29,10 +30,10 @@ const OverviewPage = () => {
       }
     };
 
-    fetchData("https://gshopbackend-1.onrender.com/user/list_user", setTotalCustomers);
-    fetchData("https://gshopbackend-1.onrender.com/product/list", setTotalProducts);
-    fetchData("https://gshopbackend-1.onrender.com/user/list_staff", setTotalStaff);
-    fetchData("https://gshopbackend-1.onrender.com/order/list", setTotalOrders);
+    fetchData(`${BASE_URL}/user/list_user`, setTotalCustomers);
+    fetchData(`${BASE_URL}/product/list`, setTotalProducts);
+    fetchData(`${BASE_URL}/user/list_staff`, setTotalStaff);
+    fetchData(`${BASE_URL}/order/list`, setTotalOrders);
   }, []);
 
   const [ordersByMonth, setOrdersByMonth] = useState<Record<string, number>>({});
@@ -40,7 +41,7 @@ const OverviewPage = () => {
   useEffect(() => {
     const fetchOrdersByMonth = async () => {
       try {
-        const response = await fetch("https://gshopbackend-1.onrender.com/order/list");
+        const response = await fetch(`${BASE_URL}/order/list`);
         const result = await response.json();
         if (result.status && Array.isArray(result.data)) {
           type Order = { status: string; date: string };
@@ -102,7 +103,7 @@ const OverviewPage = () => {
   useEffect(() => {
     const fetchTopProducts = async () => {
       try {
-        const response = await fetch("https://gshopbackend-1.onrender.com/order/top-products");
+        const response = await fetch(`${BASE_URL}/order/top-products`);
         const result = await response.json();
         if (result.status && Array.isArray(result.byQuantity)) {
           type ProductItem = { name: string; totalSold: number };
@@ -142,16 +143,16 @@ const OverviewPage = () => {
   
     switch (timePeriod) {
       case "7":
-        startDate.setDate(today.getDate() - 7);
+        startDate.setDate(today.getDate() - 6);
         break;
       case "30":
-        startDate.setDate(today.getDate() - 30);
+        startDate.setDate(today.getDate() - 29);
         break;
       case "60":
-        startDate.setDate(today.getDate() - 60);
+        startDate.setDate(today.getDate() - 59);
         break;
       case "365":
-        startDate.setFullYear(today.getFullYear() - 1);
+        startDate.setFullYear(today.getFullYear() - 2);
         break;
     }
   
@@ -159,7 +160,7 @@ const OverviewPage = () => {
     const endFormatted = formatDate(today);
   
     try {
-      const response = await fetch("https://gshopbackend-1.onrender.com/order/revenue-daily", {
+      const response = await fetch(`${BASE_URL}/order/revenue-daily`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ start: startFormatted, end: endFormatted }),
@@ -182,6 +183,8 @@ const OverviewPage = () => {
   useEffect(() => {
     fetchRevenueByPeriod(timePeriod);
   }, [timePeriod]);
+  const totalRevenue = Object.values(customRevenueData).reduce((sum, current) => sum + current, 0);
+
 
   return (
     <div>
@@ -199,9 +202,9 @@ const OverviewPage = () => {
                 Doanh thu từ {timePeriod === "7" ? "7 ngày gần nhất" : timePeriod === "30" ? "30 ngày gần nhất" : timePeriod === "60" ? "60 ngày gần nhất" : "1 năm"}
                 </p>
               </div>
-              <div className="relative flex items-center">
+              <div className="relative flex items-center text-sm">
                 <select
-                  className="appearance-none p-2 pr-8 border rounded-lg bg-blue-50"
+                  className="appearance-none p-2 pr-8 border rounded-lg bg-red-50"
                   value={timePeriod}
                   onChange={handleTimePeriodChange}
                 >
@@ -213,6 +216,7 @@ const OverviewPage = () => {
                 <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-600">
                   <ChevronDown size={20} />
                 </div>
+                
               </div>
 
             </div>
@@ -229,6 +233,13 @@ const OverviewPage = () => {
             ) : (
               <p className="text-center p-4">Không có dữ liệu</p>
             )}
+            <div className=" w-full flex justify-end">
+              <p className="font-semibold text-gray-600">
+                Tổng doanh thu: {totalRevenue.toLocaleString("vi-VN")} đ
+              </p>
+            </div>
+            
+
           </CardContent>
         </section>
       <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-[7fr_3fr]">

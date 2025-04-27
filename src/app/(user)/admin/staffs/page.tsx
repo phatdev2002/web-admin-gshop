@@ -8,6 +8,7 @@ import AddStaffDialog from "@/components/Dialog/AddStaffDialog";
 import EditStaffDialog from "@/components/Dialog/EditStaffDialog";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/Dialog/ConfirmDialog";
+import { BASE_URL } from "@/constants";
 
 interface Employee {
   _id: string;
@@ -29,7 +30,7 @@ export default function StaffPage() {
 
   const fetchEmployees = () => {
     setLoading(true);
-    fetch("https://gshopbackend-1.onrender.com/user/list_staff")
+    fetch(`${BASE_URL}/user/list_staff`)
       .then((response) => response.json())
       .then((data) => {
         if (data.status) {
@@ -52,7 +53,7 @@ export default function StaffPage() {
 
   const handleDelete = () => {
     if (!employeeToDelete) return;
-    fetch(`https://gshopbackend-1.onrender.com/user/update-staff/${employeeToDelete._id}`, {
+    fetch(`${BASE_URL}/user/update-staff/${employeeToDelete._id}`, {
       method: "PUT",
     })
       .then((res) => res.json())
@@ -68,8 +69,11 @@ export default function StaffPage() {
   };
 
   const filteredEmployees = employees.filter((employee) =>
-    employee.name.toLowerCase().includes(search.toLowerCase())
+    employee.name.toLowerCase().includes(search.toLowerCase()) ||
+    employee.email.toLowerCase().includes(search.toLowerCase()) ||
+    employee.phone_number.toLowerCase().includes(search.toLowerCase())
   );
+  
 
   const formatPhoneNumber = (phone: string) => {
     return phone.replace(/\D/g, '').replace(/^(\d{4})(\d{3})(\d{3})$/, "$1 $2 $3");
@@ -83,7 +87,7 @@ export default function StaffPage() {
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Tìm kiếm theo tên"
+              placeholder="Tìm kiếm theo tên, email, sđt"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-8 bg-white w-64"
