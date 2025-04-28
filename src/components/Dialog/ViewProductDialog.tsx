@@ -266,7 +266,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
           <Dialog.Title className="text-xl font-bold text-center mb-4">
             Chỉnh sửa sản phẩm
           </Dialog.Title>
-          <div className="flex flex-row ">
+          <div className="flex flex-row w-full">
             {/* /////////// */}
             <div className=" w-[400px] mr-5">
               <label className="block text-sm font-medium">Hình ảnh sản phẩm </label>
@@ -337,7 +337,7 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
             </div>
             {/* /////////// */}
             {/* /////////// */}
-            <form onSubmit={(e) => e.preventDefault()} className="">
+            <form onSubmit={(e) => e.preventDefault()} className="flex-1 w-full">
             {/* Tên sản phẩm */}
             <div className="">
               <label className="block text-sm font-medium">Tên sản phẩm</label>
