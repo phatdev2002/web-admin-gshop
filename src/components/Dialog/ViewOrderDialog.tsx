@@ -44,6 +44,7 @@ interface User {
   _id: string;
   name: string;
   phone_number: string;
+  email: string;
 }
 
 interface ViewOrderDialogProps {
@@ -65,7 +66,7 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ open, onClose, order,
   const [error, setError] = useState("");
   const [status, setStatus] = useState(order?.status || "Đang xử lý");
   const [, setUpdating] = useState(false);
-  
+  const [userEmail, setUserEmail] = useState<string>("");
 
   const fetchProducts = async () => {
     try {
@@ -90,6 +91,13 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ open, onClose, order,
         response.data.data.forEach((user: User) => {
           userMap[user._id] = user;
         });
+        // Store the users in state or directly use in your logic
+        if (order) {
+          const user = userMap[order.id_user];
+          if (user) {
+            setUserEmail(user.email); // Set the email based on the user ID
+          }
+        }
       }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách người dùng:", error);
@@ -140,6 +148,7 @@ useEffect(() => {
     fetchOrderDetails(order.id);
     fetchPaymentDetail(order.id_payment);
     setStatus(order.status);
+    fetchUsers();
   }
 }, [order, open, fetchOrderDetails]);
 
@@ -194,7 +203,7 @@ useEffect(() => {
 }, [order, open]);
   useEffect(() => {
     fetchProducts();
-    fetchUsers();
+    fetchUsers(); // Make sure to call fetchUsers here
   }, []);
 
   useEffect(() => {
@@ -203,6 +212,18 @@ useEffect(() => {
       setStatus(order.status);
     }
   }, [order, open]);
+
+  // Tính địa chỉ hiển thị
+  const formattedAddress = React.useMemo(() => {
+    if (!order?.address) return "Không có địa chỉ";
+    const parts = order.address.split(",").map(p => p.trim());
+    // Nếu tất cả phần đều là 'undefined' thì trả về default
+    if (parts.length === 4 && parts.every(p => p === "undefined")) {
+      return "Không có địa chỉ";
+    }
+    return order.address;
+  }, [order?.address]);
+
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -248,7 +269,10 @@ useEffect(() => {
                   <div className="px-4 py-2 flex-1">
                   <p><strong>Tên khách hàng:</strong> {order?.name || "Không xác định"}</p>
                   <p><strong>Số điện thoại:</strong> {order?.phone || "Không xác định"}</p>
-                  <p><strong>Địa chỉ:</strong> {order?.address || "Không có địa chỉ"}</p>
+                  <p>
+                    <strong>Địa chỉ:</strong> {formattedAddress}
+                  </p>
+                  <p><strong>Email người đặt:</strong> {userEmail || "Không có email"}</p> {/* Display email */}
 
                   </div>
                 </div>
