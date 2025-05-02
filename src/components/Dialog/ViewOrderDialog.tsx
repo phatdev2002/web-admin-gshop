@@ -206,7 +206,7 @@ useEffect(() => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <div className=" rounded-lg min-w-[900px] w-80 max-h-[90vh] overflow-y-auto p-4 bg-gray-200">
+      <div className=" rounded-lg min-w-[900px] w-80 max-h-[90vh] overflow-y-auto p-4 bg-gray-300">
         
 
         {order && (
@@ -214,7 +214,7 @@ useEffect(() => {
             
 
             <div>
-              <div className="flex flex-row justify-between items-center bg-gray-100 px-4 py-2 rounded-lg mb-4 border border-gray-300">
+              <div className="flex flex-row justify-between items-center bg-gray-200 px-4 py-2 rounded-lg mb-4 border border-gray-300">
                 <div className="flex flex-1 flex-col">
                   <p><strong>Đơn hàng #{order.id} </strong></p>
                   <p>{order.order_date}</p>
@@ -242,28 +242,29 @@ useEffect(() => {
               
               <div className="flex justify-between items-stretch mb-4 gap-4">
                 <div className="flex flex-col bg-white rounded-lg border border-gray-300 w-full">
-                  <div className="bg-gray-100 px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                  <div className="bg-gray-200 px-4 py-2 rounded-tl-lg rounded-tr-lg">
                     <p><strong>Thông tin khách hàng</strong></p>
                   </div>
                   <div className="px-4 py-2 flex-1">
-                    <p>Tên khách hàng: {order?.name || "Không xác định"}</p>
-                    <p>Số điện thoại: {order?.phone || "Không xác định"}</p>
-                    <p>Địa chỉ: {order?.address || "Không có địa chỉ"}</p>
+                  <p><strong>Tên khách hàng:</strong> {order?.name || "Không xác định"}</p>
+                  <p><strong>Số điện thoại:</strong> {order?.phone || "Không xác định"}</p>
+                  <p><strong>Địa chỉ:</strong> {order?.address || "Không có địa chỉ"}</p>
+
                   </div>
                 </div>
                 <div className="flex flex-col bg-white rounded-lg border border-gray-300 w-full">
-                  <div className="bg-gray-100 px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                  <div className="bg-gray-200 px-4 py-2 rounded-tl-lg rounded-tr-lg">
                     <p><strong>Thanh toán</strong></p>
                   </div>
                   <div className="px-4 py-2 flex-1">
-                    <p>Hình thức thanh toán: {paymentDetail}</p>
-                    <p>Phí vận chuyển: {order.shipping_fee.toLocaleString()} đ</p>
-                    <p>Tổng tiền: {order.amount.toLocaleString()} đ</p>
+                    <p><strong>Hình thức thanh toán: </strong>{paymentDetail}</p>
+                    <p><strong>Phí vận chuyển: </strong>{order.shipping_fee.toLocaleString()} đ</p>
+                    <p><strong>Tổng tiền: </strong>{order.amount.toLocaleString()} đ</p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col bg-gray-100 rounded-lg p-4  border border-gray-300">
+              <div className="flex flex-col bg-gray-200 rounded-lg p-4  border border-gray-300">
                   <div className="mb-2">
                     <p className=" font-semibold">Sản phẩm trong đơn hàng</p>
                   </div>
@@ -292,7 +293,7 @@ useEffect(() => {
 
         
 
-        <div className="absolute top-10 right-72">
+        <div className="absolute top-10 right-64">
           <Button onClick={onClose} className="bg-gray-200 text-red-500 hover:bg-gray-300">x</Button>
         </div>
       </div>
