@@ -224,7 +224,12 @@ useEffect(() => {
     return order.address;
   }, [order?.address]);
 
-
+  const productTotal = React.useMemo(() => {
+    return orderDetails.reduce((total, item) => {
+      return total + item.quantity * item.unit_price;
+    }, 0);
+  }, [orderDetails]);
+  
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <div className=" rounded-lg min-w-[900px] w-80 max-h-[90vh] overflow-y-auto p-4 bg-gray-300">
@@ -282,6 +287,7 @@ useEffect(() => {
                   </div>
                   <div className="px-4 py-2 flex-1">
                     <p><strong>Hình thức thanh toán: </strong>{paymentDetail}</p>
+                    <p><strong>Tiền sản phẩm: </strong>{productTotal.toLocaleString()} đ</p>
                     <p><strong>Phí vận chuyển: </strong>{order.shipping_fee.toLocaleString()} đ</p>
                     <p><strong>Tổng tiền: </strong>{order.amount.toLocaleString()} đ</p>
                   </div>
