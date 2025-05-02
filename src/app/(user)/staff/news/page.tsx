@@ -46,15 +46,30 @@ export default function NewsPage() {
 
   const filteredNews = [...newsData]
   .sort((a, b) => {
-    const dateA = a.date.split("/").reverse().join("-"); // Chuyển từ dd/mm/yyyy thành yyyy-mm-dd
+    // So sánh ngày trước
+    const dateA = a.date.split("/").reverse().join("-"); // dd/mm/yyyy -> yyyy-mm-dd
     const dateB = b.date.split("/").reverse().join("-");
-    return new Date(dateB).getTime() - new Date(dateA).getTime();
+    const dateCompare = new Date(dateB).getTime() - new Date(dateA).getTime();
+
+    if (dateCompare !== 0) {
+      return dateCompare; // Ngày khác nhau thì ưu tiên ngày
+    }
+
+    // Nếu ngày bằng nhau, so tiếp thời gian
+    const [hourA, minuteA] = a.time.split(":").map(Number);
+    const [hourB, minuteB] = b.time.split(":").map(Number);
+    const totalMinutesA = hourA * 60 + minuteA;
+    const totalMinutesB = hourB * 60 + minuteB;
+
+    return totalMinutesB - totalMinutesA; // Giờ mới hơn lên trước
   })
   .filter(
     (news) =>
       news.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       news.date.includes(searchTerm)
   );
+
+
 
 
 
@@ -87,6 +102,20 @@ export default function NewsPage() {
     }
   };
   
+  function adjustTimeToVietnam(utcTimeString: string) {
+    const [hours, minutes] = utcTimeString.split(":").map(Number);
+    let adjustedHours = hours + 7;
+  
+    if (adjustedHours >= 24) {
+      adjustedHours -= 24; // Nếu cộng 7h bị vượt qua 24h, vòng lại
+    }
+  
+    const formattedHours = adjustedHours.toString().padStart(2, "0");
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+  
+    return `${formattedHours}:${formattedMinutes}`;
+  }
+  
   
   
   
@@ -112,7 +141,7 @@ export default function NewsPage() {
           {/* Button tạo bài viết */}
           <button
             onClick={() => router.push("/staff/news/create")}
-            className="px-4 flex items-center gap-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600 transition"
+            className="px-4 flex items-center gap-2 bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition"
           >
             <PlusCircle size={20} /> Tạo bài viết
           </button>
@@ -143,8 +172,7 @@ export default function NewsPage() {
             <div className="p-4 flex flex-col flex-grow">
               <h2 className="text-lg font-semibold flex-grow">{news.title}</h2>
               <div className="flex gap-2">
-                
-                <p className="text-sm text-gray-600 mt-1">{news.time}</p>
+                <p className="text-sm text-gray-600 mt-1">{adjustTimeToVietnam(news.time)}</p>
                 <p className="text-sm text-gray-600 mt-1">{news.date}</p>
               </div>
               

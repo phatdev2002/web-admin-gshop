@@ -145,7 +145,7 @@ const OrderPage = () => {
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Tìm kiếm theo ID, tên khách hàng hoặc địa chỉ"
+            placeholder="Tìm kiếm theo ID, tên khách hàng"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-8 bg-white w-96"

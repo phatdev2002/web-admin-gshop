@@ -30,11 +30,15 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
   const thumbnails = news?.thumbnail ? news.thumbnail.split(",") : [];
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState(news?.thumbnail || "");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
 
   const handleClose = () => {
     setThumbnail(null);
+    setPreviewUrl(null); // ← Xóa URL xem trước
     onClose();
   };
+  
   
   useEffect(() => {
     if (news) {
@@ -112,8 +116,12 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
       });
       if (!response.ok) throw new Error("Lỗi khi cập nhật tin tức");
       toast.success("Cập nhật thành công!");
+      setThumbnail(null);      // ← Xóa file đã chọn
+      setPreviewUrl(null);     // ← Xóa ảnh xem trước
       onClose();
       onUpdate();
+
+
     } catch (error) {
       console.error("Lỗi:", error);
       toast.error("Có lỗi xảy ra khi cập nhật tin tức");
@@ -135,21 +143,36 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
 
 
 
-          {thumbnails.length > 0 ? (
-            thumbnails.map((image, index) => (
-              <Image 
-                key={index} 
-                src={getValidThumbnail(image)} 
-                alt={`Chưa có ảnh`} 
-                width={500} 
-                height={300} 
-                className="w-[350px] my-4 rounded-lg h-48 object-cover" 
-                priority={index === 0} // Prioritize the first image
-              />
-            ))
-          ) : (
-            <p className="text-gray-500 italic">Không có ảnh Thumbnail</p>
-          )}
+          <div className="flex gap-4 flex-wrap my-4">
+            {thumbnails.length > 0 ? (
+              thumbnails.map((image, index) => (
+                <Image 
+                  key={index} 
+                  src={getValidThumbnail(image)} 
+                  alt={`Chưa có ảnh`} 
+                  width={500} 
+                  height={300} 
+                  className="w-[350px] rounded-lg h-48 object-cover" 
+                  priority={index === 0}
+                />
+              ))
+            ) : (
+              <p className="text-gray-500 italic">Không có ảnh Thumbnail</p>
+            )}
+            {previewUrl && (
+              <div>
+                <Image 
+                  src={previewUrl} 
+                  alt="Ảnh mới chọn" 
+                  width={500} 
+                  height={300} 
+                  className="w-[350px] rounded-lg h-48 object-cover border-2 border-blue-500" 
+                />
+              </div>
+            )}
+          </div>
+
+
           <div className="mt-2 flex flex-row gap-2">
             <label htmlFor="thumbnail-upload" className="flex items-center gap-2 cursor-pointer text-blue-600 hover:text-blue-800">
               <ImageUp className="w-6 h-6" />
@@ -159,7 +182,11 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
               id="thumbnail-upload"
               type="file"
               className="hidden"
-              onChange={(e) => setThumbnail(e.target.files?.[0] || null)}
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                setThumbnail(file);
+                setPreviewUrl(file ? URL.createObjectURL(file) : null);
+              }}
             />
             
             {thumbnail && (
@@ -200,7 +227,7 @@ export default function ViewNewsDialog({ news, onClose, onUpdate }: ViewNewsDial
           <div className="flex justify-end">
             <button 
               onClick={handleSubmit} 
-              className="mt-4 px-4 py-2 bg-red-500 text-white rounded shadow-md hover:bg-red-600 transition" 
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition " 
               disabled={loading}
               aria-label="Cập nhật bài viết"
             >

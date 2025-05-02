@@ -291,7 +291,7 @@ const OverviewPage = () => {
         </section>
       <section className="grid grid-cols-1 gap-6 transition-all lg:grid-cols-[6fr_4fr]">
         
-        <section className="grid grid-cols-1 transition-all">
+        <section className="grid grid-cols-1 transition-all gap-5">
           {/* Đơn hàng đã giao */}
           <section className="grid grid-cols-4 gap-4 text-sm">
             <CardContent className="flex flex-col justify-between items-center h-28 ">
