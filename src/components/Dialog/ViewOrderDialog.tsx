@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { Dialog, DialogHeader} from "@/components/ui/Dialog";
+import { Dialog} from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "sonner";
@@ -206,59 +206,87 @@ useEffect(() => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <div className="bg-gray-200 rounded-lg min-w-[800px] w-96 max-h-[90vh] overflow-y-auto p-6">
-        <DialogHeader>
-          <div className="flex justify-center mb-4">Chi tiết đơn hàng</div>
-        </DialogHeader>
+      <div className=" rounded-lg min-w-[900px] w-80 max-h-[90vh] overflow-y-auto p-4 bg-gray-200">
+        
 
         {order && (
-          <div>
+          <div className="relative">
+            
+
             <div>
-              <p className="pb-4"><strong>Mã đơn hàng:</strong> {order.id}</p>
+              <div className="flex flex-row justify-between items-center bg-gray-100 px-4 py-2 rounded-lg mb-4 border border-gray-300">
+                <div className="flex flex-1 flex-col">
+                  <p><strong>Đơn hàng #{order.id} </strong></p>
+                  <p>{order.order_date}</p>
+                </div>
+                <div  className=" w-44">
+                  <Select key={status} value={status} onValueChange={handleStatusChange}>
+                    <SelectTrigger className={`
+                        ${status === "Đang xử lý" ? "bg-red-100 text-red-700 border-red-500" : ""}
+                        ${status === "Đang giao hàng" ? "bg-orange-100 text-orange-700 border-orange-500" : ""}
+                        ${status === "Đã giao" ? "bg-green-100 text-green-700 border-green-500" : ""}
+                        border rounded-lg px-4 py-2 font-semibold
+                    `}>
+                      <SelectValue placeholder="Chọn trạng thái" />
+                      </SelectTrigger>
+                      <SelectContent>
+                      <SelectItem value="Đang xử lý" disabled={status !== "Đang xử lý"} className="text-red-500">Đang xử lý</SelectItem>
+                      <SelectItem value="Đang giao hàng" disabled={status !== "Đang xử lý"} className="text-orange-500">Đang giao hàng</SelectItem>
+                      <SelectItem value="Đã giao" disabled={status !== "Đang giao hàng"} className="text-green-500">Đã giao</SelectItem>
+                      <SelectItem value="Đã hủy" disabled={status === "Đã giao"} className="text-gray-500">Đã hủy</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <p><strong>Khách hàng:</strong> {order?.name || "Không xác định"}</p>
-              <p><strong>Số điện thoại:</strong> {order?.phone || "Không xác định"}</p>
-              <p><strong>Địa chỉ:</strong> {order?.address || "Không có địa chỉ"}</p>
-
-
-              <h3 className="mt-4 mb-2 font-semibold">Sản phẩm trong đơn hàng:</h3>
-              {loading ? (
-                  <p>Đang tải chi tiết đơn hàng...</p>
-                ) : error ? (
-                  <p className="text-red-500">{error}</p>
-                ) : orderDetails.length > 0 ? (
-                  <DataTable columns={columns} data={orderDetails} />
-                ) : (
-                  <p>Không có sản phẩm nào.</p>
-                )}
-
-              <p className="pt-4"><strong>Phương thức thanh toán:</strong> {paymentDetail} </p>
-              <p><strong>Phí vận chuyển:</strong> {order.shipping_fee.toLocaleString()} VND</p>
-              <p><strong>Tổng tiền:</strong> {order.amount.toLocaleString()} VND</p>
+              </div>
               
-              <p className="pt-4"><strong>Ngày đặt hàng:</strong> {order.order_date}</p>
+              <div className="flex justify-between items-stretch mb-4 gap-4">
+                <div className="flex flex-col bg-white rounded-lg border border-gray-300 w-full">
+                  <div className="bg-gray-100 px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                    <p><strong>Thông tin khách hàng</strong></p>
+                  </div>
+                  <div className="px-4 py-2 flex-1">
+                    <p>Tên khách hàng: {order?.name || "Không xác định"}</p>
+                    <p>Số điện thoại: {order?.phone || "Không xác định"}</p>
+                    <p>Địa chỉ: {order?.address || "Không có địa chỉ"}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col bg-white rounded-lg border border-gray-300 w-full">
+                  <div className="bg-gray-100 px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                    <p><strong>Thanh toán</strong></p>
+                  </div>
+                  <div className="px-4 py-2 flex-1">
+                    <p>Hình thức thanh toán: {paymentDetail}</p>
+                    <p>Phí vận chuyển: {order.shipping_fee.toLocaleString()} đ</p>
+                    <p>Tổng tiền: {order.amount.toLocaleString()} đ</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col bg-gray-100 rounded-lg p-4  border border-gray-300">
+                  <div className="mb-2">
+                    <p className=" font-semibold">Sản phẩm trong đơn hàng</p>
+                  </div>
+                  <div>
+                    {loading ? (
+                    <p>Đang tải chi tiết đơn hàng...</p>
+                    ) : error ? (
+                      <p className="text-red-500">{error}</p>
+                    ) : orderDetails.length > 0 ? (
+                      <DataTable columns={columns} data={orderDetails} />
+                    ) : (
+                      <p>Không có sản phẩm nào.</p>
+                    )}
+                  </div>
+                </div>
+              
+              
+
+              
+              
+              
             </div>
 
-            {/* Thay đổi trạng thái đơn hàng */}
-            <div className="mt-3 flex flex-col">
-              <label className="font-semibold mb-2">Trạng thái đơn hàng:</label>
-              <Select key={status} value={status} onValueChange={handleStatusChange}>
-                <SelectTrigger className={`
-                    ${status === "Đang xử lý" ? "bg-red-100 text-red-700 border-red-500" : ""}
-                    ${status === "Đang giao hàng" ? "bg-orange-100 text-orange-700 border-orange-500" : ""}
-                    ${status === "Đã giao" ? "bg-green-100 text-green-700 border-green-500" : ""}
-                    border rounded-lg px-4 py-2 font-semibold
-                `}>
-                  <SelectValue placeholder="Chọn trạng thái" />
-                </SelectTrigger>
-                <SelectContent>
-                <SelectItem value="Đang xử lý" disabled={status !== "Đang xử lý"} className="text-red-500">🔴 Đang xử lý</SelectItem>
-                <SelectItem value="Đang giao hàng" disabled={status !== "Đang xử lý"} className="text-orange-500">🟠 Đang giao hàng</SelectItem>
-                <SelectItem value="Đã giao" disabled={status !== "Đang giao hàng"} className="text-green-500">🟢 Đã giao</SelectItem>
-                <SelectItem value="Đã hủy" disabled={status === "Đã giao"} className="text-gray-500">❌ Đã hủy</SelectItem>
-              </SelectContent>
-              </Select>
-            </div>
           </div>
         )}
 

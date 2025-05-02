@@ -141,7 +141,7 @@ export default function NewsPage() {
           {/* Button tạo bài viết */}
           <button
             onClick={() => router.push("/admin/news/create")}
-            className="px-4 flex items-center gap-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600 transition"
+            className="px-4 flex items-center gap-2 bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition"
           >
             <PlusCircle size={20} /> Tạo bài viết
           </button>

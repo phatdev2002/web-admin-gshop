@@ -10,11 +10,17 @@ import {
 } from "recharts";
 
 type ChartData = {
-  name: string; // ví dụ: "Tháng 3"
-  total: number; // số lượng đơn đã giao trong tháng
+  name: string;
+  total: number;
 };
 
-export default function BarChart({ data }: { data: ChartData[] }) {
+export default function BarChart({
+  data,
+  barColor = "#266FDA" // mặc định màu xanh
+}: {
+  data: ChartData[];
+  barColor?: string;
+}) {
   const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { value: number }[] }) => {
     if (active && payload && payload.length) {
       return (
@@ -25,6 +31,7 @@ export default function BarChart({ data }: { data: ChartData[] }) {
     }
     return null;
   };
+
   return (
     <ResponsiveContainer width={'100%'} height={350}>
       <BarGraph data={data}>
@@ -42,7 +49,12 @@ export default function BarChart({ data }: { data: ChartData[] }) {
           fontSize={12}
         />
         <Tooltip content={<CustomTooltip />} />
-        <Bar dataKey="total" radius={[4, 4, 0, 0]} barSize={30} fill="#266FDA" />
+        <Bar
+          dataKey="total"
+          radius={[4, 4, 0, 0]}
+          barSize={30}
+          fill={barColor}
+        />
       </BarGraph>
     </ResponsiveContainer>
   );

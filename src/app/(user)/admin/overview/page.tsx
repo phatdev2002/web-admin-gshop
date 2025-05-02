@@ -13,6 +13,16 @@ const OverviewPage = () => {
   const [totalProducts, setTotalProducts] = useState<number>(0);
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [totalStaff, setTotalStaff] = useState<number>(0);
+  const [orderStats, setOrderStats] = useState({
+    delivered: 0,
+    canceled: 0,
+    shipping: 0,
+    processing: 0,
+  });
+  const [selectedStatus, setSelectedStatus] = useState("Đã giao");
+
+
+  
 
   useEffect(() => {
     const fetchData = async (url: string, setter: (value: number) => void) => {
@@ -45,9 +55,11 @@ const OverviewPage = () => {
         const result = await response.json();
         if (result.status && Array.isArray(result.data)) {
           type Order = { status: string; date: string };
-          const deliveredOrders = result.data.filter((order: Order) => order.status === "Đã giao");
+          const filteredOrders = result.data.filter(
+            (order: Order) => order.status === selectedStatus
+          );
           const monthlyCounts: Record<string, number> = {};
-          deliveredOrders.forEach((order: Order) => {
+          filteredOrders.forEach((order: Order) => {
             const [, month] = order.date.split("/");
             const monthKey = `Tháng ${month}`;
             monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
@@ -61,14 +73,10 @@ const OverviewPage = () => {
         setOrdersByMonth({});
       }
     };
-
+  
     fetchOrdersByMonth();
-  }, []);
-
-  const orderBarChartData = Object.entries(ordersByMonth).map(([month, count]) => ({
-    name: month,
-    total: count,
-  }));
+  }, [selectedStatus]); // <-- thêm selectedStatus vào dependency
+  
 
  
 
@@ -185,6 +193,45 @@ const OverviewPage = () => {
   }, [timePeriod]);
   const totalRevenue = Object.values(customRevenueData).reduce((sum, current) => sum + current, 0);
 
+  useEffect(() => {
+    const fetchOrderStats = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/order/list`);
+        const result = await response.json();
+        if (result.status && Array.isArray(result.data)) {
+          const stats = {
+            delivered: 0,
+            canceled: 0,
+            shipping: 0,
+            processing: 0,
+          };
+          result.data.forEach((order: { status: string }) => {
+            switch (order.status) {
+              case "Đã giao":
+                stats.delivered++;
+                break;
+              case "Đã hủy":
+                stats.canceled++;
+                break;
+              case "Đang giao hàng":
+                stats.shipping++;
+                break;
+              case "Đang xử lý":
+                stats.processing++;
+                break;
+            }
+          });
+          setOrderStats(stats);
+        }
+      } catch (error) {
+        console.error("Lỗi khi thống kê đơn hàng theo trạng thái:", error);
+      }
+    };
+  
+    fetchOrderStats();
+  }, []);
+  
+
 
   return (
     <div>
@@ -202,9 +249,10 @@ const OverviewPage = () => {
                 Doanh thu từ {timePeriod === "7" ? "7 ngày gần nhất" : timePeriod === "30" ? "30 ngày gần nhất" : timePeriod === "60" ? "60 ngày gần nhất" : "1 năm"}
                 </p>
               </div>
+
               <div className="relative flex items-center text-sm">
                 <select
-                  className="appearance-none p-2 pr-8 border rounded-lg bg-red-50"
+                  className="appearance-none p-2 pr-8 border rounded-lg border-red-400 focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent"
                   value={timePeriod}
                   onChange={handleTimePeriodChange}
                 >
@@ -213,10 +261,9 @@ const OverviewPage = () => {
                   <option value="60">60 ngày gần nhất</option>
                   <option value="365">365 ngày gần nhất</option>
                 </select>
-                <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-gray-600">
+                <div className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-gray-600">
                   <ChevronDown size={20} />
                 </div>
-                
               </div>
 
             </div>
@@ -234,7 +281,7 @@ const OverviewPage = () => {
               <p className="text-center p-4">Không có dữ liệu</p>
             )}
             <div className=" w-full flex justify-end">
-              <p className="font-semibold text-gray-600">
+              <p className="font-semibold text-red-600">
                 Tổng doanh thu: {totalRevenue.toLocaleString("vi-VN")} đ
               </p>
             </div>
@@ -242,18 +289,77 @@ const OverviewPage = () => {
 
           </CardContent>
         </section>
-      <section className="grid grid-cols-1 gap-4 transition-all lg:grid-cols-[7fr_3fr]">
-        <section className="grid grid-cols-1 gap-4 transition-all">
+      <section className="grid grid-cols-1 gap-6 transition-all lg:grid-cols-[6fr_4fr]">
+        
+        <section className="grid grid-cols-1 transition-all">
           {/* Đơn hàng đã giao */}
-          <CardContent className="h-[480px]">
-            <p className="font-semibold">Thống kê đơn đặt hàng</p>
-            <p className="pb-4 text-xs text-gray-500">Đơn hàng đã giao theo tháng</p>
-            {orderBarChartData.length > 0 ? (
-              <BarChart data={orderBarChartData} />
+          <section className="grid grid-cols-4 gap-4 text-sm">
+            <CardContent className="flex flex-col justify-between items-center h-28 ">
+              <p className=" font-semibold">Đơn đã giao</p>
+              <p className="text-3xl text-green-600">{orderStats.delivered}</p>
+            </CardContent>
+            <CardContent className="flex justify-between items-center h-28 ">
+              <p className="font-semibold">Đơn đã hủy</p>
+              <p className="text-3xl">{orderStats.canceled}</p>
+            </CardContent>
+            <CardContent className="flex  justify-between items-center h-28 ">
+              <p className="font-semibold">Đang giao hàng</p>
+              <p className="text-3xl text-orange-600">{orderStats.shipping}</p>
+            </CardContent>
+            <CardContent className="flex justify-between items-center h-28 ">
+              <p className="font-semibold">Đang xử lý</p>
+              <p className="text-3xl text-red-600">{orderStats.processing}</p>
+            </CardContent>
+          </section>
+
+
+          <CardContent className="gap-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-semibold">Thống kê đơn theo trạng thái giao hàng</p>
+                <p className="pb-4 text-xs text-gray-500">Đơn hàng theo tháng</p>
+              </div>
+              <div className="relative flex items-center text-sm">
+
+              
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="appearance-none p-2 pr-8 border rounded-lg border-red-400 focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent"
+                >
+                  <option value="Đã giao">Đã giao</option>
+                  <option value="Đã hủy">Đã hủy</option>
+                  <option value="Đang giao hàng">Đang giao hàng</option>
+                  <option value="Đang xử lý">Đang xử lý</option>
+                </select>
+                <div className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-gray-600">
+                    <ChevronDown size={20} />
+                </div>
+              </div>
+            </div>
+
+            {Object.keys(ordersByMonth).length > 0 ? (
+              <BarChart
+              data={Object.entries(ordersByMonth).map(([month, count]) => ({
+                name: month,
+                total: count,
+              }))}
+              barColor={
+                selectedStatus === "Đã giao"
+                  ? "#16A34A" 
+                  : selectedStatus === "Đã hủy"
+                  ? "#1F2937" 
+                  : selectedStatus === "Đang giao hàng"
+                  ? "#F97316"
+                  : "#EF4444"
+              }
+            />
             ) : (
-              <p className="text-center p-4">Không có dữ liệu</p>
+              <p className="text-center text-sm text-gray-500">Không có dữ liệu</p>
             )}
           </CardContent>
+
+          
         </section>
 
         {/* Top 10 Gundam */}

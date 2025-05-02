@@ -123,7 +123,7 @@ export default function CreateNews() {
       {/* Nút tạo bài viết */}
       <button
         onClick={handleSubmit}
-        className="mt-4 px-4 py-2 bg-red-400 text-white rounded shadow-md hover:bg-red-500 transition"
+        className="mt-4 px-4 py-2 bg-red-400 text-white rounded-full shadow-md hover:bg-red-500 transition"
         disabled={loading}
       >
         {loading ? "Đang xử lý..." : "Tạo bài viết"}
