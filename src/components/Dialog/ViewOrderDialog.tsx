@@ -154,27 +154,34 @@ useEffect(() => {
 
 // Định nghĩa handleStatusChange
 
-  const handleStatusChange = async (newStatus: string) => {
-    if (!order || newStatus === status) return; // Không làm gì nếu trạng thái không thay đổi
-  
-    setUpdating(true);
-    try {
-      const response = await axios.put(`${API_UPDATE_ORDER}${order.id}`, { status: newStatus });
-      if (response.data.status) {
-        toast("Cập nhật trạng thái thành công!");
-        setStatus(newStatus); // Cập nhật UI
-        refreshOrders(); // Cập nhật danh sách đơn hàng
-        onClose(); // Đóng dialog
-      } else {
-        alert("Cập nhật thất bại!");
-      }
-    } catch (error) {
-      console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
-      alert("Không thể cập nhật trạng thái đơn hàng!");
-    } finally {
-      setUpdating(false);
+const handleStatusChange = async (newStatus: string) => {
+  if (!order || newStatus === status) return;
+
+  setUpdating(true);
+  const staffMail = localStorage.getItem("email") || "";
+  console.log("staff_mail:", staffMail);
+  try {
+    const response = await axios.put(`${API_UPDATE_ORDER}${order.id}`, {
+      status: newStatus,
+      staff_mail: staffMail, // truyền email làm staff_mail
+    });
+
+    if (response.data.status) {
+      toast("Cập nhật trạng thái thành công!");
+      setStatus(newStatus);
+      refreshOrders();
+      onClose();
+    } else {
+      toast.error("Cập nhật thất bại!");
     }
-  };
+  } catch (error) {
+    console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
+    alert("Không thể cập nhật trạng thái đơn hàng!");
+  } finally {
+    setUpdating(false);
+  }
+};
+
   
 const API_PAYMENT = `${BASE_URL}/payment_method/detail/`;
 

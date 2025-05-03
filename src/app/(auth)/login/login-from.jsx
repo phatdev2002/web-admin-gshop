@@ -52,6 +52,7 @@ const LoginForm = () => {
   
         // Lưu thông tin vào localStorage
         localStorage.setItem("role", user.role);
+        localStorage.setItem("email", user.email);
   
         // Điều hướng theo vai trò
         if (user.role === "admin") {

@@ -25,6 +25,7 @@ interface Order {
   order_date: string;
   status: string;
   address?: string; // Make address optional if it's not always provided
+  staff_mail: string;
 }
 function parseVNDate(dateStr: string): Date {
   const [day, month, year] = dateStr.split("/");
@@ -72,6 +73,7 @@ const OrderPage = () => {
           shipping_fee: number;
           date: string;
           status: string;
+          staff_mail: string;
         }) => ({
           id: order._id,
           id_user: order.id_user,
@@ -85,6 +87,7 @@ const OrderPage = () => {
           amount: order.total_price,
           order_date: order.date,
           status: order.status,
+          staff_mail: order.staff_mail,
         })).reverse();
         setOrders(apiData);
       } else {
@@ -225,6 +228,7 @@ const columns = (
   users: { [key: string]: string },
   onEdit: (order: Order) => void
 ): ColumnDef<Order>[] => [
+  
   { accessorKey: "id", header: "Mã đơn hàng" },
   {
     accessorKey: "name",
@@ -253,6 +257,9 @@ const columns = (
     },
   },
   {
+    accessorKey: "staff_mail", header:"Nhân viên QL"
+  },
+  {
     accessorKey: "status",
     header: "Trạng thái",
     cell: ({ getValue }) => {
@@ -260,7 +267,7 @@ const columns = (
       const statusColors: { [key: string]: string } = {
         "Đã giao": "bg-green-500 text-white",
         "Đang xử lý": "bg-red-500 text-white",
-        "Đang giao hàng": "bg-orange-400 text-black",
+        "Đang giao hàng": "bg-orange-400 text-white",
       };
       return (
         <span
@@ -271,6 +278,7 @@ const columns = (
       );
     },
   },
+  
   {
     accessorKey: "actions",
     header: "",
@@ -282,4 +290,5 @@ const columns = (
       />
     ),
   },
+  
 ];
