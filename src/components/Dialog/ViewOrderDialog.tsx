@@ -28,7 +28,8 @@ interface Order {
   name?: string;
   order_date: string;
   status: string;
-  address?: string; // Make address optional if it's not always provided
+  address?: string;
+  staff_mail?:string;
 }
 
 
@@ -239,7 +240,8 @@ useEffect(() => {
   
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <div className=" rounded-lg min-w-[900px] w-80 max-h-[90vh] overflow-y-auto p-4 bg-gray-300">
+      <div className="rounded-lg min-w-[900px] w-80 max-h-[90vh] overflow-y-auto p-4 bg-opacity-50">
+
         
 
         {order && (
@@ -247,10 +249,11 @@ useEffect(() => {
             
 
             <div>
-              <div className="flex flex-row justify-between items-center bg-gray-200 px-4 py-2 rounded-lg mb-4 border border-gray-300">
+              <div className="flex flex-row justify-between items-center px-4 py-2 rounded-lg mb-4 border border-gray-300">
                 <div className="flex flex-1 flex-col">
                   <p><strong>Đơn hàng #{order.id} </strong></p>
-                  <p>{order.order_date}</p>
+                  <p><strong>Ngày đặt hàng:</strong> {order.order_date}</p>
+                  <p><strong>Email người xử lý:</strong> {order.staff_mail}</p>
                 </div>
                 <div  className=" w-44">
                   <Select key={status} value={status} onValueChange={handleStatusChange}>
@@ -284,7 +287,7 @@ useEffect(() => {
                   <p>
                     <strong>Địa chỉ:</strong> {formattedAddress}
                   </p>
-                  <p><strong>Email người đặt:</strong> {userEmail || "Không có email"}</p> {/* Display email */}
+                  <p><strong>Email người đặt hàng:</strong> {userEmail || "Không có email"}</p> {/* Display email */}
 
                   </div>
                 </div>

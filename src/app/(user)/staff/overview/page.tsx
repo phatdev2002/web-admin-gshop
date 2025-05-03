@@ -1,15 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Card, { CardContent, CardProps } from "@/components/ui/Card";
-import { CheckCircleIcon, Settings, ShoppingCart } from "lucide-react";
-import LineChart from "@/components/ui/LineChart";
+import { CheckCircleIcon, Settings, XCircle, Truck } from "lucide-react";
+import LineChart from "@/components/ui/LineChartStaff";
 import { BASE_URL } from "@/constants";
 
 const OverviewPage = () => {
-  const [totalOrders, setTotalOrders] = useState(0);
   const [completedOrders, setCompletedOrders] = useState(0);
   const [pendingOrders, setPendingOrders] = useState(0);
+  const [canceledOrders, setCanceledOrders] = useState(0);
+  const [shippingOrders, setShippingOrders] = useState(0);
   const [chartData, setChartData] = useState<{ name: string; total: number }[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>("Đang xử lý");
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -22,37 +24,31 @@ const OverviewPage = () => {
 
           type Order = {
             status: string;
-            date: string; // "dd/MM/yyyy"
+            date: string;
             total_price: number;
             shipping_fee: number;
           };
 
-          const completedOrdersList = orders.filter(
-            (order: Order) => order.status === "Đã giao"
-          );
+          const completedOrdersList = orders.filter((order: Order) => order.status === "Đã giao");
           const pending = orders.filter((order: Order) => order.status === "Đang xử lý").length;
+          const canceled = orders.filter((order: Order) => order.status === "Đã hủy").length;
+          const shipping = orders.filter((order: Order) => order.status === "Đang giao hàng").length;
 
-          setTotalOrders(orders.length);
           setCompletedOrders(completedOrdersList.length);
           setPendingOrders(pending);
+          setCanceledOrders(canceled);
+          setShippingOrders(shipping);
 
-          // Tính doanh thu theo tháng
-          const monthlyRevenue: { [key: string]: number } = {};
-
-          completedOrdersList.forEach((order: Order) => {
-            const parts = order.date.split("/"); // ["dd", "MM", "yyyy"]
-            const monthYear = `${parts[1]}/${parts[2]}`; // "MM/yyyy"
-            const total = order.total_price + order.shipping_fee;
-
-            if (!monthlyRevenue[monthYear]) {
-              monthlyRevenue[monthYear] = total;
-            } else {
-              monthlyRevenue[monthYear] += total;
+          const monthlyOrderCount: { [key: string]: number } = {};
+          orders.forEach((order: Order) => {
+            if (order.status === selectedStatus) {
+              const parts = order.date.split("/");
+              const monthYear = `${parts[1]}/${parts[2]}`;
+              monthlyOrderCount[monthYear] = (monthlyOrderCount[monthYear] || 0) + 1;
             }
           });
 
-          // Chuyển thành mảng, sắp xếp theo tháng tăng dần
-          const sortedChartData = Object.entries(monthlyRevenue)
+          const sortedChartData = Object.entries(monthlyOrderCount)
             .sort(([a], [b]) => {
               const [monthA, yearA] = a.split("/").map(Number);
               const [monthB, yearB] = b.split("/").map(Number);
@@ -68,42 +64,54 @@ const OverviewPage = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [selectedStatus]);
 
-  const cardData: CardProps[] = [
-    {
-      label: "Tổng đơn hàng",
-      amount: totalOrders.toString(),
-      discription: "Tổng số đơn hàng đã đặt",
-      icon: ShoppingCart,
-    },
+  const cardData: (Omit<CardProps, "discription"> & { status: string })[] = [
     {
       label: "Đơn hàng chờ xử lý",
       amount: pendingOrders.toString(),
-      discription: "Số lượng đơn hàng chưa hoàn thành",
       icon: Settings,
+      status: "Đang xử lý"
+    },
+    {
+      label: "Đơn hàng đang giao",
+      amount: shippingOrders.toString(),
+      icon: Truck,
+      status: "Đang giao hàng"
     },
     {
       label: "Đơn hàng đã hoàn thành",
       amount: completedOrders.toString(),
-      discription: "Số lượng đơn đã giao thành công",
       icon: CheckCircleIcon,
+      status: "Đã giao"
+    },
+    {
+      label: "Đơn hàng đã hủy",
+      amount: canceledOrders.toString(),
+      icon: XCircle,
+      status: "Đã hủy"
     },
   ];
 
   return (
     <div>
       {/* Thống kê đơn hàng */}
-      <section className="grid w-full pb-4 grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-3">
+      <section className="grid w-full pb-4 grid-cols-1 gap-4 gap-x-8 transition-all sm:grid-cols-2 xl:grid-cols-4">
         {cardData.map((d, i) => (
-          <Card key={i} amount={d.amount} discription={d.discription} icon={d.icon} label={d.label} />
+          <div
+            key={i}
+            className={`cursor-pointer rounded-2xl p-1 ${selectedStatus === d.status ? "bg-red-400" : "bg-gray-300"}`}
+            onClick={() => setSelectedStatus(d.status)}
+          >
+            <Card amount={d.amount} icon={d.icon} label={d.label} discription={""} />
+          </div>
         ))}
       </section>
 
-      {/* Biểu đồ doanh thu theo tháng */}
+      {/* Biểu đồ số đơn hàng theo tháng */}
       <section className="grid grid-cols-1 gap-4 transition-all">
         <CardContent>
-          <p className="p-4 font-semibold">Doanh thu từ đơn hàng đã giao theo tháng</p>
+          <p className="p-4 font-semibold">Số đơn hàng theo tháng (Trạng thái: {selectedStatus})</p>
           <LineChart data={chartData} />
         </CardContent>
       </section>

@@ -43,14 +43,16 @@ export const columns: ColumnDef<OrderDetail>[] = [
       <span>{row.original.unit_price.toLocaleString("vi-VN")}</span>
     ),
   },
+  
   {
     id: "total_price",
     header: "Thành tiền (đ)",
-    cell: ({ row }) => {
-      const { quantity, unit_price } = row.original;
-      const total = quantity * unit_price;
+    accessorFn: (row) => row.quantity * row.unit_price,
+    cell: ({ getValue }) => {
+      const total = getValue<number>();
       return <span>{total.toLocaleString("vi-VN")}</span>;
     },
-  },
+  }
+  
   
 ];

@@ -257,7 +257,7 @@ const columns = (
     },
   },
   {
-    accessorKey: "staff_mail", header:"Nhân viên QL"
+    accessorKey: "staff_mail", header:"Email người xử lý"
   },
   {
     accessorKey: "status",
