@@ -347,7 +347,7 @@ const AddProductDialog = ({ isOpen, setIsOpen, onSubmit }: AddProductDialogProps
             </div>
             <div className="my-2">
               <label className="block text-sm font-medium">Mô tả</label>
-              <div className="w-full border rounded max-h-[500px] overflow-y-auto">
+              <div className="w-full border rounded max-h-[500px] min-h-[150px] overflow-y-auto">
                 <Editor value={content} onChange={setContent}/>
               </div>
             </div>

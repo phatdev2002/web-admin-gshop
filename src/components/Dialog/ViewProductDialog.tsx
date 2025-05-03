@@ -414,14 +414,15 @@ const EditProductDialog = ({ isOpen, setIsOpen, onSubmit, productToEdit }: EditP
               <div className="">
                 <label className="block text-sm font-medium">Số lượng</label>
                 <Input
-                  type="number"
-                  className="w-full p-2 border rounded mt-1 bg-blue-50"
-                  value={editedProduct.quantity}
-                  onChange={(e) =>
-                    setEditedProduct({ ...editedProduct, quantity: e.target.value })
-                  }
-                  required
-                />
+                type="number"
+                className="w-full p-2 border rounded mt-1 bg-blue-50"
+                value={editedProduct.quantity}
+                onChange={(e) =>
+                  setEditedProduct({ ...editedProduct, quantity: e.target.value })
+                }
+                required
+              />
+
               </div>
             </div>
             
